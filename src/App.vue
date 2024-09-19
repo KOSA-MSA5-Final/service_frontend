@@ -1,20 +1,14 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <BeforeLoginMain />
+    <router-view /> <!-- 라우팅된 컴포넌트를 이곳에 렌더링 -->
   </div>
 </template>
 
 <script>
-import BeforeLoginMain from './components/BeforeLogin/BeforeLoginMain.vue';
-
-
 export default {
   name: 'App',
-  components: {
-    BeforeLoginMain
-  }
-}
+};
 </script>
 
 <style>

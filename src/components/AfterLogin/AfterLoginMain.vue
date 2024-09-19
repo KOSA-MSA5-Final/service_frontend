@@ -1,5 +1,5 @@
 <template>
-    <div id="beforeLoginMain">
+    <div id="afterLoginMain">
         <!-- 다른 내용들 -->
         <h1>메인 페이지 콘텐츠</h1>
         <p>여기에 메인 페이지의 다른 요소들이 들어갑니다.</p>
@@ -13,6 +13,7 @@
 import ButtomBar from './ButtomBar.vue';
 
 export default {
+    name: 'AfterLoginMain', // 컴포넌트 이름 추가
     components: {
         ButtomBar
     }
@@ -20,18 +21,14 @@ export default {
 </script>
 
 <style scoped>
-    #beforeLoginMain {
+    #afterLoginMain { /* 아이디를 올바르게 수정 */
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         height: 100vh; /* 전체 화면을 차지 */
     }
 
-    h1 {
-        text-align: center;
-    }
-
-    p {
+    h1, p {
         text-align: center;
     }
 

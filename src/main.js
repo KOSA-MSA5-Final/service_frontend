@@ -1,15 +1,15 @@
 import { createApp } from 'vue';
 import App from './App.vue';
+import router from '@/routes/index'; // 라우터 가져오기
 import axios from 'axios';
 
-// Vue 애플리케이션을 생성
 const app = createApp(App);
 
-// Axios를 글로벌 프로퍼티로 추가
+// Axios 전역 설정
 app.config.globalProperties.$axios = axios;
 
-// Vue Router가 있다면 여기에 추가
-// app.use(routes);
+// 라우터 사용
+app.use(router);
 
-// Vue 애플리케이션을 #app 요소에 마운트
+// 애플리케이션 마운트
 app.mount('#app');
