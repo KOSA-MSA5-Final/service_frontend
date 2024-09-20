@@ -1,10 +1,10 @@
 <template>
     <div id="login-button">
-        <button id="login" @click="goToMain">Login</button>
+        <button id="login" @click="goToLogin">Login</button>
     </div>
 
     <div id="signup-button">
-        <button id="signup" @click="goToMain">SignUp</button>
+        <button id="signup" @click="goToSignup">SignUp</button>
     </div>
 </template>
 
@@ -15,6 +15,14 @@ export default {
         goToMain() {
             // 메인 페이지로 이동
             this.$router.push('/main');
+        },
+        goToLogin() {
+            // 메인 페이지로 이동
+            this.$router.push('/login');
+        },
+        goToSignup() {
+            // 메인 페이지로 이동
+            this.$router.push('/signup');
         }
     }
 }

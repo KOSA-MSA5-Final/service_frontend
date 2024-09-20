@@ -16,7 +16,12 @@ module.exports = defineConfig({
         target: `ws://${host}:${port}`,
         changeOrigin: false,
         ws: true,
-      },
+      }, 
+      '/auth': {
+        target: 'http://localhost:9000', // 로그인 서버
+        changeOrigin: true,
+        pathRewrite: { '^/auth': '' }
+      }
     },
   },
   configureWebpack: {
