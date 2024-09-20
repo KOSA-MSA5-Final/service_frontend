@@ -1,6 +1,6 @@
 const { defineConfig } = require('@vue/cli-service');
 const host = "localhost"; // back-end host
-const port = "8080"; // back-end port
+const port = "8081"; // back-end port
 
 module.exports = defineConfig({
   transpileDependencies: true,
