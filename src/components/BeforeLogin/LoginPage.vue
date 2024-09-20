@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { useAuthStore } from '@/fetch_datas/authStore'; // 스토어 가져오기
+import { useAuthStore } from '@/post_datas/loginStore'; // 스토어 가져오기
 
 export default {
     setup() {
