@@ -26,6 +26,7 @@ export const useAuthStore = defineStore('auth', {
                 }
             } catch (error) {
                 console.error('로그인이 실패했습니다', error);
+                alert("아이디나 패스워드가 다릅니다");
             }
         }
     }
