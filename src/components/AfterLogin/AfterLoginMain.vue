@@ -3,7 +3,10 @@
         <!-- 다른 내용들 -->
         <h1>메인 페이지 콘텐츠</h1>
         <p>여기에 메인 페이지의 다른 요소들이 들어갑니다.</p>
-
+        <div id="logoutBox">
+            <span>안녕하세요 ~님</span>
+            <button @click="logout">로그아웃</button>
+        </div>
         <!-- ButtomBar 컴포넌트를 하단에 배치 -->
         <ButtomBar />
     </div>
@@ -16,6 +19,17 @@ export default {
     name: 'AfterLoginMain', // 컴포넌트 이름 추가
     components: {
         ButtomBar
+    },
+    data(){
+        return{
+
+        }
+    },
+    methods:{
+        logout(){
+            localStorage.removeItem('token');
+            this.$router.push('/login'); //
+        }
     }
 }
 </script>
@@ -31,5 +45,9 @@ export default {
     h1, p {
         text-align: center;
     }
-
+    #logoutBox{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+    }
 </style>
