@@ -5,6 +5,7 @@ import axios from 'axios';
 import { createPinia } from 'pinia';
 
 const app = createApp(App);
+const pinia = createPinia();
 
 app.config.globalProperties.$axios = axios;
 axios.defaults.baseURL = '/api'; // 프록시를 통해 백엔드와 통신
@@ -18,5 +19,6 @@ app.use(pinia);
 // Vue Router 등록 (선택사항)
 app.use(router);
 
-// Vue 애플리케이션 마운트
+// 애플리케이션 마운트
 app.mount('#app');
+
