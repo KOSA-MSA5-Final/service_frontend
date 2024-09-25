@@ -1,6 +1,12 @@
 <template>
+    <div class="mgng-beforeLoginMain">멍지냥지</div>
+    <div class="mgng-gif">
+        <img :src="require('@/assets/mgng.gif')" alt="mgng gif"/>
+    </div>
+    
     <div id="login-button">
         <button id="login" @click="goToLogin">Login</button>
+
     </div>
 
     <div id="signup-button">
@@ -39,5 +45,8 @@ button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+}
+.mgng-beforeLoginMain {
+    font-family: 'HancomMalangMalang-Regular', sans-serif;
 }
 </style>
