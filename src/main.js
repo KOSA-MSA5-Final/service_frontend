@@ -13,7 +13,6 @@ axios.defaults.withCredentials = true; // 쿠키 전송 설정
 
 
 // Pinia 생성 및 등록
-const pinia = createPinia();
 app.use(pinia);
 
 // Vue Router 등록 (선택사항)

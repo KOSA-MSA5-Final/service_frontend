@@ -26,17 +26,17 @@ export default {
         ButtomBar
     },
 
-    data(){
-        return{
+    data() {
+        return {
 
-        }
+        };
     },
-    methods:{
-        logout(){
+    methods: {
+        logout() {
             localStorage.removeItem('token');
             this.$router.push('/login'); //
-        }
-
+        },
+    },
     setup() {
         const postStore = usePostStore(); // Pinia store 호출
         const { contents } = storeToRefs(postStore); // storeToRefs를 사용하여 반응형 상태로 만듦
@@ -49,10 +49,10 @@ export default {
         return {
             contents // 상태를 템플릿에서 사용할 수 있도록 리턴
         };
-
     }
 };
 </script>
+
 
 <style scoped>
 
