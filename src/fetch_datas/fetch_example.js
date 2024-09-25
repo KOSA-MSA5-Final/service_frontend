@@ -1,26 +1,23 @@
+// fetch_test.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:8081';
+const baseUrl = ''; // 프록시 설정을 사용하기 위해 baseUrl을 빈 문자열로 설정
 
-export const usePostStore = defineStore('storeId',{
-	state: () => ({
-		contents: [],
-	}),
-    // 함수 정의하는 곳
-	actions: {
-		async fetchContents(){
-			try{
-				const res = await axios.get(baseUrl); // 요청한 데이터를
-				this.contents = res.data;             // 생성한 state에 대입
-				// res에 담겨오는 데이터 항목들을 보고 자유롭게 사용할 수 있다.
-				// ex)
-				// if(res.status === 200){
-				//    alert('Success Message');
-        		// }
-			} catch (err) {
-				console.error('Fetch ERROR!', err);
-			}
-		}
-	},
+
+export const usePostStore = defineStore('storeId', {
+  state: () => ({
+    contents: [], // 여기에 메시지를 받아오기 위해 다른 state를 추가할 수도 있음.
+  }),
+  actions: {
+    async fetchContents() {
+      try {
+        const res = await axios.get(`${baseUrl}/message`); // 수정: 요청 경로 변경
+        this.contents = res.data; // 데이터 저장
+        console.log('Fetched content:', this.contents); // 확인용 로그
+      } catch (err) {
+        console.error('Fetch ERROR!', err);
+      }
+    }
+  }
 });
