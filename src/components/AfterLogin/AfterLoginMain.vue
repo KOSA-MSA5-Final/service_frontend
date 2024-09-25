@@ -3,7 +3,7 @@
         <!-- 다른 내용들 -->
         <h1>메인 페이지 콘텐츠</h1>
 
-        <p>여기에 메인 페이지의 다른 요소들이 들어갑니다.</p>
+        <router-view />
         <div id="logoutBox">
             <span>안녕하세요 ~님</span>
             <button @click="logout">로그아웃</button>

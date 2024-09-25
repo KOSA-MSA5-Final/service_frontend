@@ -4,6 +4,8 @@ import BeforeLoginMain from "@/components/BeforeLogin/BeforeLoginMain.vue";
 import LoginPage from '@/components/BeforeLogin/LoginPage.vue';
 import SignupPage from '@/components/BeforeLogin/SignupPage.vue';
 import AfterLoginMain from '@/components/AfterLogin/AfterLoginMain.vue';
+import SettingsMain from '@/components/AfterLogin/Account/SettingsMain.vue';
+import ProfileMain from '@/components/AfterLogin/Profile/ProfileMain.vue';
 
 // const isLoggedIn = () => {
 //     return !!localStorage.getItem('token'); // 토큰이 존재하면 로그인된 상태
@@ -31,7 +33,19 @@ const routes = [
     {
         path: '/main',
         name: 'AfterLoginMain',
-        component: AfterLoginMain
+        component: AfterLoginMain,
+        children: [
+            {
+                path: 'profile',
+                name: 'ProfileMainPage',
+                component: ProfileMain
+            },
+            {
+                path: 'settings',
+                name: 'SettingsPage',
+                component: SettingsMain
+            }
+        ]
     },
     {
         path: '/login',

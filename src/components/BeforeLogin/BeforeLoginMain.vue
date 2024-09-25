@@ -48,5 +48,7 @@ button {
 }
 .mgng-beforeLoginMain {
     font-family: 'HancomMalangMalang-Regular', sans-serif;
+    font-size: xxx-large;
+    font-weight: bold;
 }
 </style>
