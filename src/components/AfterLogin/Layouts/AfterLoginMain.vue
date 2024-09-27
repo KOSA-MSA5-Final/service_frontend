@@ -1,12 +1,10 @@
 <template>
     <div id="afterLoginMain">
         <!-- 다른 내용들 -->
-        <h1>메인 페이지 콘텐츠</h1>
+        <TopBar/>
 
-        <router-view />
-        <div id="logoutBox">
-            <span>안녕하세요 ~님</span>
-            <button @click="logout">로그아웃</button>
+        <div id="router-pages">
+            <router-view />
         </div>
 
         <!-- ButtomBar 컴포넌트를 하단에 배치 -->
@@ -19,10 +17,12 @@ import { usePostStore } from '@/fetch_datas/fetch_example';
 import { onMounted } from 'vue'; // Vue Composition API 사용
 import { storeToRefs } from 'pinia'; // Pinia 상태를 반응형으로 가져오기 위해 사용
 import ButtomBar from './ButtomBar.vue';
+import TopBar from './TopBar.vue';
 
 export default {
     name: 'AfterLoginMain',
     components: {
+        TopBar,
         ButtomBar
     },
 
@@ -70,6 +70,13 @@ export default {
         display:flex;
         justify-content: center;
         align-items: center;
+    }
+    #router-pages {
+        flex-grow: 1;
+        overflow-y: auto;
+        height: -webkit-fill-available;
+        /* 스크롤바 숨기기 */
+        scrollbar-width: none;
     }
 
 </style>

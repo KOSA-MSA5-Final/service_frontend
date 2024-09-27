@@ -1,7 +1,8 @@
 <template>
     <div id="buttomBar">
         <div id="left-button">
-            <p>따끈따끈한 아이템들</p>
+            <img src="@/assets/icon-home.svg"/>
+            <p>메인화면</p>
         </div>
 
         <div id="center-button">
@@ -10,6 +11,7 @@
         </div>
 
         <div id="right-button">
+            <img src="@/assets/icon-my-page.svg"/>
             <p>환경설정</p>
         </div>
     </div>
@@ -23,20 +25,42 @@
     background-color: #f8f8f8; /* 배경색 */
     padding: 10px; /* 여백 */
     height: 100px;
+    margin-bottom: 5px;
 }
 
 #buttomBar div {
     flex: 1; /* 모든 버튼이 동일한 비율로 차지 */
     text-align: center; /* 텍스트 가운데 정렬 */
 }
-#center-button p{
+#center-button p {
+    margin-top: 5px;
     font-size: 12px;
 }
 
 #center-button img {
-    max-width: 100px; /* 이미지 크기 제한 */
-    height: 100px;
-    width: 100px;
+    max-width: 90px; /* 이미지 크기 제한 */
+    height: 90px;
+    width: 90px;
     border-radius: 50%;
+}
+
+#right-button, #left-button {
+    margin-top: 10px;
+}
+
+#right-button img {
+    max-width: 50px;
+}
+#left-button img {
+    max-width: 45px;
+}
+#left-button p {
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+#right-button p {
+    margin-top: 10px;
+    font-size: 12px;
 }
 </style>

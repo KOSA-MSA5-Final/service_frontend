@@ -3,7 +3,7 @@ import BeforeLoginMain from "@/components/BeforeLogin/BeforeLoginMain.vue";
 // import AfterLoginMain from "@/components/AfterLogin/AfterLoginMain.vue";
 import LoginPage from '@/components/BeforeLogin/LoginPage.vue';
 import SignupPage from '@/components/BeforeLogin/SignupPage.vue';
-import AfterLoginMain from '@/components/AfterLogin/AfterLoginMain.vue';
+import AfterLoginMain from '@/components/AfterLogin/Layouts/AfterLoginMain.vue';
 import SettingsMain from '@/components/AfterLogin/Account/SettingsMain.vue';
 import ProfileMain from '@/components/AfterLogin/Profile/ProfileMain.vue';
 
