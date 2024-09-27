@@ -1,6 +1,6 @@
 <template>
-<div class="gradient-custom">
-    <section class="d-flex vh-100">
+<div class="gradient-custom " >
+    <section class="d-flex vh-100" style="margin-left:35px;">
         <div class="container-fluid row justify-content-center align-content-center">
             <div class="card bg-dark" style="border-radius: 1rem;">
                 <div class="card-body p-5 text-center">
@@ -49,10 +49,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 .gradient-custom {
     background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
 }
+
 </style>

@@ -43,7 +43,7 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   background-color: white;
-  padding: 20px;
+  
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }

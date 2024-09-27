@@ -5,9 +5,9 @@ import LoginPage from '@/components/BeforeLogin/LoginPage.vue';
 import SignupPage from '@/components/BeforeLogin/SignupPage.vue';
 import AfterLoginMain from '@/components/AfterLogin/AfterLoginMain.vue';
 
-// const isLoggedIn = () => {
-//     return !!localStorage.getItem('token'); // 토큰이 존재하면 로그인된 상태
-// };
+const isLoggedIn = () => {
+    return !!localStorage.getItem('token'); // 토큰이 존재하면 로그인된 상태
+};
 
 // 라우트 정의
 const routes = [
@@ -16,22 +16,17 @@ const routes = [
         name: 'BeforeLoginMain',
         component: BeforeLoginMain 
     },
-    // {
-    //     path: '/main',
-    //     name: 'AfterLoginMain',
-    //     component: AfterLoginMain,
-    //     beforeEnter: (to, from, next) => {
-    //         if (isLoggedIn()) {
-    //             next(); // 로그인된 경우 접근 허용
-    //         } else {
-    //             next('/login'); // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
-    //         }
-    //     }
-    // },
     {
         path: '/main',
         name: 'AfterLoginMain',
-        component: AfterLoginMain
+        component: AfterLoginMain,
+        beforeEnter: (to, from, next) => {
+            if (isLoggedIn()) {
+                next(); // 로그인된 경우 접근 허용
+            } else {
+                next('/login'); // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+            }
+        }
     },
     {
         path: '/login',
