@@ -2,7 +2,10 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from '@/routes/index';
 import axios from 'axios';
+import { register } from 'swiper/element/bundle';
 import { createPinia } from 'pinia';
+
+register();
 
 const app = createApp(App);
 const pinia = createPinia();
