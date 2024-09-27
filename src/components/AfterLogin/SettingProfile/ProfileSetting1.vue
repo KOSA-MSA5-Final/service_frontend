@@ -1,13 +1,13 @@
 <template>
-  <div style="height:inherit;">
-    <div class="container-fluid row justify-content-center align-content-center" style="width:auto; margin-bottom:20px;">
-      <div style="display:flex; align-items: center; justify-content: space-between; align-items: start; background-color: white; padding-left:2px; align-items: center;">
-        <div class="back_btn" style="margin-right:10px; align-items: center; display:flex; justify-content: center; justify-items: center; height:50px; " @click="goToBeforeLogin">
+  <div class="fullDiv">
+    <div class="container-fluid row justify-content-center align-content-center njsCustom">
+      <div class="subContainer">
+        <div class="back_btn" @click="goToBeforeLogin">
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
           </svg>
         </div>
-        <div class="skip_btn" style="min-height:100%;align-content:center">
+        <div class="skip_btn">
           건너뛰기
         </div>
       </div>
@@ -69,8 +69,23 @@ html, body{
 .container{
   height:100%;
 }
+.fullDiv{
+  height:inherit;
+}
+.njsCustom{
+  width:auto; margin-bottom:20px;
+}
+.subContainer{
+  display:flex; align-items: center; justify-content: space-between; align-items: start; background-color: white; padding-left:2px; align-items: center;
+}
+.skip_btn{
+  min-height:100%;align-content:center
+}
 .skip_btn:hover{
   background-color: lightgray;
+}
+.back_btn{
+  margin-right:10px; align-items: center; display:flex; justify-content: center; justify-items: center; height:50px; 
 }
 .back_btn:hover {
   background-color: lightgray;

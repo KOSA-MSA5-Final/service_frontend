@@ -4,9 +4,11 @@ import BeforeLoginMain from "@/components/BeforeLogin/BeforeLoginMain.vue";
 import LoginPage from '@/components/BeforeLogin/LoginPage.vue';
 import SignupPage from '@/components/BeforeLogin/SignupPage.vue';
 import AfterLoginMain from '@/components/AfterLogin/Layouts/AfterLoginMain.vue';
-import SettingsMain from '@/components/AfterLogin/Account/SettingsMain.vue';
+import Settings1 from '@/components/AfterLogin/Account/SettingsMain.vue';
 import ProfileMain from '@/components/AfterLogin/Profile/ProfileMain.vue';
 import setProfile from '@/components/AfterLogin/SettingProfile/ProfileSetting1.vue'
+import setProfile2 from '@/components/AfterLogin/SettingProfile/ProfileSetting2.vue'
+
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token'); // 토큰이 존재하면 로그인된 상태
@@ -40,14 +42,19 @@ const routes = [
             {
                 path: 'settings',
                 name: 'SettingsPage',
-                component: SettingsMain
-            }
+                component: Settings1
+            },
         ]
     },
     {
-        path: '/setProfile',
-        name: 'setProfilePage',
+        path: '/setProfile1',
+        name: 'setProfilePage1',
         component: setProfile
+    },
+    {
+        path: '/setProfile2',
+        name: 'setProfilePage2',
+        component: setProfile2
     },
     {
         path: '/login',
