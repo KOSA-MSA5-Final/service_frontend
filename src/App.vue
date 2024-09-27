@@ -31,21 +31,23 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
 }
 
 .container {
   width: 100%;
-  min-width: 500px;
+  min-width: 400px;
   max-width: 600px;
+  height: 100%;
   margin: 0 auto;
   background-color: white;
-  
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+  overflow: hidden; /* 스크롤 방지 */
 }
 
 @media screen and (max-width: 600px) {
