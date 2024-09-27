@@ -28,7 +28,7 @@
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             <button id="signup" @click="goToSignup">SignUp</button>
-        </div>
+        </div> 
     </div>
 
 </template>
