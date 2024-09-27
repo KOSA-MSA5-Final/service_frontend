@@ -18,7 +18,7 @@ module.exports = defineConfig({
         ws: true,
       }, 
       '/auth': {
-        target: 'http://localhost:9000', // 로그인 서버
+        target: 'http://localhost:8081', // 로그인 서버
         changeOrigin: true,
         pathRewrite: { '^/auth': '' }
       }
