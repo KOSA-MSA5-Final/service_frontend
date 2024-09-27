@@ -4,6 +4,9 @@ import router from '@/routes/index';
 import axios from 'axios';
 import { register } from 'swiper/element/bundle';
 import { createPinia } from 'pinia';
+import VueTypewriterEffect from "vue-typewriter-effect";
+
+
 
 register();
 
@@ -20,6 +23,8 @@ app.use(pinia);
 
 // Vue Router 등록 (선택사항)
 app.use(router);
+
+app.component("vue-typewriter-effect", VueTypewriterEffect);
 
 // 애플리케이션 마운트
 app.mount('#app');

@@ -56,7 +56,7 @@ export default {
 
 <style scoped>
 
-    #afterLoginMain { /* 아이디를 올바르게 수정 */
+    #afterLoginMain { 
         display: flex;
         flex-direction: column;
         justify-content: space-between;

@@ -24,7 +24,7 @@
     align-items: center; /* 세로축 가운데 정렬 */
     background-color: #f8f8f8; /* 배경색 */
     padding: 10px; /* 여백 */
-    height: 100px;
+    height: 80px;
     margin-bottom: 5px;
 }
 
@@ -32,35 +32,39 @@
     flex: 1; /* 모든 버튼이 동일한 비율로 차지 */
     text-align: center; /* 텍스트 가운데 정렬 */
 }
+#center-button {
+    margin-top: 15px;
+}
 #center-button p {
-    margin-top: 5px;
+    margin-top: 2px;
     font-size: 12px;
 }
 
 #center-button img {
     max-width: 90px; /* 이미지 크기 제한 */
-    height: 90px;
-    width: 90px;
+    height: 55px;
+    width: 55px;
     border-radius: 50%;
+    margin-top: 8px;
 }
 
 #right-button, #left-button {
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 #right-button img {
-    max-width: 50px;
+    max-width: 40px;
 }
 #left-button img {
-    max-width: 45px;
+    max-width: 30px;
 }
 #left-button p {
     margin-top: 10px;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 #right-button p {
-    margin-top: 10px;
-    font-size: 12px;
+    margin-top: 5px;
+    font-size: 10px;
 }
 </style>
