@@ -26,33 +26,35 @@ export default {
     font-style: normal;
 }
 #app {
+  display: flex;
+  justify-content: center;
   font-family: 'GmarketSansMedium', 'HancomMalangMalang-Regular', Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  /* display: flex; */
   justify-content: center;
   align-items: center;
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
 
 .container {
   width: 100%;
-  min-width: 400px;
+  /* min-width: 500px; */
   max-width: 600px;
-  height: 100%;
   margin: 0 auto;
   background-color: white;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  overflow: hidden; /* 스크롤 방지 */
+  min-height: 811px;
+  overflow: hidden;
 }
 
 @media screen and (max-width: 600px) {
   .container {
-    width: 600px; /* 모바일에서도 600px 유지 */
+    width: 500px;
+    justify-items: center;
   }
 }
 </style>
