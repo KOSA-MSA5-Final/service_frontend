@@ -4,6 +4,8 @@ import router from '@/routes/index';
 import axios from 'axios';
 import { register } from 'swiper/element/bundle';
 import { createPinia } from 'pinia';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'; // BootstrapVue 스타일
 
 register();
 

@@ -6,9 +6,7 @@ import SignupPage from '@/components/BeforeLogin/SignupPage.vue';
 import AfterLoginMain from '@/components/AfterLogin/Layouts/AfterLoginMain.vue';
 import Settings1 from '@/components/AfterLogin/Account/SettingsMain.vue';
 import ProfileMain from '@/components/AfterLogin/Profile/ProfileMain.vue';
-import setProfile from '@/components/AfterLogin/SettingProfile/ProfileSetting1.vue'
-import setProfile2 from '@/components/AfterLogin/SettingProfile/ProfileSetting2.vue'
-
+import settingProfile from './settingProfile';
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token'); // 토큰이 존재하면 로그인된 상태
@@ -47,16 +45,6 @@ const routes = [
         ]
     },
     {
-        path: '/setProfile1',
-        name: 'setProfilePage1',
-        component: setProfile
-    },
-    {
-        path: '/setProfile2',
-        name: 'setProfilePage2',
-        component: setProfile2
-    },
-    {
         path: '/login',
         name: 'LoginPage',
         component: LoginPage
@@ -71,7 +59,7 @@ const routes = [
 // 라우터 생성
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes: [...routes, ...settingProfile],
 });
 
 export default router;
