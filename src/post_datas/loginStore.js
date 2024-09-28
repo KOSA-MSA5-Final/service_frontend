@@ -21,6 +21,7 @@ export const useAuthStore = defineStore('auth', {
                     this.token = response.data.accessToken;
                     localStorage.setItem('token', this.token);
                     window.location.href = '/main'; // 로그인 성공 후 메인 페이지로 리다이렉트
+                    console.log(this.email);
                 } else {
                     console.error('토큰을 가져오지 못했습니다.');
                 }
