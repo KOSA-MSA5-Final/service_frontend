@@ -10,8 +10,8 @@
                     <div class="mb-2">
                         <form @submit.prevent="login">
                             <div class="mb-3">
-                                <label class="form-label text-white">Email address</label>
-                                <input type="email" v-model="authStore.email" class="form-control" name="username">
+                                <label class="form-label text-white">Username</label>
+                                <input type="text" v-model="authStore.username" class="form-control" name="username">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-white">Password</label>
@@ -46,6 +46,7 @@ export default {
             goToSignup
         };
     }
+    //login로직은 loginStore.js에 구현되어있음
 }
 </script>
 

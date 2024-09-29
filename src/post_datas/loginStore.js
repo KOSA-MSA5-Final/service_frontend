@@ -5,20 +5,26 @@ const baseUrl = 'http://localhost:8081';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        token: localStorage.getItem('token') || null,
-        email: '',
+
+        token: null,
+        username: '',
         password: ''
     }),
     actions: {
         async login() {
             try {
+                console.log('Logging in with:', { username: this.username, password: this.password }); // 추가된 로그
                 const response = await axios.post(`${baseUrl}/auth/login`, {
-                    email: this.email,
+                    username: this.username,
                     password: this.password
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 });
 
-                if (response && response.data && response.data.accessToken) {
-                    this.token = response.data.accessToken;
+                if (response && response.data && response.data.token) {
+                    this.token = response.data.token;
                     localStorage.setItem('token', this.token);
                     this.setAxiosAuthHeader();
                     window.location.href = '/main'; // 로그인 성공 후 메인 페이지로 리다이렉트
