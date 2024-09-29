@@ -1,10 +1,12 @@
 // export default router;
 import { createRouter, createWebHistory } from 'vue-router';
-import BeforeLoginMain from "@/components/BeforeLogin/BeforeLoginMain.vue";
+import BeforeLoginMain from '@/components/BeforeLogin/BeforeLoginMain.vue';
 import SignupPage from '@/components/BeforeLogin/SignupPage.vue';
 import AfterLoginMain from '@/components/AfterLogin/Layouts/AfterLoginMain.vue';
 import SettingsMain from '@/components/AfterLogin/Account/SettingsMain.vue';
 import ProfileMain from '@/components/AfterLogin/Profile/ProfileMain.vue';
+import KakaoMaps from '@/components/AfterLogin/maps/KakaoMaps.vue';
+import MainPage from '@/components/AfterLogin/main/MainPage.vue';
 
 import RegisterReceipt from '@/components/AfterLogin/Profile/RegisterReceipt.vue';
 
@@ -19,7 +21,7 @@ const routes = [
     {
         path: '/',
         name: 'BeforeLoginMain',
-        component: BeforeLoginMain 
+        component: BeforeLoginMain,
     },
     {
         path: '/main',
@@ -34,15 +36,24 @@ const routes = [
         },
         children: [
             {
+                path: '',
+                name: 'MainPage',
+                component: MainPage,
+            },
+            {
                 path: 'profile',
                 name: 'ProfileMainPage',
                 component: ProfileMain,
-                
             },
             {
                 path: 'settings',
                 name: 'SettingsPage',
-                component: SettingsMain
+                component: SettingsMain,
+            },
+            {
+                path: 'maps',
+                name: 'MapsPage',
+                component: KakaoMaps,
             },
             {
                 path: 'upload_receipt', 
@@ -52,12 +63,11 @@ const routes = [
 
         ]
     },
-    
     {
-        path:'/signup',
-        name:"SignupPage",
-        component: SignupPage
-    }
+        path: '/signup',
+        name: 'SignupPage',
+        component: SignupPage,
+    },
 ];
 
 const router = createRouter({
