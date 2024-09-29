@@ -25,7 +25,7 @@
                     <p class="subtitle">확인하기</p>
                 </div>
                 <div id="reg-receipt">
-                    <img src="@/assets/icon-scan.svg" alt="Register Receipt Icon"/>
+                    <img src="@/assets/icon-scan.svg" alt="Register Receipt Icon" @click="goToUploadReceipt"/>
                     <p class="title">진료영수증</p>
                     <p class="subtitle">등록하기</p>
                 </div>
@@ -61,7 +61,22 @@
     </div>
 </template>
 
-<script></script>
+<script>
+import { useRouter } from 'vue-router';
+export default {
+    name: 'ProfileMainPage',
+    setup() {
+        const router = useRouter(); 
+        const goToUploadReceipt = () => {
+            router.push('/main/upload_receipt'); 
+        };
+
+        return {
+            goToUploadReceipt,
+        };
+    }
+};
+</script>
 
 <style scoped>
 #profile-page {

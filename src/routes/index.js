@@ -5,6 +5,7 @@ import SignupPage from '@/components/BeforeLogin/SignupPage.vue';
 import AfterLoginMain from '@/components/AfterLogin/Layouts/AfterLoginMain.vue';
 import SettingsMain from '@/components/AfterLogin/Account/SettingsMain.vue';
 import ProfileMain from '@/components/AfterLogin/Profile/ProfileMain.vue';
+import RegisterReceipt from '@/components/AfterLogin/Profile/RegisterReceipt.vue';
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
@@ -31,15 +32,22 @@ const routes = [
             {
                 path: 'profile',
                 name: 'ProfileMainPage',
-                component: ProfileMain
+                component: ProfileMain,
+                
             },
             {
                 path: 'settings',
                 name: 'SettingsPage',
                 component: SettingsMain
+            },
+            {
+                path: 'upload_receipt', 
+                name: 'RegisterReceiptPage',
+                component: RegisterReceipt
             }
         ]
     },
+    
     {
         path:'/signup',
         name:"SignupPage",
