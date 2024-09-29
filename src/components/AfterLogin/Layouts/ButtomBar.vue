@@ -1,21 +1,50 @@
 <template>
     <div id="buttomBar">
         <div id="left-button">
-            <img src="@/assets/icon-home.svg"/>
+            <img src="@/assets/icon-home.svg" @click="goToMain"/>
             <p>메인화면</p>
         </div>
 
-        <div id="center-button">
+        <div id="center-button" @click="goToProfile">
             <img src="https://elliebucket1.s3.ap-northeast-2.amazonaws.com/%ED%86%A0%EB%81%BC%EA%B6%81%EB%94%94.jpg"/>
             <p>반려동물 추가</p>
         </div>
 
         <div id="right-button">
-            <img src="@/assets/icon-my-page.svg"/>
+            <img src="@/assets/icon-my-page.svg" @click="goToSettings"/>
             <p>환경설정</p>
         </div>
     </div>
 </template>
+
+<script>
+import { useRouter } from 'vue-router';
+
+export default {
+    name: 'ButtomBar',
+    setup() {
+        const router = useRouter(); // Use the Vue Router
+
+        const goToProfile = () => {
+            router.push('/main/profile'); // Navigate to the profile page
+        };
+
+        const goToMain = () => {
+            router.push('/main');
+        };
+
+        const goToSettings = () => {
+            router.push('/main/settings');
+        };
+
+        return {
+            goToProfile,
+            goToMain,
+            goToSettings,
+        };
+    }
+};
+</script>
 
 <style scoped>
 #buttomBar {
