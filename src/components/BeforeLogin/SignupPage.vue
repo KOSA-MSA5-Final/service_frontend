@@ -39,6 +39,7 @@
 
 <script>
 import axios from 'axios';
+import https from 'https'; // Make sure to import the https module
 
 export default {
   data() {
@@ -46,7 +47,7 @@ export default {
       email: '',
       password: '',
       username: '',
-      confirmPassword: '', // 비밀번호 확인을 위한 데이터 추가
+      confirmPassword: '', 
       name: '',
     };
   },
@@ -63,15 +64,19 @@ export default {
       }
 
       axios
-        .post('http://localhost:8081/auth/register', {
+        .post('https://localhost:8081/auth/register', {
           email: this.email,
           password: this.password,
           username: this.username,
           name: this.name,
+        }, {
+          httpsAgent: new https.Agent({  
+            rejectUnauthorized: false // Ignore invalid SSL certificates
+          })
         })
         .then((response) => {
           // 회원가입 성공 후 리디렉션 처리
-          window.location.href = 'http://localhost:80/';
+          window.location.href = 'https://localhost:80/';
           console.log(response.data);
         })
         .catch(error => {
@@ -83,6 +88,7 @@ export default {
     }
   }
 };
+
 </script>
 
 <style>

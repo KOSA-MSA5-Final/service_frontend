@@ -22,11 +22,11 @@ module.exports = defineConfig({
   devServer: {
     https: httpsOptions,
     host: host,
-    port: 8080, // Vue CLI의 기본 포트입니다. 필요하다면 변경하세요.
+    port: 8080,
     hot: true,
     proxy: {
       '/api/': {
-        target: `http://${host}:${port}`,
+        target: `https://${host}:${port}`,
         changeOrigin: true,
       },
       '/ws/': {
@@ -35,7 +35,7 @@ module.exports = defineConfig({
         ws: true,
       },
       '/auth': {
-        target: `http://${host}:${port}`, // 로그인 서버
+        target: `https://${host}:${port}`,
         changeOrigin: true,
         pathRewrite: { '^/auth': '' }
       }
@@ -43,10 +43,17 @@ module.exports = defineConfig({
   },
 
   configureWebpack: {
+    resolve: {
+      fallback: {
+        "https": require.resolve("https-browserify"),
+        "url": require.resolve("url/"),
+        "http": require.resolve("stream-http"), // Add the http polyfill
+      },
+    },
     module: {
       rules: [
         {
-          test: /\.d\.ts$/, // TypeScript 정의 파일을 무시하도록 설정
+          test: /\.d\.ts$/,
           loader: 'ignore-loader',
         },
       ],

@@ -10,7 +10,7 @@ import VueTypewriterEffect from "vue-typewriter-effect";
 
 
 register();
-
+window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
 const app = createApp(App);
 const pinia = createPinia();
 
