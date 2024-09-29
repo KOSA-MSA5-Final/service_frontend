@@ -28,7 +28,7 @@
   
   #mgng-name p {
     font-family: 'HancomMalangMalang-Regular', sans-serif;
-    font-size: 20px;
+    font-size: 26px;
     font-weight: bold;
     margin: 0;
   }

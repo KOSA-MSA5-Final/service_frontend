@@ -136,9 +136,9 @@
 #services {
     border-radius: 10px;
     border: 2px solid white;
-    max-width: 450px;
+    width: 100%;
     background-color: white; 
-    padding: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

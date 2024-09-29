@@ -7,6 +7,26 @@
             <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
           </svg>
         </div>
+        <form @submit.prevent="submitForm">
+          <div class="mb-3" style="text-align:left">
+            <label class="form-label text-dark">사용자 이름을 입력해주세요</label>
+            <input type="text" v-model="name" class="form-control" required />
+          </div>
+          <div class="mb-3" style="text-align:left">
+            <label class="form-label text-dark">이메일을 입력해주세요</label>
+            <input type="email" v-model="email" class="form-control" required />
+          </div>
+          <div class="mb-3" style="text-align:left">
+            <label class="form-label text-dark">비밀번호를 입력해주세요</label>
+            <input type="password" v-model="password" class="form-control" required />
+          </div>
+          <div class="mb-3" style="text-align:left">
+            <label class="form-label text-dark">비밀번호를 한번 더 입력해주세요</label>
+            <input type="password" v-model="confirmPassword" class="form-control" required />
+            <div v-if="passwordMismatch" class="text-danger" style="font-size: 0.8em;">비밀번호가 일치하지 않습니다.</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
       </div>
     </div>
     <form @submit.prevent="submitForm">
@@ -34,6 +54,7 @@
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>    
+
 </template>
 
 <script>
