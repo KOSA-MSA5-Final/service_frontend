@@ -15,6 +15,10 @@
         <input type="text" v-model="name" class="form-control" required />
       </div>
       <div class="mb-3" style="text-align:left">
+        <label class="form-label text-dark">사용하실 아이디를 입력해주세요</label>
+        <input type="text" v-model="username" class="form-control" required />
+      </div>
+      <div class="mb-3" style="text-align:left">
         <label class="form-label text-dark">이메일을 입력해주세요</label>
         <input type="email" v-model="email" class="form-control" required />
       </div>
@@ -40,6 +44,7 @@ export default {
     return {
       email: '',
       password: '',
+      username: '',
       confirmPassword: '', // 비밀번호 확인을 위한 데이터 추가
       name: '',
     };
@@ -60,6 +65,7 @@ export default {
         .post('http://localhost:8081/auth/register', {
           email: this.email,
           password: this.password,
+          username: this.username,
           name: this.name,
         })
         .then((response) => {
