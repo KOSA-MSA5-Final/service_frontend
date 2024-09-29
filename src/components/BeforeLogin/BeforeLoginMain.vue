@@ -20,7 +20,7 @@
         <div class="login-input-fields">
             <form @submit.prevent="login">
                 <div class="email-field">
-                    <input type="email" v-model="authStore.email" class="form-control" name="username" placeholder="이메일 주소 입력">
+                    <input type="text" v-model="authStore.username" class="form-control" name="username" placeholder="이메일 주소 입력">
                 </div>
                 <div class="password-field">
                     <input type="password" v-model="authStore.password" class="form-control" name="password" placeholder="비밀번호 입력">

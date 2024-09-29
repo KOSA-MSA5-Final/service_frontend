@@ -4,12 +4,13 @@ import router from '@/routes/index';
 import axios from 'axios';
 import { register } from 'swiper/element/bundle';
 import { createPinia } from 'pinia';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'; // BootstrapVue 스타일
 import VueTypewriterEffect from "vue-typewriter-effect";
 
 
-
 register();
-
+window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
 const app = createApp(App);
 const pinia = createPinia();
 

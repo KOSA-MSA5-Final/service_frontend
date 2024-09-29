@@ -8,6 +8,11 @@ import ProfileMain from '@/components/AfterLogin/Profile/ProfileMain.vue';
 import KakaoMaps from '@/components/AfterLogin/maps/KakaoMaps.vue';
 import MainPage from '@/components/AfterLogin/main/MainPage.vue';
 
+import RegisterReceipt from '@/components/AfterLogin/Profile/RegisterReceipt.vue';
+
+import settingProfile from './settingProfile';
+
+
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
 };
@@ -50,7 +55,13 @@ const routes = [
                 name: 'MapsPage',
                 component: KakaoMaps,
             },
-        ],
+            {
+                path: 'upload_receipt', 
+                name: 'RegisterReceiptPage',
+                component: RegisterReceipt
+            }
+
+        ]
     },
     {
         path: '/signup',
@@ -61,7 +72,7 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes: [...routes, ...settingProfile],
 });
 
 export default router;

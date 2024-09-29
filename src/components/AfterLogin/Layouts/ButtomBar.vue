@@ -31,11 +31,11 @@ export default {
 
         const goToMain = () => {
             router.push('/main');
-        }
+        };
 
         const goToSettings = () => {
             router.push('/main/settings');
-        }
+        };
 
         return {
             goToProfile,
