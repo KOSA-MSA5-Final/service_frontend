@@ -64,8 +64,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import BeforeLoginMain from "@/components/BeforeLogin/BeforeLoginMain.vue";
 import SignupPage from '@/components/BeforeLogin/SignupPage.vue';
 import AfterLoginMain from '@/components/AfterLogin/Layouts/AfterLoginMain.vue';
-import SettingsMain from '@/components/AfterLogin/Account/SettingsMain.vue';
+import Settings1 from '@/components/AfterLogin/Account/SettingsMain.vue';
 import ProfileMain from '@/components/AfterLogin/Profile/ProfileMain.vue';
+import settingProfile from './settingProfile';
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
@@ -97,8 +98,8 @@ const routes = [
             {
                 path: 'settings',
                 name: 'SettingsPage',
-                component: SettingsMain
-            }
+                component: Settings1
+            },
         ]
     },
     {
@@ -110,7 +111,7 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes: [...routes, ...settingProfile],
 });
 
 export default router;
