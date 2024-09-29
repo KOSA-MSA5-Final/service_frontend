@@ -1,36 +1,29 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { useAuthStore } from './loginStore';
 
-const baseUrl = 'http://localhost:8081/api/receipt';
+const baseUrl = 'https://localhost:8081/api/s3';
 
-export const usePostReceiptToOCR = defineStore('receiptOCR', {
+export const useFileUploadStore = defineStore('fileUpload', {
     state: () => ({
-        contents: [],
+        uploadedFiles: [],
     }),
     actions: {
-        async createContents(payload) {
-            const authStore = useAuthStore();
-            console.log('token: ', authStore.token);
+        async uploadFile(payload) {
+            
+            const token = localStorage.getItem('token');
+            console.log('Token being sent:', token);
             try {
-                const { data } = await axios.post(`${baseUrl}/detect-text`, payload, {
+                const { data } = await axios.post(`${baseUrl}/file`, payload, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Authorization': `Bearer ${authStore.token}`
+                        'Authorization': `Bearer ${token}`
                     },
                     withCredentials: true
                 });
-                console.log(data);
-                this.contents.push(data);
+                this.uploadedFiles.push(data);
                 return data;
             } catch (err) {
-                console.error('Post ERROR!', err);
-                if (err.response && err.response.status === 403) {
-                    console.error('Authentication error. Please login again.');
-                    console.log('token: ', authStore.token);
-                    // authStore.logout();
-                    // window.location.href = '/login';
-                }
+                console.error('File Upload ERROR!', err);
                 throw err;
             }
         }

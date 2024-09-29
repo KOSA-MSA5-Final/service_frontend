@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { usePostReceiptToOCR } from '@/post_datas/receiptOCR';
+import { useFileUploadStore  } from '@/post_datas/receiptOCR';
 
 export default {
     name: 'RegisterReceiptPage',
@@ -78,7 +78,7 @@ export default {
             }, 'image/png');
         },
         async submitReceipt() {
-            const postReceiptStore = usePostReceiptToOCR();
+            const fileUploadStore = useFileUploadStore();
             
             if (!this.file) {
                 console.error('No file selected');
@@ -86,10 +86,10 @@ export default {
             }
 
             const formData = new FormData();
-            formData.append('file', this.file);
+            formData.append('qimage', this.file); // Match the key to your backend's @RequestParam
 
             try {
-                const response = await postReceiptStore.createContents(formData);
+                const response = await fileUploadStore.uploadFile(formData);
                 console.log(response);
             } catch (error) {
                 console.error('Error submitting receipt:', error);
