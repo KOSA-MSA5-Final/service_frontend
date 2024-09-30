@@ -17,6 +17,8 @@
       <div class="mb-3" style="text-align:left">
         <label class="form-label text-dark">사용하실 아이디를 입력해주세요</label>
         <input type="text" v-model="username" class="form-control" required />
+        <p v-if="usernameExists" class="text-danger">이미 사용 중인 아이디입니다.</p>
+        <p v-else-if="username" class="text-success">사용 가능한 아이디입니다.</p>
       </div>
       <div class="mb-3" style="text-align:left">
         <label class="form-label text-dark">이메일을 입력해주세요</label>
@@ -53,7 +55,8 @@
 <script>
 import axios from 'axios';
 import https from 'https';
-import { send_email } from '@/fetch_datas/send_email'; // 경로 수정
+import { send_email } from '@/fetch_datas/send_email';
+import { fetch_ids } from '@/fetch_datas/fetch_ids';
 
 export default {
   data() {
@@ -67,7 +70,23 @@ export default {
       inputVerificationCode: '',
       verificationCode: '',
       isVerified: false,
+      userIds: [],  // 기존 사용자 아이디 목록 저장
+      usernameExists: false,
     };
+  },
+  async created() {
+    const idsStore = fetch_ids(); // 핀아 스토어 호출
+    this.userIds = await idsStore.fetchAllUserIds(); // 모든 사용자 아이디 가져오기
+  },
+  watch: {
+    // username 값이 변할 때마다 기존 유저 아이디와 비교
+    username(value) {
+      if (value) {
+        this.usernameExists = this.userIds.includes(value);
+      } else {
+        this.usernameExists = false;
+      }
+    }
   },
   computed: {
     passwordMismatch() {
@@ -102,6 +121,11 @@ export default {
 
       if (!this.isVerified) {
         alert("이메일 인증이 필요합니다.");
+        return;
+      }
+
+      if (this.usernameExists) {
+        alert("이미 사용 중인 아이디입니다.");
         return;
       }
 
