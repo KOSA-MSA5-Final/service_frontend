@@ -31,15 +31,29 @@
         <input type="password" v-model="confirmPassword" class="form-control" required />
         <div v-if="passwordMismatch" class="text-danger" style="font-size: 0.8em;">비밀번호가 일치하지 않습니다.</div>
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <div id="verify-email" v-if="!isVerified">
+        <div class="input-group mb-3">
+          <input v-model="email" type="email" class="form-control" placeholder="이메일" required>
+          <button class="btn btn-outline-secondary" type="button" @click="sendVerificationCode" :disabled="emailSent">
+            {{ emailSent ? '인증코드 전송됨' : '인증코드 받기' }}
+          </button>
+        </div>
+        <div v-if="emailSent" class="input-group mb-3">
+          <input v-model="inputVerificationCode" class="form-control" placeholder="인증코드 입력" />
+          <button class="btn btn-outline-secondary" type="button" @click="verifyCode">인증하기</button>
+        </div>
+        <button class="btn btn-link" @click="sendVerificationCode" v-if="emailSent">인증코드 재전송</button>
+      </div>
+      
+      <button type="submit" class="btn btn-primary" :disabled="!isVerified">회원가입</button>
     </form>
   </div>    
-
 </template>
 
 <script>
 import axios from 'axios';
-import https from 'https'; // Make sure to import the https module
+import https from 'https';
+import { send_email } from '@/fetch_datas/send_email'; // 경로 수정
 
 export default {
   data() {
@@ -49,6 +63,10 @@ export default {
       username: '',
       confirmPassword: '', 
       name: '',
+      emailSent: false,
+      inputVerificationCode: '',
+      verificationCode: '',
+      isVerified: false,
     };
   },
   computed: {
@@ -57,38 +75,60 @@ export default {
     },
   },
   methods: {
+    async sendVerificationCode() {
+      try {
+        const emailStore = send_email();
+        this.verificationCode = await emailStore.sendVerificationEmail(this.email);
+        this.emailSent = true;
+        alert('인증코드가 이메일로 전송되었습니다.');
+      } catch (error) {
+        console.error('인증코드 전송 실패:', error);
+        alert('인증코드 전송에 실패했습니다. 다시 시도해주세요.');
+      }
+    },
+    verifyCode() {
+      if (this.inputVerificationCode === this.verificationCode) {
+        this.isVerified = true;
+        alert('이메일이 성공적으로 인증되었습니다.');
+      } else {
+        alert('잘못된 인증코드입니다. 다시 시도해주세요.');
+      }
+    },
     submitForm() {
       if (this.password !== this.confirmPassword) {
-        console.error("비밀번호가 일치하지 않습니다.");
+        alert("비밀번호가 일치하지 않습니다.");
         return;
       }
 
-      axios
-        .post('https://localhost:8081/auth/register', {
-          email: this.email,
-          password: this.password,
-          username: this.username,
-          name: this.name,
-        }, {
-          httpsAgent: new https.Agent({  
-            rejectUnauthorized: false // Ignore invalid SSL certificates
-          })
+      if (!this.isVerified) {
+        alert("이메일 인증이 필요합니다.");
+        return;
+      }
+
+      axios.post('https://localhost:8081/auth/register', {
+        email: this.email,
+        password: this.password,
+        username: this.username,
+        name: this.name,
+      }, {
+        httpsAgent: new https.Agent({  
+          rejectUnauthorized: false
         })
-        .then((response) => {
-          // 회원가입 성공 후 리디렉션 처리
-          window.location.href = 'https://localhost:80/';
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.error("회원가입 실패", error);
-        });
+      })
+      .then(() => {
+        alert('회원가입이 완료되었습니다.');
+        this.$router.push('/');
+      })
+      .catch(error => {
+        console.error("회원가입 실패", error);
+        alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+      });
     },
     goToBeforeLogin(){
       this.$router.push('/');
     }
   }
 };
-
 </script>
 
 <style>
