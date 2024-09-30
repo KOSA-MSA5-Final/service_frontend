@@ -6,12 +6,19 @@ import setProfile4 from '@/components/AfterLogin/SettingProfile/ProfileSetting4.
 import setProfile5 from '@/components/AfterLogin/SettingProfile/ProfileSetting5.vue';
 import setProfile6 from '@/components/AfterLogin/SettingProfile/ProfileSetting6.vue';
 import setProfile7 from '@/components/AfterLogin/SettingProfile/ProfileSetting7.vue';
+import setProfile8 from '@/components/AfterLogin/SettingProfile/ProfileSetting8.vue';
+import testProfile from '@/components/AfterLogin/SettingProfile/TestProfile.vue';
 
 const pageroutes = [
     {
         path: '/userinfo', // 사용자 정보 페이지 경로
         name: 'UserInfo',
         component: UserInfoPage, // 사용자 정보 페이지 컴포넌트
+    },
+    {
+        path: '/testProfile',
+        name: 'testProfile',
+        component: testProfile,
     },
     {
         path: '/setProfile1',
@@ -47,6 +54,11 @@ const pageroutes = [
         path: '/setProfile7',
         name: 'setProfilePage7',
         component: setProfile7,
+    },
+    {
+        path: '/setProfile8',
+        name: 'setProfilePage8',
+        component: setProfile8,
     },
 ];
 

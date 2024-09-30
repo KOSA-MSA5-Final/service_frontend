@@ -25,7 +25,7 @@
             </svg>
             없어요
         </div>
-        <div style="flex: 1"></div>
+        <div style="flex: 1">(여러개 선택가능)</div>
     </div>
 
     <div class="diseaseContainer">
@@ -139,6 +139,15 @@
             />
             <br />
             종양성 질환
+        </div>
+        <div
+            class="diseaseBox"
+            :class="{ 'active-border': isDisease.includes('obesity') }"
+            @click="toggleDisease('obesity')"
+        >
+            <img width="50" height="50" src="https://img.icons8.com/ios/50/fat-dog.png" alt="fat-dog" />
+            <br />
+            대사계통(비만)
         </div>
     </div>
 
