@@ -27,6 +27,6 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /* 추가적인 스타일을 원하시면 여기에 작성하세요 */
 </style>

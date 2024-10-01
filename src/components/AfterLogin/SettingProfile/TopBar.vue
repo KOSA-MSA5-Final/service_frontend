@@ -1,6 +1,6 @@
 <template>
-    <div class="subContainer">
-        <div class="back_btn" @click="goToBeforeLogin">
+    <div id="topBar">
+        <div id="mgng-name" class="skip_btn" @click="goToBeforeLogin">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="40"
@@ -15,9 +15,8 @@
                 />
             </svg>
         </div>
-        <div class="skip_btn">건너뛰기</div>
+        <div id="mgng-img" class="back_btn">건너뛰기</div>
     </div>
-       
 </template>
 
 <script>
@@ -26,14 +25,14 @@ export default {
         return {
             //현재 경로를 이전 경로로 매핑
             routeMap: {
-                '/setProfile1': '/', //맨처음에서 메인 페이지로 돌아감
-                '/setProfile2': '/setProfile1',
-                '/setProfile3': '/setProfile2',
-                '/setProfile4': '/setProfile3',
-                '/setProfile5': '/setProfile4',
-                '/setProfile6': '/setProfile5',
-                '/setProfile7': '/setProfile6',
-                '/setProfile8': '/setProfile7',
+                '/main/setProfile1': '/main', //맨처음에서 메인 페이지로 돌아감
+                '/main/setProfile2': '/main/setProfile1',
+                '/main/setProfile3': '/main/setProfile2',
+                '/main/setProfile4': '/main/setProfile3',
+                '/main/setProfile5': '/main/setProfile4',
+                '/main/setProfile6': '/main/setProfile5',
+                '/main/setProfile7': '/main/setProfile6',
+                '/main/setProfile8': '/main/setProfile7',
             },
         };
     },
@@ -50,21 +49,27 @@ export default {
 };
 </script>
 
-<style>
-.subContainer {
+<style scoped>
+#topBar {
     display: flex;
     justify-content: space-between;
-    align-content: center;
     align-items: center;
+    background-color: white;
+    height: 80px;
+    margin-bottom: 5px;
     padding: 0 15px;
 }
-.skip_btn {
+
+#mgng-name {
+    text-align: left;
+}
+#mgng-img {
+    text-align: right;
 }
 .skip_btn:hover {
-}
-.back_btn {
+    background-color: lightgray;
 }
 .back_btn:hover {
-
+    background-color: lightgray;
 }
 </style>
