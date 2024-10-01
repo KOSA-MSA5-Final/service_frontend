@@ -51,35 +51,18 @@ export default {
 
 <style>
 .subContainer {
-    position: absolute;
-    bottom: 93%;
-    width: -webkit-fill-available;
-    margin-right: 10%;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    align-items: start;
-    background-color: white;
-    padding-left: 2px;
+    align-content: center;
     align-items: center;
-    height: 60px; /* 높이를 설정하여 요소가 보이도록 */
+    padding: 0 15px;
 }
 .skip_btn {
-    min-height: 100%;
-    align-content: center;
 }
 .skip_btn:hover {
-    background-color: lightgray;
 }
 .back_btn {
-    margin-right: 10px;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    justify-items: center;
-    height: 50px;
 }
 .back_btn:hover {
-    background-color: lightgray;
 }
 </style>

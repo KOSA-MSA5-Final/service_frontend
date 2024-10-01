@@ -26,6 +26,7 @@
 import axios from 'axios';
 
 export default {
+    name: 'UserInfo',
     data() {
         return {
             userInfo: null, // 사용자 정보를 저장할 변수

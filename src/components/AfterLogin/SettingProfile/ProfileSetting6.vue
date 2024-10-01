@@ -116,6 +116,7 @@ import Multiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.min.css'; // CSS를 여기서 import
 
 export default {
+    name: 'setProfilePage6',
     components: {
         TopBar,
         PrevNextButton,

@@ -23,24 +23,24 @@ export default {
     data() {
         return {
             routeMap: {
-                '/setProfile1': '/setProfile2',
-                '/setProfile2': '/setProfile3',
-                '/setProfile3': '/setProfile4',
-                '/setProfile4': '/setProfile5',
-                '/setProfile5': '/setProfile6',
-                '/setProfile6': '/setProfile7',
-                '/setProfile7': '/setProfile8',
-                '/setProfile8': '/main', //마지막에서 메인 페이지로 돌아감
+                '/main/setProfile1': '/main/setProfile2',
+                '/main/setProfile2': '/main/setProfile3',
+                '/main/setProfile3': '/main/setProfile4',
+                '/main/setProfile4': '/main/setProfile5',
+                '/main/setProfile5': '/main/setProfile6',
+                '/main/setProfile6': '/main/setProfile7',
+                '/main/setProfile7': '/main/setProfile8',
+                '/main/setProfile8': '/main', //마지막에서 메인 페이지로 돌아감
             },
             beforeRouteMap: {
-                '/setProfile1': '/', //맨처음에서 메인 페이지로 돌아감
-                '/setProfile2': '/setProfile1',
-                '/setProfile3': '/setProfile2',
-                '/setProfile4': '/setProfile3',
-                '/setProfile5': '/setProfile4',
-                '/setProfile6': '/setProfile5',
-                '/setProfile7': '/setProfile6',
-                '/setProfile8': '/setProfile7',
+                '/msin/setProfile1': '/main', //맨처음에서 메인 페이지로 돌아감
+                '/main/setProfile2': '/main/setProfile1',
+                '/main/setProfile3': '/main/setProfile2',
+                '/main/setProfile4': '/main/setProfile3',
+                '/main/setProfile5': '/main/setProfile4',
+                '/main/setProfile6': '/main/setProfile5',
+                '/main/setProfile7': '/main/setProfile6',
+                '/main/setProfile8': '/main/setProfile7',
             },
         };
     },

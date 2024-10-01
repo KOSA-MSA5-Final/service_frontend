@@ -6,11 +6,12 @@
         </div>
     </div>
     <div id="info-text-container">
-        <div  class="info-text">
-            <vue-typewriter-effect style="font-size: 22px;"
-            :strings="['소중한 반려, <br>멍지냥지와 함께 <br>맞춤 관리 하세요!']"
-        
-            :pauseFor="3000" />
+        <div class="info-text">
+            <vue-typewriter-effect
+                style="font-size: 22px"
+                :strings="['소중한 반려, <br>멍지냥지와 함께 <br>맞춤 관리 하세요!']"
+                :pauseFor="3000"
+            />
         </div>
     </div>
 
@@ -20,17 +21,28 @@
         <div class="login-input-fields">
             <form @submit.prevent="login">
                 <div class="email-field">
-                    <input type="text" v-model="authStore.username" class="form-control" name="username" placeholder="이메일 주소 입력">
+                    <input
+                        type="text"
+                        v-model="authStore.username"
+                        class="form-control"
+                        name="username"
+                        placeholder="이메일 주소 입력"
+                    />
                 </div>
                 <div class="password-field">
-                    <input type="password" v-model="authStore.password" class="form-control" name="password" placeholder="비밀번호 입력">
+                    <input
+                        type="password"
+                        v-model="authStore.password"
+                        class="form-control"
+                        name="password"
+                        placeholder="비밀번호 입력"
+                    />
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             <button id="signup" @click="goToSignup">SignUp</button>
-        </div> 
+        </div>
     </div>
-
 </template>
 
 <script>
@@ -38,31 +50,32 @@ import { useAuthStore } from '@/post_datas/loginStore';
 import { ref, onMounted } from 'vue';
 
 export default {
-  name: 'BeforeLoginMain',
-  setup() {
-    const authStore = useAuthStore();
-    const isMounted = ref(false);
+    name: 'BeforeLoginMain',
+    setup() {
+        const authStore = useAuthStore();
+        const isMounted = ref(false);
 
-    onMounted(() => {
-      isMounted.value = true;
-    });
+        onMounted(() => {
+            isMounted.value = true;
+        });
 
-    const goToSignup = () => {
-      window.location.href = '/signup';
-    };
+        const goToSignup = () => {
+            window.location.href = '/signup';
+        };
 
-    return {
-      authStore,
-      isMounted,
-      login: authStore.login,
-      goToSignup
-    };
-  }
-}
+        return {
+            authStore,
+            isMounted,
+            login: authStore.login,
+            goToSignup,
+        };
+    },
+};
 </script>
 
 <style scoped>
-#login-button, #signup-button {
+#login-button,
+#signup-button {
     display: flex;
     justify-content: center;
     margin: 20px;
@@ -78,7 +91,6 @@ button {
     font-size: xxx-large;
     font-weight: bold;
     margin-top: 20px;
-    
 }
 #info-text-container {
     height: 100px;
@@ -86,16 +98,16 @@ button {
 }
 
 .mgng-gif {
-  width: 100%;
-  height: 311px;
-  overflow: hidden;
+    width: 100%;
+    height: 311px;
+    overflow: hidden;
 }
 
 .image-cropper {
-  height: 311px; /* 371px - 30px top - 30px bottom */
-  overflow: hidden;
-  position: relative;
-  /* margin-top: 20px; */
+    height: 311px; /* 371px - 30px top - 30px bottom */
+    overflow: hidden;
+    position: relative;
+    /* margin-top: 20px; */
 }
 
 .image-cropper img {
@@ -104,33 +116,31 @@ button {
     width: 100%;
 }
 
-
-  
 .content-wrapper {
     position: relative;
     width: 100%;
     height: 311px;
-  }
-  
-  .mgng-gif {
+}
+
+.mgng-gif {
     width: 100%;
     height: 100%;
     overflow: hidden;
-  }
-  
-  .image-cropper {
+}
+
+.image-cropper {
     height: 100%;
     overflow: hidden;
     position: relative;
-  }
-  
-  .image-cropper img {
+}
+
+.image-cropper img {
     position: relative;
     top: -150px;
     width: 100%;
-  }
-  
-  #info-text-container {
+}
+
+#info-text-container {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -138,8 +148,7 @@ button {
     z-index: 1;
     text-align: center;
     color: black; /* 텍스트 색상을 조정하여 이미지 위에서 잘 보이게 합니다 */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* 텍스트 가독성을 위해 그림자를 추가합니다 */
-  
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 텍스트 가독성을 위해 그림자를 추가합니다 */
 }
 .login-box {
     position: absolute;
@@ -151,24 +160,17 @@ button {
     color: black;
 }
 
-
-
 .login-input-fields {
-  width: 100%;
-  max-width: 400px;
-  margin: 20px auto;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
 }
 
-
 .login-input-fields form > * {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .form-control::placeholder {
-  color: #aaa;
+    color: #aaa;
 }
-
-
 </style>
-
- 

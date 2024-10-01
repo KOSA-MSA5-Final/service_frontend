@@ -96,6 +96,7 @@ import TopBar from './TopBar.vue';
 import PrevNextButton from './PrevNextButton.vue';
 
 export default {
+    name: 'setProfilePage3',
     components: {
         VueSlider,
         TopBar,
