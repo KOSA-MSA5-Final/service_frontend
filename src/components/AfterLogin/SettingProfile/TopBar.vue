@@ -17,7 +17,6 @@
         </div>
         <div class="skip_btn">건너뛰기</div>
     </div>
-       
 </template>
 
 <script>
@@ -65,6 +64,5 @@ export default {
 .back_btn {
 }
 .back_btn:hover {
-
 }
 </style>
