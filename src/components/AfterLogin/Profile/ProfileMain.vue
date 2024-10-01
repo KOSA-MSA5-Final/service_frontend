@@ -23,22 +23,27 @@
         <div id="services">
             <div id="main-services">
                 <div id="check-delivery">
-                    <img src="@/assets/icon-delivery.svg" alt="Delivery Icon" />
+                    <img class="icon" src="@/assets/icon-delivery.svg" alt="Delivery Icon" />
                     <p class="title">주문배송</p>
                     <p class="subtitle">확인하기</p>
                 </div>
                 <div id="reg-receipt">
-                    <img src="@/assets/icon-scan.svg" alt="Register Receipt Icon" @click="goToUploadReceipt" />
+                    <img
+                        class="icon"
+                        src="@/assets/icon-scan.svg"
+                        alt="Register Receipt Icon"
+                        @click="goToUploadReceipt"
+                    />
                     <p class="title">진료영수증</p>
                     <p class="subtitle">등록하기</p>
                 </div>
                 <div id="find-facilities">
-                    <img src="@/assets/icon-building.svg" alt="Facilities Icon" />
+                    <img class="icon" src="@/assets/icon-building.svg" alt="Facilities Icon" />
                     <p class="title">맞춤형</p>
                     <p class="subtitle">시설찾기</p>
                 </div>
                 <div id="shopping-cart">
-                    <img src="@/assets/icon-shopping-cart.svg" alt="Shopping Cart Icon" />
+                    <img class="icon" src="@/assets/icon-shopping-cart.svg" alt="Shopping Cart Icon" />
                     <p class="title">장바구니</p>
                     <p class="subtitle">확인하기</p>
                 </div>
@@ -47,17 +52,44 @@
             <div id="separating-line"></div>
             <div id="sub-services">
                 <div id="medical-history">
-                    <img src="@/assets/icon-receipt.svg" alt="Medical Receipt Icon" />
+                    <img class="icon" src="@/assets/icon-receipt.svg" alt="Medical Receipt Icon" />
                     <div class="title">전체 진료 내역 확인하기</div>
                 </div>
                 <div id="health-history">
-                    <img src="@/assets/icon-health.svg" alt="Medical Receipt Icon" />
+                    <img class="icon" src="@/assets/icon-health.svg" alt="Medical Receipt Icon" />
                     <div class="title">현재 건강 상태 보기/내보내기</div>
                 </div>
             </div>
         </div>
         <div id="supplying-products">
-            <div id="supplying-products-title">현재 급여중인 상품들</div>
+            <div id="supplying-products-title-container">
+                <div id="title-p-container">
+                    <div id="supplying-products-title">현재 급여중인 상품들</div>
+                </div>
+                <div id="title-img-container">
+                    <img class="icon" src="@/assets/icon-right-arrow.svg" alt="Right Arrow Icon" />
+                </div>
+            </div>
+            <div id="categories-section">
+                <div id="categories-container">
+                    <div id="feedstuff" @click="selectCategory('feedstuff')">
+                        <p>사료</p>
+                    </div>
+                    <div id="snack" @click="selectCategory('snack')">
+                        <p>간식</p>
+                    </div>
+                    <div id="supplement" @click="selectCategory('supplement')">
+                        <p>영양제</p>
+                    </div>
+                </div>
+            </div>
+            <div id="supplying-products-list-container">
+                <div id="products">
+                    <div id="datas" v-for="product in displayedProducts" :key="product.id">
+                        {{ product.name }}
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="latest-bought-items"></div>
     </div>
@@ -65,15 +97,76 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import { ref, computed, watch } from 'vue';
+
 export default {
     name: 'ProfileMainPage',
     setup() {
         const router = useRouter();
+        const selectedCategory = ref('feedstuffs'); // 초기값을 '사료'로 설정
+
+        const feedstuffs = ref([
+            { id: 1, name: '사료1' },
+            { id: 2, name: '사료2' },
+            { id: 3, name: '사료3' },
+            { id: 4, name: '사료4' },
+        ]);
+
+        const snacks = ref([
+            { id: 5, name: '간식1' },
+            { id: 6, name: '간식2' },
+            { id: 7, name: '간식3' },
+            { id: 8, name: '간식4' },
+        ]);
+
+        const supplements = ref([
+            { id: 9, name: '영양제1' },
+            { id: 10, name: '영양제2' },
+            { id: 11, name: '영양제3' },
+            { id: 12, name: '영양제4' },
+        ]);
+
+        const displayedProducts = computed(() => {
+            switch (selectedCategory.value) {
+                case 'feedstuff':
+                    return feedstuffs.value;
+                case 'snack':
+                    return snacks.value;
+                case 'supplement':
+                    return supplements.value;
+                default:
+                    return feedstuffs.value;
+            }
+        });
+
+        const selectCategory = (category) => {
+            selectedCategory.value = category;
+        };
+
         const goToUploadReceipt = () => {
             router.push('/main/upload_receipt');
         };
 
+        // selectedCategory가 변경될 때마다 실행되는 watch 함수
+        watch(
+            selectedCategory,
+            (newCategory) => {
+                const categories = ['feedstuff', 'snack', 'supplement'];
+                categories.forEach((category) => {
+                    const element = document.getElementById(category);
+                    if (element) {
+                        element.style.backgroundColor = category === newCategory ? '#71a9db' : 'white';
+                        element.style.color = category === newCategory ? 'white' : 'black';
+                    }
+                });
+            },
+            { immediate: true },
+        ); // immediate: true를 사용하여 초기 렌더링 시에도 실행되도록 함
+
         return {
+            selectedCategory,
+            displayedProducts,
+            selectCategory,
             goToUploadReceipt,
         };
     },
@@ -218,7 +311,7 @@ p {
 
 /* 가운데 구분선 */
 #separating-line {
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #71a9db;
     width: 100%;
     margin: 20px 0;
 }
@@ -240,7 +333,8 @@ p {
     padding: 10px;
     margin-bottom: 10px;
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 5px;
+    border: 1px, solid, #71a9db;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -250,4 +344,74 @@ p {
     height: 40px;
     margin-right: 10px;
 }
+
+.icon {
+    filter: invert(77%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%);
+}
+#supplying-products {
+    border-radius: 10px;
+    border: 2px solid white;
+    width: 95%;
+    background-color: white;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+#supplying-products-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 5px;
+}
+
+#title-p-container {
+    width: 90%;
+    text-align: left;
+    margin-left: 10px;
+}
+#title-img-container {
+    width: 10%;
+}
+
+#supplying-products-title-container img {
+    width: 20px;
+    height: 20px;
+}
+
+#categories-section {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 5px;
+}
+#categories-container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+}
+
+#feedstuff,
+#snack,
+#supplement {
+    border-radius: 20px;
+    border: 1px solid #71a9db;
+    background-color: white;
+    width: -moz-fit-content;
+    width: 100%;
+    padding: 5px;
+    font-size: 12px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* .active {
+    background-color: #71a9db !important;
+    color: white;
+} */
 </style>
