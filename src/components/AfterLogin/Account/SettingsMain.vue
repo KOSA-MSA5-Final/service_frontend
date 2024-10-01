@@ -38,7 +38,8 @@
                 </div>
                 <div id="add-profile">
                     <div class="add-profile">
-                        <img src="@/assets/icon-add.svg" alt="Add Icon" />
+                        <!-- <img src="@/assets/icon-add.svg" alt="Add Icon" /> -->
+                        <img src="@/assets/jangoon.gif" alt="Strong Jangoon" />
                         <p class="title">반려동물 추가</p>
                     </div>
                 </div>
@@ -111,13 +112,16 @@ export default {
 }
 #settings-container {
     display: flex;
-    flex-direction: row; /* 가로로 배치 */
-    justify-content: space-between; /* 요소들 간에 균등한 간격 */
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     border-radius: 10px;
-    border: 1px solid white;
+    border: 1px solid black;
     background-color: white;
-    width: 100%; /* 전체 너비 차지 */
+    width: 95%;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 5px;
 }
 #separating-line {
     border-top: 1px solid #ccc;

@@ -69,6 +69,7 @@ p {
     align-items: center;
 }
 #router-pages {
+    background-color: #cee2f5;
     flex-grow: 1;
     overflow-y: auto;
     height: -webkit-fill-available;
