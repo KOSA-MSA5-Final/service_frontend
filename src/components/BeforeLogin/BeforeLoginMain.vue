@@ -1,46 +1,50 @@
 <template>
-    <div class="mgng-beforeLoginMain">멍지냥지</div>
-    <div class="mgng-gif">
-        <div class="image-cropper">
-            <img :src="require('@/assets/mgng.gif')" alt="mgng gif" />
+    <div id="container">
+        <div class="mgng-beforeLoginMain">멍지냥지</div>
+        <div class="mgng-gif">
+            <div class="image-cropper">
+                <img :src="require('@/assets/mgng.gif')" alt="mgng gif" />
+            </div>
         </div>
-    </div>
-    <div id="info-text-container">
-        <div class="info-text">
-            <vue-typewriter-effect
-                style="font-size: 22px"
-                :strings="['소중한 반려, <br>멍지냥지와 함께 <br>맞춤 관리 하세요!']"
-                :pauseFor="3000"
-            />
+
+        <div id="info-text-container">
+            <div class="info-text">
+                <vue-typewriter-effect
+                    style="font-size: 22px"
+                    :strings="['소중한 반려, <br>멍지냥지와 함께 <br>맞춤 관리 하세요!']"
+                    :pauseFor="3000"
+                />
+            </div>
         </div>
-    </div>
 
-    <div class="login-box">
-        <p class="login-box-title">로그인</p>
 
-        <div class="login-input-fields">
-            <form @submit.prevent="login">
-                <div class="email-field">
-                    <input
-                        type="text"
-                        v-model="authStore.username"
-                        class="form-control"
-                        name="username"
-                        placeholder="이메일 주소 입력"
-                    />
-                </div>
-                <div class="password-field">
-                    <input
-                        type="password"
-                        v-model="authStore.password"
-                        class="form-control"
-                        name="password"
-                        placeholder="비밀번호 입력"
-                    />
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-            <button id="signup" @click="goToSignup">SignUp</button>
+        <div class="login-box">
+            <p class="login-box-title">로그인</p>
+
+            <div class="login-input-fields">
+                <form @submit.prevent="login">
+                    <div class="email-field">
+                        <input
+                            type="text"
+                            v-model="authStore.username"
+                            class="form-control"
+                            name="username"
+                            placeholder="이메일 주소 입력"
+                        />
+                    </div>
+                    <div class="password-field">
+                        <input
+                            type="password"
+                            v-model="authStore.password"
+                            class="form-control"
+                            name="password"
+                            placeholder="비밀번호 입력"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                <button id="signup" @click="goToSignup">SignUp</button>
+            </div>
         </div>
     </div>
 </template>
@@ -86,12 +90,14 @@ button {
     font-size: 16px;
     cursor: pointer;
 }
+
 .mgng-beforeLoginMain {
     font-family: 'HancomMalangMalang-Regular', sans-serif;
     font-size: xxx-large;
     font-weight: bold;
     margin-top: 20px;
 }
+
 #info-text-container {
     height: 100px;
     margin-top: 0px;

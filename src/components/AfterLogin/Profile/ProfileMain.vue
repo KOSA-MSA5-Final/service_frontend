@@ -4,14 +4,17 @@
         <div id="profile-info">
             <div id="profile-img">
                 <div id="profile-img-container">
-                    <img src="https://elliebucket1.s3.ap-northeast-2.amazonaws.com/%ED%86%A0%EB%81%BC%EA%B6%81%EB%94%94.jpg" alt="Profile Image"/>
+                    <img
+                        src="https://elliebucket1.s3.ap-northeast-2.amazonaws.com/%ED%86%A0%EB%81%BC%EA%B6%81%EB%94%94.jpg"
+                        alt="Profile Image"
+                    />
                 </div>
             </div>
             <div id="profile-name">
                 <p>토깽이</p>
             </div>
             <div id="edit-button">
-                <img src="@/assets/icon-edit.svg" alt="Edit Icon"/>
+                <img src="@/assets/icon-edit.svg" alt="Edit Icon" />
             </div>
             <div id="custom-info-reg-button">
                 <p>맞춤 정보 등록</p>
@@ -20,22 +23,22 @@
         <div id="services">
             <div id="main-services">
                 <div id="check-delivery">
-                    <img src="@/assets/icon-delivery.svg" alt="Delivery Icon"/>
+                    <img src="@/assets/icon-delivery.svg" alt="Delivery Icon" />
                     <p class="title">주문배송</p>
                     <p class="subtitle">확인하기</p>
                 </div>
                 <div id="reg-receipt">
-                    <img src="@/assets/icon-scan.svg" alt="Register Receipt Icon" @click="goToUploadReceipt"/>
+                    <img src="@/assets/icon-scan.svg" alt="Register Receipt Icon" @click="goToUploadReceipt" />
                     <p class="title">진료영수증</p>
                     <p class="subtitle">등록하기</p>
                 </div>
                 <div id="find-facilities">
-                    <img src="@/assets/icon-building.svg" alt="Facilities Icon"/>
+                    <img src="@/assets/icon-building.svg" alt="Facilities Icon" />
                     <p class="title">맞춤형</p>
                     <p class="subtitle">시설찾기</p>
                 </div>
                 <div id="shopping-cart">
-                    <img src="@/assets/icon-shopping-cart.svg" alt="Shopping Cart Icon"/>
+                    <img src="@/assets/icon-shopping-cart.svg" alt="Shopping Cart Icon" />
                     <p class="title">장바구니</p>
                     <p class="subtitle">확인하기</p>
                 </div>
@@ -44,14 +47,13 @@
             <div id="separating-line"></div>
             <div id="sub-services">
                 <div id="medical-history">
-                    <img src="@/assets/icon-receipt.svg" alt="Medical Receipt Icon">
+                    <img src="@/assets/icon-receipt.svg" alt="Medical Receipt Icon" />
                     <div class="title">전체 진료 내역 확인하기</div>
                 </div>
                 <div id="health-history">
-                    <img src="@/assets/icon-health.svg" alt="Medical Receipt Icon">
+                    <img src="@/assets/icon-health.svg" alt="Medical Receipt Icon" />
                     <div class="title">현재 건강 상태 보기/내보내기</div>
                 </div>
-
             </div>
         </div>
         <div id="supplying-products">
@@ -66,15 +68,15 @@ import { useRouter } from 'vue-router';
 export default {
     name: 'ProfileMainPage',
     setup() {
-        const router = useRouter(); 
+        const router = useRouter();
         const goToUploadReceipt = () => {
-            router.push('/main/upload_receipt'); 
+            router.push('/main/upload_receipt');
         };
 
         return {
             goToUploadReceipt,
         };
-    }
+    },
 };
 </script>
 
@@ -88,6 +90,7 @@ export default {
 }
 
 #profile-page-title {
+    margin-top: 15px;
     font-size: 20px;
     margin-bottom: 20px;
 }
@@ -98,10 +101,14 @@ export default {
     justify-content: space-between;
     align-items: center;
     background-color: #f8f8f8;
+    border-radius: 10px;
+    width: 95%;
     padding: 10px;
     height: 100px;
     margin-bottom: 20px;
     text-align: left;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 #profile-img-container img {
@@ -128,17 +135,20 @@ export default {
 #custom-info-reg-button {
     border-radius: 10px;
     border: 1px solid white;
-    background-color: #71A9DB;
+    background-color: #71a9db;
     padding: 5px 10px;
     color: white;
     white-space: nowrap;
 }
 
-#profile-name p, #custom-info-reg-button p {
+#profile-name p,
+#custom-info-reg-button p {
     margin: 0;
 }
 
-#services, #supplying-products, #latest-bought-items {
+#services,
+#supplying-products,
+#latest-bought-items {
     margin-bottom: 20px;
     /* Add more styles for these sections as needed */
 }
@@ -151,13 +161,15 @@ export default {
 #services {
     border-radius: 10px;
     border: 2px solid white;
-    width: 100%;
-    background-color: white; 
+    width: 95%;
+    background-color: white;
     padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 #main-services {
@@ -171,13 +183,19 @@ export default {
     width: 100%; /* 전체 너비 차지 */
 }
 
-#check-delivery, #reg-receipt, #find-facilities, #shopping-cart {
+#check-delivery,
+#reg-receipt,
+#find-facilities,
+#shopping-cart {
     flex: 1; /* 각 요소가 동일한 너비를 가짐 */
     margin: 0 10px; /* 요소 간의 간격 */
     text-align: center; /* 요소 안의 내용 중앙 정렬 */
 }
 
-#check-delivery img, #reg-receipt img, #find-facilities img, #shopping-cart img {
+#check-delivery img,
+#reg-receipt img,
+#find-facilities img,
+#shopping-cart img {
     width: 50px; /* 이미지 너비 */
     height: 50px; /* 이미지 높이 */
     object-fit: cover; /* 이미지를 잘라내지 않고 비율에 맞춰 표시 */
@@ -214,7 +232,8 @@ p {
     /* height: 1000px; */
 }
 
-#medical-history, #health-history {
+#medical-history,
+#health-history {
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -225,10 +244,10 @@ p {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#medical-history img, #health-history img {
+#medical-history img,
+#health-history img {
     width: 40px;
     height: 40px;
     margin-right: 10px;
 }
-
 </style>

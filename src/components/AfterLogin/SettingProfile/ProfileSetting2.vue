@@ -11,7 +11,13 @@
                 adsorb
                 style="position: absolute !important; top: 10%; width: 80%"
             />
+
         </div>
+        <!-- 글 -->
+        <div style="margin-top: 40px; display: flex; flex-direction: column; align-items: center">
+            <div style="font-size: 2em">반려견의 종류를</div>
+            <div style="font-size: 2em">선택해주세요</div>
+            <div style="font-size: 1em; margin-bottom: 10px">반려동물별 맞춤서비스를 제공해드려요</div>
 
         <!-- 컨텐츠 시작 -->
         <div
@@ -29,7 +35,8 @@
             <div style="font-size: 2em">선택해주세요</div>
             <div style="font-size: 1em; margin-bottom: 10px">반려동물별 맞춤서비스를 제공해드려요</div>
 
-            <!-- tab구현 -->
+
+            <!-- tab구현 -->p
             <!-- tab title  -->
             <div style="display: flex; width: 80%; align-content: center">
                 <div class="menuTab" :class="{ active: activeTab === 'dog' }" @click="setActiveTab('dog')">
@@ -69,6 +76,7 @@
     </div>
     <!-- 아래 버튼들: PrevNextButton.vue -->
     <PrevNextButtonVue />
+
 </template>
 
 <script>
@@ -82,6 +90,7 @@ export default {
         TopBar,
         PrevNextButtonVue,
         VueSlider,
+
     },
     data() {
         return {
@@ -152,6 +161,7 @@ body {
 }
 
 /* 아래 버튼들 */
+
 .bottomBtn1 {
     position: absolute;
     margin-bottom: 20px;

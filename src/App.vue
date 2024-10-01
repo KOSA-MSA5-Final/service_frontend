@@ -26,6 +26,15 @@ export default {
     font-weight: normal;
     font-style: normal;
 }
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
 #app {
     display: flex;
     justify-content: center;
@@ -44,10 +53,11 @@ export default {
     padding: 0 !important;
     width: 100%;
     /* min-width: 500px; */
-    /* max-width: 600px; */
+
+    max-width: 600px;
     margin: 0 auto;
     background-color: white;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); */
     border-radius: 10px;
     min-height: 811px;
     overflow: hidden;

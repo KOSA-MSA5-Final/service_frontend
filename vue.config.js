@@ -29,11 +29,6 @@ module.exports = defineConfig({
         target: `https://${host}:${port}`,
         changeOrigin: true,
       },
-      '/ws/': {
-        target: `ws://${host}:${port}`,
-        changeOrigin: false,
-        ws: true,
-      },
       '/auth': {
         target: `https://${host}:${port}`,
         changeOrigin: true,

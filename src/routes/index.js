@@ -22,6 +22,11 @@ import RegisterReceipt from '@/components/AfterLogin/Profile/RegisterReceipt.vue
 
 // import settingProfile from './settingProfile';
 
+import AddressSetting from '@/components/AfterLogin/Account/AddressSetting.vue';
+import AddAddressPage from '@/components/AfterLogin/Account/AddAddressPage.vue';
+import AddressSearchPage from '@/components/AfterLogin/Account/AddressSearchPage.vue';
+
+
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
 };
@@ -118,6 +123,20 @@ const routes = [
                 path: 'setProfile8',
                 name: 'setProfilePage8',
                 component: setProfile8,
+
+                path: 'settings/address',
+                name: 'AddressSettingPage',
+                component: AddressSetting,
+            },
+            {
+                path: 'settings/address/add',
+                name: 'AddAddressPage',
+                component: AddAddressPage,
+            },
+            {
+                path: '/settings/address/search',
+                name: 'AddressSearchPage',
+                component: AddressSearchPage, // 실제 주소 검색 화면 컴포넌트
             },
         ],
     },
