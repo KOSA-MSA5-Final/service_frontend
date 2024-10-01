@@ -1,8 +1,17 @@
 <template>
-    <div style="height: inherit; background-color: aquamarine">
+    <div style="height: inherit">
         <TopBar />
-        <div id="vue-slider">
-            <VueSlider v-model="value2" :min="0" :max="8" marks adsorb />
+
+        <div style="display: flex; justify-content: center">
+            <VueSlider
+                v-model="value2"
+                :min="0"
+                :max="8"
+                marks
+                adsorb
+                style="position: absolute !important; top: 10%; width: 80%"
+            />
+
         </div>
         <!-- 글 -->
         <div style="margin-top: 40px; display: flex; flex-direction: column; align-items: center">
@@ -10,7 +19,24 @@
             <div style="font-size: 2em">선택해주세요</div>
             <div style="font-size: 1em; margin-bottom: 10px">반려동물별 맞춤서비스를 제공해드려요</div>
 
-            <!-- tab구현 -->
+        <!-- 컨텐츠 시작 -->
+        <div
+            style="
+                position: absolute;
+                top: 20%;
+                width: -webkit-fill-available;
+                left: 0%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            "
+        >
+            <div style="font-size: 2em">반려견의 종류를</div>
+            <div style="font-size: 2em">선택해주세요</div>
+            <div style="font-size: 1em; margin-bottom: 10px">반려동물별 맞춤서비스를 제공해드려요</div>
+
+
+            <!-- tab구현 -->p
             <!-- tab title  -->
             <div style="display: flex; width: 80%; align-content: center">
                 <div class="menuTab" :class="{ active: activeTab === 'dog' }" @click="setActiveTab('dog')">
@@ -46,24 +72,25 @@
                 </div>
                 <div v-if="activeTab === 'cat'" style="width: 90%"></div>
             </div>
-
-            <!-- 아래 버튼들: PrevNextButton.vue -->
-            <PrevNextButtonVue />
         </div>
     </div>
+    <!-- 아래 버튼들: PrevNextButton.vue -->
+    <PrevNextButtonVue />
+
 </template>
 
 <script>
 import TopBar from './TopBar.vue';
-import VueSlider from 'vue-3-slider-component';
 import PrevNextButtonVue from './PrevNextButton.vue';
+import VueSlider from 'vue-3-slider-component';
 
 export default {
     name: 'setProfilePage2',
     components: {
         TopBar,
-        VueSlider,
         PrevNextButtonVue,
+        VueSlider,
+
     },
     data() {
         return {
@@ -132,6 +159,9 @@ body {
     font-size: 1.5em;
     background-color: lightgray;
 }
+
+/* 아래 버튼들 */
+
 .bottomBtn1 {
     position: absolute;
     margin-bottom: 20px;

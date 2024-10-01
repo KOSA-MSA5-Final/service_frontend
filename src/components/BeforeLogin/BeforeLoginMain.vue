@@ -6,6 +6,7 @@
                 <img :src="require('@/assets/mgng.gif')" alt="mgng gif" />
             </div>
         </div>
+
         <div id="info-text-container">
             <div class="info-text">
                 <vue-typewriter-effect
@@ -15,6 +16,7 @@
                 />
             </div>
         </div>
+
 
         <div class="login-box">
             <p class="login-box-title">로그인</p>

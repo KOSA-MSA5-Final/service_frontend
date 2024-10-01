@@ -1,5 +1,4 @@
 <template>
-    <!-- <div id="set-profile-topbar"> -->
     <div class="subContainer">
         <div class="back_btn" @click="goToBeforeLogin">
             <svg
@@ -16,11 +15,9 @@
                 />
             </svg>
         </div>
-        <div class="skip_btn">
-            <p>건너뛰기</p>
-        </div>
+        <div class="skip_btn">건너뛰기</div>
     </div>
-    <!-- </div> -->
+       
 </template>
 
 <script>
@@ -54,47 +51,20 @@ export default {
 </script>
 
 <style>
-/* #set-profile-topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    height: 80px;
-    margin-bottom: 5px;
-    padding: 0 15px;
-} */
 .subContainer {
-    /* display: flex;
-    align-items: center;
-    justify-content: space-between;
-    align-items: start;
-    background-color: white;
-    padding-left: 2px;
-    align-items: center; */
     display: flex;
     justify-content: space-between;
+    align-content: center;
     align-items: center;
-    background-color: white;
-    height: 80px;
-    margin-bottom: 5px;
     padding: 0 15px;
 }
 .skip_btn {
-    min-height: 100%;
-    align-content: center;
 }
 .skip_btn:hover {
-    background-color: lightgray;
 }
 .back_btn {
-    margin-right: 10px;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    justify-items: center;
-    height: 50px;
 }
 .back_btn:hover {
-    background-color: lightgray;
+
 }
 </style>
