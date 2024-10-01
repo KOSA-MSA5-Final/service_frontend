@@ -11,7 +11,6 @@
                 adsorb
                 style="position: absolute !important; top: 10%; width: 80%"
             />
-
         </div>
         <!-- 글 -->
         <div style="margin-top: 40px; display: flex; flex-direction: column; align-items: center">
@@ -19,64 +18,63 @@
             <div style="font-size: 2em">선택해주세요</div>
             <div style="font-size: 1em; margin-bottom: 10px">반려동물별 맞춤서비스를 제공해드려요</div>
 
-        <!-- 컨텐츠 시작 -->
-        <div
-            style="
-                position: absolute;
-                top: 20%;
-                width: -webkit-fill-available;
-                left: 0%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            "
-        >
-            <div style="font-size: 2em">반려견의 종류를</div>
-            <div style="font-size: 2em">선택해주세요</div>
-            <div style="font-size: 1em; margin-bottom: 10px">반려동물별 맞춤서비스를 제공해드려요</div>
+            <!-- 컨텐츠 시작 -->
+            <div
+                style="
+                    position: absolute;
+                    top: 20%;
+                    width: -webkit-fill-available;
+                    left: 0%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                "
+            >
+                <div style="font-size: 2em">반려견의 종류를</div>
+                <div style="font-size: 2em">선택해주세요</div>
+                <div style="font-size: 1em; margin-bottom: 10px">반려동물별 맞춤서비스를 제공해드려요</div>
 
-
-            <!-- tab구현 -->p
-            <!-- tab title  -->
-            <div style="display: flex; width: 80%; align-content: center">
-                <div class="menuTab" :class="{ active: activeTab === 'dog' }" @click="setActiveTab('dog')">
-                    <img width="50" height="50" src="https://img.icons8.com/keek/100/dog.png" alt="dog" />
-                    강아지
-                </div>
-                <div class="menuTab" :class="{ active: activeTab === 'cat' }" @click="setActiveTab('cat')">
-                    <img width="50" height="50" src="https://img.icons8.com/keek/100/cat.png" alt="cat" />
-                    고양이
-                </div>
-            </div>
-            <!-- tab contents -->
-            <div class="content">
-                <div v-if="activeTab === 'dog'" style="width: 90%">
-                    <div class="searchDiv">
-                        <div style="margin-left: 20px; margin-right: 20px">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                class="bi bi-search"
-                                viewBox="0 0 16 16"
-                            >
-                                <path
-                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-                                />
-                            </svg>
-                        </div>
-                        <input class="searchInput" type="text" />
+                <!-- tab구현 -->p
+                <!-- tab title  -->
+                <div style="display: flex; width: 80%; align-content: center">
+                    <div class="menuTab" :class="{ active: activeTab === 'dog' }" @click="setActiveTab('dog')">
+                        <img width="50" height="50" src="https://img.icons8.com/keek/100/dog.png" alt="dog" />
+                        강아지
                     </div>
-                    <div>기타/ 가정용 반려강아지 /믹스</div>
+                    <div class="menuTab" :class="{ active: activeTab === 'cat' }" @click="setActiveTab('cat')">
+                        <img width="50" height="50" src="https://img.icons8.com/keek/100/cat.png" alt="cat" />
+                        고양이
+                    </div>
                 </div>
-                <div v-if="activeTab === 'cat'" style="width: 90%"></div>
+                <!-- tab contents -->
+                <div class="content">
+                    <div v-if="activeTab === 'dog'" style="width: 90%">
+                        <div class="searchDiv">
+                            <div style="margin-left: 20px; margin-right: 20px">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-search"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <path
+                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+                                    />
+                                </svg>
+                            </div>
+                            <input class="searchInput" type="text" />
+                        </div>
+                        <div>기타/ 가정용 반려강아지 /믹스</div>
+                    </div>
+                    <div v-if="activeTab === 'cat'" style="width: 90%"></div>
+                </div>
             </div>
         </div>
+        <!-- 아래 버튼들: PrevNextButton.vue -->
+        <PrevNextButtonVue />
     </div>
-    <!-- 아래 버튼들: PrevNextButton.vue -->
-    <PrevNextButtonVue />
-
 </template>
 
 <script>
@@ -90,7 +88,6 @@ export default {
         TopBar,
         PrevNextButtonVue,
         VueSlider,
-
     },
     data() {
         return {
