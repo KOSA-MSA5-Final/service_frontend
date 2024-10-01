@@ -27,7 +27,7 @@
         <div id="separating-line"></div>
         <p class="title">우리집 아이들</p>
         <p class="subtitle">반려동물 프로필을 클릭하면</p>
-        <p class="subtitle">계정 프로필이 선택한 프로필로 변경됩니다.</p>
+        <p class="subtitle">현재 계정 프로필이 선택한 프로필로 변경됩니다.</p>
         <div id="mypets-container">
             <div id="mypet-profiles">
                 <div id="profiles" v-if="profiles.length > 0">
@@ -98,7 +98,7 @@ export default {
             }
         },
         addressSettingsPage() {
-            this.$router.push('/settings/addressSettings');
+            this.router.push({ name: 'AddressSettingPage' });
         },
     },
 };

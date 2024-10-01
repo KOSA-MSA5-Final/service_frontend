@@ -11,7 +11,7 @@ import MainPage from '@/components/AfterLogin/main/MainPage.vue';
 import RegisterReceipt from '@/components/AfterLogin/Profile/RegisterReceipt.vue';
 
 import settingProfile from './settingProfile';
-
+import AddressSetting from '@/components/AfterLogin/Account/AddressSetting.vue';
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
@@ -56,12 +56,16 @@ const routes = [
                 component: KakaoMaps,
             },
             {
-                path: 'upload_receipt', 
+                path: 'upload_receipt',
                 name: 'RegisterReceiptPage',
-                component: RegisterReceipt
-            }
-
-        ]
+                component: RegisterReceipt,
+            },
+            {
+                path: 'settings/address',
+                name: 'AddressSettingPage',
+                component: AddressSetting,
+            },
+        ],
     },
     {
         path: '/signup',
