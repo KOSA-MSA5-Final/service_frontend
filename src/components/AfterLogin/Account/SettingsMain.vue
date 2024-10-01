@@ -27,7 +27,7 @@
         <div id="separating-line"></div>
         <p class="title">우리집 아이들</p>
         <p class="subtitle">반려동물 프로필을 클릭하면</p>
-        <p class="subtitle">계정 프로필이 선택한 프로필로 변경됩니다.</p>
+        <p class="subtitle">현재 계정 프로필이 선택한 프로필로 변경됩니다.</p>
         <div id="mypets-container">
             <div id="mypet-profiles">
                 <div id="profiles" v-if="profiles.length > 0">
@@ -38,7 +38,8 @@
                 </div>
                 <div id="add-profile">
                     <div class="add-profile">
-                        <img src="@/assets/icon-add.svg" alt="Add Icon" />
+                        <!-- <img src="@/assets/icon-add.svg" alt="Add Icon" /> -->
+                        <img src="@/assets/jangoon.gif" alt="Strong Jangoon" />
                         <p class="title">반려동물 추가</p>
                     </div>
                 </div>
@@ -98,7 +99,7 @@ export default {
             }
         },
         addressSettingsPage() {
-            this.$router.push('/settings/addressSettings');
+            this.router.push({ name: 'AddressSettingPage' });
         },
     },
 };
@@ -111,13 +112,16 @@ export default {
 }
 #settings-container {
     display: flex;
-    flex-direction: row; /* 가로로 배치 */
-    justify-content: space-between; /* 요소들 간에 균등한 간격 */
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     border-radius: 10px;
-    border: 1px solid white;
+    border: 1px solid black;
     background-color: white;
-    width: 100%; /* 전체 너비 차지 */
+    width: 95%;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 5px;
 }
 #separating-line {
     border-top: 1px solid #ccc;

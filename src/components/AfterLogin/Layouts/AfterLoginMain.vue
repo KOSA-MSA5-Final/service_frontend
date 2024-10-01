@@ -1,7 +1,7 @@
 <template>
     <div id="afterLoginMain">
         <!-- 다른 내용들 -->
-        <TopBar/>
+        <TopBar />
 
         <div id="router-pages">
             <router-view />
@@ -23,13 +23,11 @@ export default {
     name: 'AfterLoginMain',
     components: {
         TopBar,
-        ButtomBar
+        ButtomBar,
     },
 
     data() {
-        return {
-
-        };
+        return {};
     },
     methods: {
         logout() {
@@ -47,36 +45,35 @@ export default {
         });
 
         return {
-            contents // 상태를 템플릿에서 사용할 수 있도록 리턴
+            contents, // 상태를 템플릿에서 사용할 수 있도록 리턴
         };
-    }
+    },
 };
 </script>
 
-
 <style scoped>
+#afterLoginMain {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh; /* 전체 화면을 차지 */
+}
 
-    #afterLoginMain { 
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 100vh; /* 전체 화면을 차지 */
-    }
-
-    h1, p {
-        text-align: center;
-    }
-    #logoutBox{
-        display:flex;
-        justify-content: center;
-        align-items: center;
-    }
-    #router-pages {
-        flex-grow: 1;
-        overflow-y: auto;
-        height: -webkit-fill-available;
-        /* 스크롤바 숨기기 */
-        scrollbar-width: none;
-    }
-
+h1,
+p {
+    text-align: center;
+}
+#logoutBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#router-pages {
+    background-color: #cee2f5;
+    flex-grow: 1;
+    overflow-y: auto;
+    height: -webkit-fill-available;
+    /* 스크롤바 숨기기 */
+    scrollbar-width: none;
+}
 </style>
