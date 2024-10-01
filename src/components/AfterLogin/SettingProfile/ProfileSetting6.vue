@@ -1,51 +1,74 @@
 <template>
-    <TopBar />
+    <div style="height: inherit">
+        <TopBar />
 
-    <VueSlider v-model="value6" :min="0" :max="8" marks adsorb />
-
-    <!-- 컨텐츠 -->
-    <div style="margin-top: 40px; display: flex; flex-direction: column; align-items: center">
-        <div style="font-size: 2em">장구니에게</div>
-        <div style="font-size: 2em">알레르기가 있나요?</div>
-        <div style="font-size: 1em; margin-bottom: 10px; color: gray">맞춤형 제품이 제공돼요</div>
-    </div>
-    <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px">
-        <div class="isAllergy" :class="{ 'active-border': isAllergy === 'y' }" @click="isAllergy = 'y'">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-check-circle-fill"
-                viewBox="0 0 16 16"
-            >
-                <path
-                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
-                />
-            </svg>
-            있어요
+        <div style="display: flex; justify-content: center">
+            <VueSlider
+                v-model="value6"
+                :min="0"
+                :max="8"
+                marks
+                adsorb
+                style="position: absolute !important; top: 10%; width: 80%"
+            />
         </div>
-        <div style="flex: 0.1"></div>
-        <div class="isAllergy" :class="{ 'active-border': isAllergy === 'n' }" @click="isAllergy = 'n'">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-x-circle-fill"
-                viewBox="0 0 16 16"
-            >
-                <path
-                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"
-                />
-            </svg>
-            없어요
-        </div>
-    </div>
 
-    <div v-if="isAllergy === 'y'">
-        <div class="searchDiv">
-            <div style="margin-left: 20px; margin-right: 20px">
+        <!-- 컨텐츠 -->
+        <div style="display: flex; justify-content: center">
+            <div style="position: absolute; top: 20%; width: -webkit-fill-available">
+                <div style="font-size: 1.5em">장구니에게</div>
+                <div style="font-size: 1.5em">알레르기가 있나요?</div>
+                <div style="font-size: 1em; margin-bottom: 10px; color: gray">맞춤형 제품이 제공돼요</div>
+            </div>
+            <!-- 있어요 없어요 버튼 -->
+            <div
+                style="
+                    position: absolute;
+                    top: 34%;
+                    width: 80%;
+                    align-items: center;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: row;
+                "
+            >
+                <div class="isAllergy" :class="{ 'active-border': isAllergy === 'y' }" @click="isAllergy = 'y'">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-check-circle-fill"
+                        viewBox="0 0 16 16"
+                    >
+                        <path
+                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                        />
+                    </svg>
+                    있어요
+                </div>
+                <div style="flex: 0.1"></div>
+                <div class="isAllergy" :class="{ 'active-border': isAllergy === 'n' }" @click="isAllergy = 'n'">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-x-circle-fill"
+                        viewBox="0 0 16 16"
+                    >
+                        <path
+                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"
+                        />
+                    </svg>
+                    없어요
+                </div>
+            </div>
+        </div>
+        <!-- 있어요를 누를시 보이는 컨텐츠 -->
+        <div v-if="isAllergy === 'y'" style="display: flex; justify-content: center">
+            <div class="searchDiv">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -58,26 +81,27 @@
                         d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
                     />
                 </svg>
+                <input class="searchInput" type="text" style="width: 80%; text-align: center" />
             </div>
-            <input class="searchInput" type="text" style="width: 80%; text-align: center" />
-        </div>
 
-        <!-- 드롭다운 -->
-        <multiselect
-            v-model="value"
-            tag-placeholder="Add this as new tag"
-            placeholder="과일"
-            label="name"
-            track-by="code"
-            :close-on-select="false"
-            :options="options"
-            :multiple="true"
-            :taggable="true"
-            @tag="addTag"
-        >
-        </multiselect>
+            <!-- 드롭다운 -->
+            <multiselect
+                v-model="value"
+                tag-placeholder="Add this as new tag"
+                placeholder="과일"
+                label="name"
+                track-by="code"
+                :close-on-select="false"
+                :options="options"
+                :multiple="true"
+                :taggable="true"
+                @tag="addTag"
+                style="position: absolute; top: 49%; width: 80%"
+            >
+            </multiselect>
+        </div>
+        <!-- 컨텐츠 끝 -->
     </div>
-    <!-- 컨텐츠 끝 -->
 
     <div class="button-container">
         <PrevNextButton />
@@ -151,15 +175,14 @@ export default {
 
 /* 서치 */
 .searchDiv {
-    margin-top: 1em;
-    display: flex;
+    position: absolute;
+    top: 39%;
+    width: 80%;
     align-items: center;
-    justify-items: center;
-    border-radius: 40px;
-    border: 1px solid lightgray;
-    height: 50px;
-    background-color: lightgray;
-    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
 }
 .searchInput {
     border-width: 0;

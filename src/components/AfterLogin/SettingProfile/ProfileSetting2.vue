@@ -65,10 +65,9 @@
                 </div>
                 <div v-if="activeTab === 'cat'" style="width: 90%"></div>
             </div>
-
-            <!-- 아래 버튼들: PrevNextButton.vue -->
         </div>
     </div>
+    <!-- 아래 버튼들: PrevNextButton.vue -->
     <PrevNextButtonVue />
 </template>
 

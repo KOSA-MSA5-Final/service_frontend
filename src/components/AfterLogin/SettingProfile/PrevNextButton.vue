@@ -81,7 +81,7 @@ export default {
     font-size: 2.5em;
 }
 .nextBtnDiv {
-    flex: 2;
+    flex: 1.5;
     background-color: #1860c3;
     color: white;
     border-radius: 20px;
