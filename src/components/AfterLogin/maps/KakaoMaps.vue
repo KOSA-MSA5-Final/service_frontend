@@ -66,6 +66,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import axios from 'axios';
 
 const mapContainer = ref(null);
 const mapInstance = ref(null);
@@ -73,13 +74,109 @@ const userLocation = ref(null);
 const userMarker = ref(null);
 const isMapReady = ref(false);
 const currentAddress = ref('위치 정보를 불러오는 중...'); // 현재 위치 주소를 저장할 상태 변수
+const hospitalList = ref([]); // 병원 리스트 데이터를 저장할 변수
 
 // 병원 리스트 예시 데이터
-const hospitalList = ref([
-    { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
-    { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
-    { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
-]);
+// const hospitalList = ref([
+//     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
+//     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
+//     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
+// ]);
+
+// 공공데이터 API 정보
+const API_KEY = '8Opb1NFLhzfnHXfd28uPabBZIljNXbqLRy+s8CO3I4744jA/Lzy9vOt/N5ZnnsxnQKcqX8F6IeFpdJ37ggPSSA=='; // Decoding 인증키
+const BASE_URL = 'https://api.odcloud.kr/api/15075937/v1/uddi:d41505f8-093d-4905-aad7-c09e8e3831fd'; // Base URL에 데이터 API 엔드포인트 추가
+
+// 주소를 위도와 경도로 변환하는 함수
+const convertAddressToLatLng = async (address) => {
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    return new Promise((resolve, reject) => {
+        geocoder.addressSearch(address, (result, status) => {
+            if (status === window.kakao.maps.services.Status.OK) {
+                const { y: latitude, x: longitude } = result[0];
+                resolve({ latitude, longitude });
+            } else {
+                reject(`주소 변환 실패: ${address}`);
+            }
+        });
+    });
+};
+
+// 공공데이터 API 호출 함수
+const fetchHospitalData = async () => {
+    try {
+        const response = await axios.get(BASE_URL, {
+            params: {
+                serviceKey: API_KEY,
+                page: 1,
+                perPage: 10,
+            },
+            headers: {
+                'Content-Type': 'application/json', // 요청의 Content-Type 설정
+                Accept: 'application/json', // 서버로부터 받을 데이터 형식 설정
+            },
+            withCredentials: false, // 자격 증명(쿠키)을 포함하지 않도록 설정
+        });
+
+        // API 호출 결과에서 병원 데이터 추출
+        console.log('API 응답 전체 데이터:', response.data); // 전체 응답 확인
+
+        const data = response.data.data;
+        console.log('병원 데이터:', data); // 추출한 병원 데이터 확인
+
+        if (!Array.isArray(data)) {
+            console.error('받아온 데이터가 올바르지 않습니다.', data);
+            return;
+        }
+
+        const hospitalsWithLatLng = await Promise.all(
+            data.map(async (hospital) => {
+                try {
+                    // address 변수가 정의되지 않았을 수 있습니다.
+                    const address = hospital.도로명주소 || hospital.지번주소;
+                    const { latitude, longitude } = await convertAddressToLatLng(address);
+                    return {
+                        name: hospital.사업장명,
+                        address: hospital.도로명주소,
+                        lat: latitude,
+                        lng: longitude,
+                    };
+                } catch (error) {
+                    console.error(`주소 변환 실패: ${hospital.지번주소 || hospital.도로명주소}`, error);
+                    return null;
+                }
+            }),
+        );
+
+        // 유효한 병원 데이터만 필터링
+        hospitalList.value = hospitalsWithLatLng.filter((hospital) => hospital !== null);
+
+        // 지도에 병원 마커 추가
+        addMarkersToMap(hospitalList.value);
+    } catch (error) {
+        console.error('API 호출 오류:', error);
+    }
+};
+
+// 병원 데이터를 기반으로 지도에 마커 추가
+const addMarkersToMap = (hospitals) => {
+    if (!isMapReady.value || !window.kakao || !window.kakao.maps) return;
+
+    hospitals.forEach((hospital) => {
+        const position = new window.kakao.maps.LatLng(hospital.lat, hospital.lng);
+
+        const marker = new window.kakao.maps.Marker({
+            position,
+            map: mapInstance.value,
+            title: hospital.name,
+        });
+
+        // 마커 클릭 시 병원 이름 및 주소 출력
+        window.kakao.maps.event.addListener(marker, 'click', () => {
+            alert(`병원명: ${hospital.name}\n주소: ${hospital.address}`);
+        });
+    });
+};
 
 // 지도 초기화 함수
 const loadKakaoMap = (container) => {
@@ -101,7 +198,7 @@ const loadKakaoMap = (container) => {
 // 지도 설정 및 사용자 위치 마커 초기화 함수
 const initializeMap = (container) => {
     const options = {
-        center: new window.kakao.maps.LatLng(33.450701, 126.570667), // 초기 지도 위치 설정
+        center: new window.kakao.maps.LatLng(37.583713, 126.999971),
         level: 1, // 지도 확대 수준
     };
     mapInstance.value = new window.kakao.maps.Map(container, options);
@@ -110,7 +207,16 @@ const initializeMap = (container) => {
     mapInstance.value.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
 
     isMapReady.value = true;
-    refreshUserLocation(); // 지도 초기화 후 사용자 위치로 이동
+
+    // 지도 클릭 이벤트 추가 (클릭 시 마커 및 주소 업데이트)
+    window.kakao.maps.event.addListener(mapInstance.value, 'click', (mouseEvent) => {
+        const latLng = mouseEvent.latLng;
+        moveToLocation(latLng.getLat(), latLng.getLng());
+        fetchHospitalData(latLng.getLat(), latLng.getLng()); // 클릭한 위치를 기준으로 병원 데이터 가져오기
+    });
+
+    // 초기 위치를 기준으로 병원 데이터 가져오기
+    refreshUserLocation();
 };
 
 // 사용자 위치 마커 업데이트 함수
@@ -181,6 +287,8 @@ const moveToLocation = (lat, lng) => {
     updateUserMarker(lat, lng);
     // 주소 업데이트
     getAddressFromCoords(lat, lng);
+    // API 호출하여 병원 데이터 가져오기
+    fetchHospitalData(lat, lng);
 };
 
 // 사용자 위치 새로고침 함수
@@ -189,6 +297,7 @@ const refreshUserLocation = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 moveToLocation(position.coords.latitude, position.coords.longitude);
+                fetchHospitalData(position.coords.latitude, position.coords.longitude); // 사용자 위치를 기준으로 병원 데이터 가져오기
             },
             (error) => {
                 console.error('사용자 위치를 가져오는 중 오류 발생: ', error);
@@ -273,7 +382,7 @@ onBeforeUnmount(() => {
 
 .hospital-item {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 15px;
     background-color: #fff;
@@ -293,10 +402,18 @@ onBeforeUnmount(() => {
 }
 
 .hospital-address {
+    width: 440px;
     color: #666;
 }
 
 /* 병원 예약 및 상담 버튼 스타일 */
+.hospital-action {
+    display: flex; /* Flexbox 사용 */
+    flex-direction: column; /* 버튼들을 위아래로 정렬 */
+    justify-content: flex-start; /* 위쪽으로 정렬 */
+    align-items: flex-end; /* 왼쪽으로 정렬 */
+    gap: 10px; /* 버튼 사이의 간격 */
+}
 .hospital-action button {
     margin-left: 5px;
     padding: 5px 10px;
