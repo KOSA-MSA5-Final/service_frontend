@@ -83,12 +83,8 @@
                     </div>
                 </div>
             </div>
-            <div id="supplying-products-list-container">
-                <div id="products">
-                    <div id="datas" v-for="product in displayedProducts" :key="product.id">
-                        {{ product.name }}
-                    </div>
-                </div>
+            <div id="section-item">
+                <MyPetProductSlider :products="displayedProducts" />
             </div>
         </div>
         <div id="latest-bought-items"></div>
@@ -98,32 +94,120 @@
 <script>
 import { useRouter } from 'vue-router';
 import { ref, computed, watch } from 'vue';
+import MyPetProductSlider from './MyPetProductSlider.vue';
 
 export default {
     name: 'ProfileMainPage',
+    components: {
+        MyPetProductSlider,
+    },
     setup() {
         const router = useRouter();
         const selectedCategory = ref('feedstuffs'); // 초기값을 '사료'로 설정
 
         const feedstuffs = ref([
-            { id: 1, name: '사료1' },
-            { id: 2, name: '사료2' },
-            { id: 3, name: '사료3' },
-            { id: 4, name: '사료4' },
+            {
+                id: 1,
+                name: '사료1',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 2,
+                name: '사료2',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 3,
+                name: '사료3',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 4,
+                name: '사료4',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
         ]);
 
         const snacks = ref([
-            { id: 5, name: '간식1' },
-            { id: 6, name: '간식2' },
-            { id: 7, name: '간식3' },
-            { id: 8, name: '간식4' },
+            {
+                id: 5,
+                name: '간식1',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 6,
+                name: '간식2',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 7,
+                name: '간식3',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 8,
+                name: '간식4',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
         ]);
 
         const supplements = ref([
-            { id: 9, name: '영양제1' },
-            { id: 10, name: '영양제2' },
-            { id: 11, name: '영양제3' },
-            { id: 12, name: '영양제4' },
+            {
+                id: 9,
+                name: '영양제1',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 10,
+                name: '영양제2',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 11,
+                name: '영양제3',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
+            {
+                id: 12,
+                name: '영양제4',
+                img: {
+                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
+                    alt: 'White sneaker shoe',
+                },
+            },
         ]);
 
         const displayedProducts = computed(() => {
@@ -410,8 +494,8 @@ p {
     transition: background-color 0.3s ease;
 }
 
-/* .active {
-    background-color: #71a9db !important;
-    color: white;
-} */
+#section-item {
+    position: relative;
+    width: 100%;
+}
 </style>

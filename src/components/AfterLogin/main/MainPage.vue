@@ -43,16 +43,17 @@ const navigateToMaps = () => {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 5px;
 }
 
 .middle-section {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0px;
     width: 100%;
-    background-color: #f5f5f5;
-    padding: 20px;
+    background-color: white;
+    padding: 0px;
+    border-radius: 8px;
 }
 
 .section-item {

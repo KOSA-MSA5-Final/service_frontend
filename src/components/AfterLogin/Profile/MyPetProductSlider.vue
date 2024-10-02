@@ -19,19 +19,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, nextTick, defineProps } from 'vue';
 
-const products = ref(
-    Array.from(Array(10), (_, i) => ({
-        id: i.toString(),
-        name: 'Athletic mens walking sneakers',
-        price: '$2,345.99',
-        img: {
-            src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-            alt: 'White sneaker shoe',
-        },
-    })),
-);
+const props = defineProps({
+    products: {
+        type: Array,
+        required: true,
+    },
+});
 
 const container = ref(null);
 const isAtStart = ref(true);
@@ -64,10 +59,19 @@ onMounted(() => {
         container.value.addEventListener('scroll', updateScrollState);
     }
 });
+
+watch(
+    () => props.products,
+    () => {
+        nextTick(() => {
+            updateScrollState();
+        });
+    },
+);
 </script>
 
 <style scoped>
-.product-slider {
+.my-pet-product-slider {
     position: relative;
     width: 100%;
     overflow: hidden;
@@ -111,7 +115,7 @@ onMounted(() => {
     margin-bottom: 5px;
     color: #333;
     text-decoration: none;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 
 .product-price {
@@ -157,5 +161,9 @@ onMounted(() => {
     height: 30px;
     font-size: 18px;
     cursor: pointer;
+}
+#section-item {
+    position: relative;
+    width: 100%;
 }
 </style>
