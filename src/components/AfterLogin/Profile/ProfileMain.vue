@@ -228,7 +228,7 @@ export default {
 #custom-info-reg-button {
     border-radius: 10px;
     border: 1px solid white;
-    background-color: #71a9db;
+    background-color: #539ee0;
     padding: 5px 10px;
     color: white;
     white-space: nowrap;
