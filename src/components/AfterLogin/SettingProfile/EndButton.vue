@@ -2,7 +2,7 @@
     <div>
         <div class="btnContainer">
             <div class="prevBtnDiv" @click="goToBeforeLogin">이전</div>
-            <div class="nextBtnDiv" @click="goToNextPage">다음</div>
+            <div class="nextBtnDiv" @click="goToNextPage">프로필 생성하기</div>
         </div>
     </div>
 </template>
@@ -73,9 +73,9 @@ export default {
 }
 .nextBtnDiv {
     flex: 1.5;
-    background-color: #1860c3;
+    background-color: #ffbf6b;
     height: inherit;
-    color: white;
+    color: black;
     align-content: center;
     cursor: pointer;
     text-align: center;

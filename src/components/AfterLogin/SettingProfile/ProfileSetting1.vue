@@ -91,6 +91,36 @@
                     v-model="inputValue"
                 />
             </div>
+            <div v-if="inputValue == '기타'" style="margin-top: 10px">
+                <!-- input -->
+                <div style="align-items: center; display: flex; align-content: center; flex-direction: row">
+                    <!-- 기타 품종을 적는 input  -->
+                    <div
+                        style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 40px;
+                            border: 1px solid lightgray;
+                            height: 40px;
+                            width: 100%;
+                        "
+                    >
+                        <input
+                            type="text"
+                            style="
+                                border-width: 0;
+                                height: 30px;
+                                text-align: center;
+                                outline: none;
+                                width: inherit;
+                                border-radius: 90%;
+                            "
+                            placeholder="해당 이름이 없다면 이름을 적어주세요"
+                        />
+                    </div>
+                </div>
+            </div>
             <!-- 종류를 누르면 팟하고 나오는 창 -->
             <transition name="fade">
                 <div v-if="isModalOpen" class="modalOverlay" @click="closeModal">
@@ -121,6 +151,7 @@
                             <div @click="decideAnimalType('cat')" :class="{ active: selectedAnimalType === 'cat' }">
                                 고양이
                             </div>
+                            <div style="color: lightgray">기타</div>
                         </div>
                         <!-- 강아지일때 -->
                         <div v-if="selectedAnimalType === 'dog'">
@@ -234,6 +265,32 @@
                     안했다
                 </button>
             </div>
+            <!-- 안했다를 누를시 -->
+            <div v-if="neuteredselected === 'notneutured'">
+                <div class="questionDiv">
+                    <img
+                        width="15"
+                        height="15"
+                        src="https://img.icons8.com/fluency-systems-filled/50/dog-footprint.png"
+                        alt="dog-footprint"
+                    />
+                    중성화를 할 예정이?
+                </div>
+                <div style="display: flex; border: 1px solid #ddd; overflow: hidden; border-radius: 10px">
+                    <button
+                        :class="['consumer-button', { selected: willneutered === 'y' }]"
+                        @click="willneutered = 'y'"
+                    >
+                        있다
+                    </button>
+                    <button
+                        :class="['consumer-button', { selected: willneutered === 'n' }]"
+                        @click="willneutered = 'n'"
+                    >
+                        없다
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <!-- <NextButton /> -->
@@ -260,6 +317,7 @@ export default {
             inputValue: '', // 입력값
             searchTerm: '', // 강아지 검색어 저장
             searchCatTerm: '', // 고양이 검색어 저장
+            willneutered: '',
             dogs: [
                 // 강아지 종류 배열
                 '기타',
@@ -367,7 +425,6 @@ export default {
 .bannerDiv {
     height: 220px;
     background-color: #79bbf4;
-    margin-top: 20px;
     text-align: left;
     padding: 20px 20px;
 }
@@ -408,7 +465,7 @@ export default {
 .pageContainer {
     flex-grow: 1;
     overflow-y: auto;
-    height: 92%; /* 스크롤바 숨기기 */
+    height: 100%; /* 스크롤바 숨기기 */
     scrollbar-width: none;
 }
 /* .cardBoard {
