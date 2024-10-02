@@ -45,12 +45,13 @@ const navigateToMaps = () => {
     max-width: 1200px;
     margin: 0 auto;
     padding: 5px;
+    background-color: white;
 }
 
 .middle-section {
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 8px;
     width: 100%;
     background-color: white;
     padding: 0px;
