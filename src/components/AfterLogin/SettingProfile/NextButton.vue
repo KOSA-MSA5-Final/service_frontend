@@ -49,11 +49,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .btnContainer {
     display: flex;
     justify-content: center;
-    height: 70px;
+    height: 60px;
     align-items: center;
     background-color: #1860c3;
     color: white;
