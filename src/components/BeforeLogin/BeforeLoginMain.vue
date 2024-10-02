@@ -17,7 +17,6 @@
             </div>
         </div>
 
-
         <div class="login-box">
             <p class="login-box-title">로그인</p>
 
@@ -29,7 +28,7 @@
                             v-model="authStore.username"
                             class="form-control"
                             name="username"
-                            placeholder="이메일 주소 입력"
+                            placeholder="아이디 입력"
                         />
                     </div>
                     <div class="password-field">
