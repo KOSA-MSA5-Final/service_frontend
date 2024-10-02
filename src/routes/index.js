@@ -64,11 +64,6 @@ const routes = [
                 component: SettingsMain,
             },
             {
-                path: 'maps',
-                name: 'MapsPage',
-                component: KakaoMaps,
-            },
-            {
                 path: 'upload_receipt',
                 name: 'RegisterReceiptPage',
                 component: RegisterReceipt,
@@ -144,6 +139,11 @@ const routes = [
         path: '/signup',
         name: 'SignupPage',
         component: SignupPage,
+    },
+    {
+        path: '/main/maps',
+        name: 'MapsPage',
+        component: KakaoMaps,
     },
 ];
 
