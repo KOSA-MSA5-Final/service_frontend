@@ -1,10 +1,5 @@
 <template>
-    <div id="address-setting-title">주소관리</div>
     <div id="addresses-container">
-        <div id="add-new-address" @click="goToAddAddress">
-            <img src="@/assets/icon-add.svg" alt="Add Icon" />
-            <p>새로운 배송지 추가</p>
-        </div>
         <div id="addresses" v-for="address in addresses" :key="address.id">
             <div id="contents">
                 <div id="infos">
@@ -73,14 +68,14 @@ export default {
 
             console.log('대표 배송지가 변경되었습니다.');
         },
-        goToAddAddress() {
-            this.router.push({ name: 'AddAddressPage' });
-        },
     },
 };
 </script>
 
 <style>
+#addresses-container {
+    padding: 10px;
+}
 #address-setting-title {
     font-size: 20px;
     margin-bottom: 20px;

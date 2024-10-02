@@ -5,6 +5,7 @@
                 <div style="color: gray">설정하기</div>
                 <div style="color: gray">
                     <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">3</span>/ 3
+
                 </div>
             </div>
             평소 반려동물의 <br />
@@ -16,6 +17,7 @@
 
 <script>
 export default {};
+
 </script>
 
 <style scoped>

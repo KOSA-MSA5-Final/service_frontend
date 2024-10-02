@@ -29,6 +29,7 @@ import { computed } from 'vue'; // computed 함수 import
 import NextButton from './NextButton.vue';
 import PrevNextButton from './PrevNextButton.vue';
 import EndButton from './EndButton.vue';
+
 import TopBar2 from './TopBar2.vue';
 
 export default {

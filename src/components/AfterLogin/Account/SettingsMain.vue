@@ -99,7 +99,7 @@ export default {
             }
         },
         addressSettingsPage() {
-            this.router.push({ name: 'AddressSettingPage' });
+            this.router.push({ name: 'AddressSettingMain' });
         },
     },
 };

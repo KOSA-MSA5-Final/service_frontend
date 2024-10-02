@@ -2,6 +2,7 @@
     <div id="topBar2">
         <div id="mgng-back" class="back_btn" @click="goToBeforeLogin">
             <img class="petwoman" :src="require('@/assets/icon-home.svg')" alt="" style="width: 30px; height: 30px" />
+
         </div>
         <div id="mgng-title">프로필 추가</div>
         <div id="mgng-skip" class="skip_btn">건너뛰기</div>

@@ -10,6 +10,7 @@
             평소 반려동물에게 <br />
             가려야할 음식이 있나요?
             <img class="petwoman" :src="require('@/assets/food.png')" alt="" />
+
         </div>
 
         <div class="whiteContentDiv">
@@ -96,6 +97,7 @@
 <script>
 export default {
     components: {},
+
     data() {
         return {
             isAllergy: 'n',
