@@ -38,7 +38,7 @@
                     <p class="subtitle">등록하기</p>
                 </div>
                 <div id="find-facilities">
-                    <img class="icon" src="@/assets/icon-building.svg" alt="Facilities Icon" />
+                    <img class="icon" src="@/assets/icon-building.svg" alt="Facilities Icon" @click="goToMaps" />
                     <p class="title">맞춤형</p>
                     <p class="subtitle">시설찾기</p>
                 </div>
@@ -231,6 +231,10 @@ export default {
             router.push('/main/upload_receipt');
         };
 
+        const goToMaps = () => {
+            router.push('/main/maps');
+        };
+
         // selectedCategory가 변경될 때마다 실행되는 watch 함수
         watch(
             selectedCategory,
@@ -252,6 +256,7 @@ export default {
             displayedProducts,
             selectCategory,
             goToUploadReceipt,
+            goToMaps,
         };
     },
 };
