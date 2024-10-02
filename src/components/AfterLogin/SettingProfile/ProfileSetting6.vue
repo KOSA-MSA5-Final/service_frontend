@@ -1,6 +1,6 @@
 <template>
     <div style="height: inherit">
-        <TopBar />
+        <TopBar2 />
 
         <div style="display: flex; justify-content: center">
             <VueSlider
@@ -110,7 +110,7 @@
 
 <script>
 import PrevNextButton from './PrevNextButton.vue';
-import TopBar from './TopBar.vue';
+import TopBar2 from './TopBar2.vue';
 import VueSlider from 'vue-3-slider-component';
 import Multiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.min.css'; // CSS를 여기서 import
@@ -118,7 +118,7 @@ import 'vue-multiselect/dist/vue-multiselect.min.css'; // CSS를 여기서 impor
 export default {
     name: 'setProfilePage6',
     components: {
-        TopBar,
+        TopBar2,
         PrevNextButton,
         VueSlider,
         Multiselect,
