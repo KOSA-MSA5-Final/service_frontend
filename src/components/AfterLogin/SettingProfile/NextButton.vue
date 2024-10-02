@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; justify-content: center">
+    <div class="btnContainer">
         <div @click="goToNextPage" class="nextBtn">
             &nbsp; 다음
             <svg
@@ -50,14 +50,23 @@ export default {
 </script>
 
 <style>
+.btnContainer {
+    display: flex;
+    justify-content: center;
+    height: 70px;
+    align-items: center;
+    background-color: #1860c3;
+    color: white;
+}
 #bottomBar {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f8f8f8;
+    background-color: #1860c3;
+    color: white;
     height: 80px;
 }
-.nextBtn {
+/* .nextBtn {
     cursor: pointer;
     border: 1px solid #1860c3;
     font-size: 15px;
@@ -70,5 +79,5 @@ export default {
 }
 .nextBtn:hover {
     opacity: 80%;
-}
+} */
 </style>

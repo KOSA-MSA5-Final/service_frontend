@@ -1,6 +1,6 @@
 <template>
     <div id="topBar">
-        <div id="mgng-name" class="skip_btn" @click="goToBeforeLogin">
+        <div id="mgng-back" class="back_btn" @click="goToBeforeLogin">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="40"
@@ -15,7 +15,8 @@
                 />
             </svg>
         </div>
-        <div id="mgng-img" class="back_btn">건너뛰기</div>
+        <div id="mgng-title">프로필 추가</div>
+        <div id="mgng-skip" class="skip_btn">건너뛰기</div>
     </div>
 </template>
 
@@ -25,14 +26,14 @@ export default {
         return {
             //현재 경로를 이전 경로로 매핑
             routeMap: {
-                '/main/setProfile1': '/main', //맨처음에서 메인 페이지로 돌아감
-                '/main/setProfile2': '/main/setProfile1',
-                '/main/setProfile3': '/main/setProfile2',
-                '/main/setProfile4': '/main/setProfile3',
-                '/main/setProfile5': '/main/setProfile4',
-                '/main/setProfile6': '/main/setProfile5',
-                '/main/setProfile7': '/main/setProfile6',
-                '/main/setProfile8': '/main/setProfile7',
+                '/setProfile/1': '/main', //맨처음에서 메인 페이지로 돌아감
+                '/setProfile/2': '/setProfile/1',
+                '/setProfile/3': '/setProfile/2',
+                '/setProfile/4': '/setProfile/3',
+                '/setProfile/5': '/setProfile/4',
+                '/setProfile/6': '/setProfile/5',
+                '/setProfile/7': '/setProfile/6',
+                '/setProfile/8': '/setProfile/7',
             },
         };
     },
@@ -52,22 +53,26 @@ export default {
 <style scoped>
 #topBar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     background-color: white;
-    height: 80px;
+    height: 70px;
     margin-bottom: 5px;
     padding: 0 15px;
 }
-
-#mgng-name {
+#mgng-title {
+    flex: 4;
+}
+#mgng-back {
     text-align: left;
 }
-#mgng-img {
+#mgng-skip {
     text-align: right;
 }
+.skip_btn {
+    color: lightgray;
+}
 .skip_btn:hover {
-    background-color: lightgray;
+    background-color: rgb(150, 150, 150);
 }
 .back_btn:hover {
     background-color: lightgray;
