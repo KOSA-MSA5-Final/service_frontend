@@ -1,6 +1,4 @@
 <template>
-    <div id="add-address-title">배송지 정보 추가</div>
-
     <div id="info-inputs">
         <div id="address-field" @click="goToSearchPage">
             <img src="@/assets/icon-search-address.svg" alt="Search Location Icon" />
@@ -25,10 +23,8 @@
         <div id="receiptant-telNum"></div>
         <div id="make-it-primary-address">
             <b-check id="checkbox"> </b-check>
-            <p>기본 배송지로 선택</p>
         </div>
     </div>
-    <div id="save-btn">저장하기</div>
 </template>
 
 <script>
@@ -55,6 +51,9 @@ export default {
 </script>
 
 <style>
+#info-inputs {
+    margin-top: 10px;
+}
 #add-address-title {
     font-size: 20px;
     margin-bottom: 20px;
