@@ -53,7 +53,6 @@ body {
     padding: 0 !important;
     width: 100%;
     /* min-width: 500px; */
-
     max-width: 600px;
     margin: 0 auto;
     background-color: white;

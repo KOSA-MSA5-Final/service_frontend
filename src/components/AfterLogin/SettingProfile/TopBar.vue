@@ -76,5 +76,6 @@ export default {
 }
 .back_btn:hover {
     background-color: lightgray;
+
 }
 </style>
