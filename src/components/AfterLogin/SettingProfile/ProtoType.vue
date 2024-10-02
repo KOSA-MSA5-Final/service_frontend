@@ -18,6 +18,11 @@
 
         <!-- /setProfile/3일 때 EndButton을 표시 -->
         <div v-else-if="isPageThree">
+            <PrevNextButton />
+        </div>
+
+        <!-- /setProfile/3일 때 EndButton을 표시 -->
+        <div v-else-if="isPageFour">
             <EndButton />
         </div>
     </div>
@@ -46,11 +51,13 @@ export default {
         const isPageOne = computed(() => route.path === '/setProfile/1');
         const isPageTwo = computed(() => route.path === '/setProfile/2');
         const isPageThree = computed(() => route.path === '/setProfile/3');
+        const isPageFour = computed(() => route.path === '/setProfile/4');
 
         return {
             isPageOne,
             isPageTwo,
             isPageThree,
+            isPageFour,
         };
     },
 };

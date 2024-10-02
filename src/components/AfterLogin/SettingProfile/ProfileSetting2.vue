@@ -4,13 +4,12 @@
             <div class="bannerFlexDiv">
                 <div style="color: gray">설정하기</div>
                 <div style="color: gray">
-                    <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">2</span>/ 3
+                    <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">2</span>/ 4
                 </div>
             </div>
             평소 반려동물에게 <br />
             가려야할 음식이 있나요?
             <img class="petwoman" :src="require('@/assets/food.png')" alt="" />
-
         </div>
 
         <div class="whiteContentDiv">
