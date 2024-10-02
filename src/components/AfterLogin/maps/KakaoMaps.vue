@@ -6,8 +6,8 @@
                 <!-- 왼쪽에 뒤로가기 버튼 -->
                 <button class="back-button" @click="goBack">
                     <svg
-                        height="30px"
                         width="30px"
+                        height="30px"
                         fill="#000000"
                         viewBox="0 0 200 200"
                         data-name="Layer 1"
@@ -19,7 +19,7 @@
                         <g id="SVGRepo_iconCarrier">
                             <title></title>
                             <path
-                                d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"
+                                d="M160,89.75H56l53-53a9.67,9.67,0,0,0,0-14,9.67,9.67,0,0,0-14,0l-56,56a30.18,30.18,0,0,0-8.5,18.5c0,1-.5,1.5-.5,2.5a6.34,6.34,0,0,0,.5,3,31.47,31.47,0,0,0,8.5,18.5l56,56a9.9,9.9,0,0,0,14-14l-52.5-53.5H160a10,10,0,0,0,0-20Z"
                             ></path>
                         </g>
                     </svg>
@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <!-- 병원 정보 리스트 -->
+            <!-- 시설 정보 리스트 -->
             <div class="facility-list" :style="{ height: isMapMinimized ? '80vh' : '50vh' }">
                 <div
                     class="facility-item"
@@ -134,7 +134,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 // import axios from 'axios';
 
 const mapContainer = ref(null);
@@ -148,6 +148,7 @@ const currentAddress = ref('위치 정보를 불러오는 중...'); // 현재 �
 const facilityList = ref([]); // 병원 리스트 데이터를 저장할 변수
 const activeCategory = ref('동물병원'); // 활성화된 카테고리를 저장할 상태 변수
 const markers = ref([]);
+const infoWindow = ref(null); // 인포윈도우 객체를 저장할 변수 선언
 
 // 병원 리스트 예시 데이터
 // const facilityList = ref([
@@ -247,19 +248,38 @@ const toggleMapSize = () => {
 // 기존 마커들을 모두 지도에서 제거하는 함수
 const clearMarkers = () => {
     markers.value.forEach((marker) => {
-        marker.setMap(null); // 마커를 지도에서 제거
+        if (marker && marker.setMap) {
+            marker.setMap(null); // 마커를 지도에서 제거
+        }
     });
     markers.value = []; // 마커 배열 초기화
+
+    if (infoWindow.value) {
+        infoWindow.value.close(); // 기존 인포윈도우 닫기
+    }
 };
 
 // facility-item을 클릭했을 때 해당 위치로 이동하는 함수
 const moveToFacility = (facility) => {
     if (!mapInstance.value || !facility.lat || !facility.lng) return;
 
+    // 모든 인포윈도우를 닫음
+    closeAllInfoWindows();
+
     const facilityLocation = new window.kakao.maps.LatLng(facility.lat, facility.lng);
 
     // 지도의 중심을 클릭한 시설의 위치로 이동
     mapInstance.value.panTo(facilityLocation);
+
+    // 시설의 위치에 있는 마커를 찾기
+    const marker = markers.value.find(
+        (marker) => marker.getPosition().getLat() === facility.lat && marker.getPosition().getLng() === facility.lng,
+    );
+
+    // 해당 마커가 존재하면 인포윈도우를 생성하고 표시
+    if (marker) {
+        createInfoWindow(marker, facility);
+    }
 };
 
 // 위치 기반 동물병원 검색 함수 (category_name 필터링 포함)
@@ -321,6 +341,7 @@ const updatefacilityListAndMarkers = (places) => {
         address: place.road_address_name || place.address_name,
         lat: place.y,
         lng: place.x,
+        phone: place.phone,
     }));
 
     // 기존 마커 모두 제거
@@ -330,11 +351,11 @@ const updatefacilityListAndMarkers = (places) => {
     addMarkersToMap(facilityList.value);
 };
 
-// 병원 데이터를 기반으로 지도에 마커 추가
-const addMarkersToMap = (facilitys) => {
+// 병원 데이터를 기반으로 지도에 마커 추가 및 클릭 이벤트 설정
+const addMarkersToMap = (facilities) => {
     if (!isMapReady.value || !window.kakao || !window.kakao.maps) return;
 
-    facilitys.forEach((facility) => {
+    facilities.forEach((facility) => {
         const position = new window.kakao.maps.LatLng(facility.lat, facility.lng);
 
         const marker = new window.kakao.maps.Marker({
@@ -343,37 +364,97 @@ const addMarkersToMap = (facilitys) => {
             title: facility.name,
         });
 
-        // 마커 클릭 시 병원 이름 및 주소 출력
+        // 마커 클릭 시 인포윈도우 생성
         window.kakao.maps.event.addListener(marker, 'click', () => {
-            alert(`시설명: ${facility.name}\n주소: ${facility.address}`);
+            createInfoWindow(marker, facility);
         });
 
-        // 마커 배열에 저장
         markers.value.push(marker);
     });
 };
 
+// 인포윈도우 생성 함수
+const createInfoWindow = (marker, facility) => {
+    if (!window.kakao || !window.kakao.maps) {
+        console.error('Kakao Maps SDK가 로드되지 않았습니다.');
+        return;
+    }
+    const content = `
+        <div style="padding:10px; width:200px; height:80px; display:flex; flex-direction: column; align-items: center; justify-content: center; text-align:center;">
+            <p style="margin:0; font-size:14px;">${facility.name}</p>
+            <p style="margin:5px 0; font-size:12px;">${facility.address}</p>
+            <p style="margin:5px 0; font-size:12px;">${facility.phone}</p>
+        </div>
+    `;
+
+    if (!infoWindow.value) {
+        infoWindow.value = new window.kakao.maps.InfoWindow({
+            content,
+            removable: true,
+        });
+    } else {
+        infoWindow.value.setContent(content); // 인포윈도우 내용 업데이트
+    }
+
+    infoWindow.value.open(mapInstance.value, marker);
+};
+
+// 지도 클릭 시 인포윈도우 닫기
+const addMapClickListener = () => {
+    // Kakao Maps SDK가 로드되었는지 확인
+    if (!window.kakao || !window.kakao.maps) {
+        console.error('Kakao Maps SDK가 로드되지 않았습니다.');
+        return;
+    }
+
+    if (!mapInstance.value) {
+        console.error('mapInstance가 초기화되지 않았습니다.');
+        return;
+    }
+
+    // 지도 클릭 시 인포윈도우를 닫는 이벤트 리스너 추가
+    window.kakao.maps.event.addListener(mapInstance.value, 'click', () => {
+        if (infoWindow.value) {
+            infoWindow.value.close();
+        }
+    });
+};
+
+// 모든 인포윈도우를 닫는 함수
+const closeAllInfoWindows = () => {
+    if (infoWindow.value) {
+        infoWindow.value.close(); // 현재 열려 있는 인포윈도우를 닫음
+    }
+};
+
 // 지도 초기화 함수
 const loadKakaoMap = (container) => {
-    if (!window.kakao || !window.kakao.maps) {
-        const script = document.createElement('script');
-        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=174a4fe81b5616acf152b93b71c0b41d&libraries=services,clusterer,drawing&autoload=false`;
-        document.head.appendChild(script);
+    return new Promise((resolve, reject) => {
+        if (!window.kakao || !window.kakao.maps) {
+            const script = document.createElement('script');
+            script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=174a4fe81b5616acf152b93b71c0b41d&libraries=services,clusterer,drawing&autoload=false`;
+            document.head.appendChild(script);
 
-        script.onload = () => {
-            window.kakao.maps.load(() => {
-                initializeMap(container);
-                // 지도 로드 완료 후 사용자 위치 새로고침 호출
-                isMapReady.value = true;
-                refreshUserLocation();
-            });
-        };
-    } else {
-        initializeMap(container);
-        // 지도 로드 완료 후 사용자 위치 새로고침 호출
-        isMapReady.value = true;
-        refreshUserLocation();
-    }
+            script.onload = () => {
+                window.kakao.maps.load(() => {
+                    initializeMap(container);
+                    isMapReady.value = true;
+                    refreshUserLocation();
+                    resolve(true);
+                });
+            };
+
+            script.onerror = () => {
+                console.error('Kakao Maps SDK 로드 실패');
+                reject(false);
+            };
+        } else {
+            initializeMap(container);
+            isMapReady.value = true;
+            refreshUserLocation();
+            resolve(true);
+        }
+    });
 };
 
 // 지도 설정 및 사용자 위치 마커 초기화 함수
@@ -507,8 +588,15 @@ const refreshUserLocation = () => {
 };
 
 // 지도 초기화 및 이벤트 등록
-onMounted(() => {
-    loadKakaoMap(mapContainer.value);
+onMounted(async () => {
+    try {
+        await loadKakaoMap(mapContainer.value);
+        nextTick(() => {
+            addMapClickListener(); // Kakao Maps SDK가 로드된 이후에만 이벤트 리스너 등록
+        });
+    } catch (error) {
+        console.error('Kakao Map 로드 중 오류 발생:', error);
+    }
 });
 
 // 컴포넌트 언마운트 시 이벤트 제거
@@ -516,12 +604,19 @@ onBeforeUnmount(() => {
     if (userMarker.value) {
         userMarker.value.setMap(null);
     }
+
+    // 지도 클릭 이벤트 제거
+    if (mapInstance.value) {
+        window.kakao.maps.event.removeListener(mapInstance.value, 'click');
+    }
 });
 </script>
 
 <style scoped>
 .map-container {
     background-color: #cee2f5;
+    width: 100%;
+    height: 100%;
 }
 
 .map-wrapper {
@@ -530,13 +625,6 @@ onBeforeUnmount(() => {
     width: 100%;
     height: 40vh;
     transition: height 0.3s ease;
-}
-
-.map-container {
-    border: none;
-    border-radius: 3px;
-    width: 100%;
-    height: 100%;
 }
 
 /* .refresh-location-btn {
@@ -560,8 +648,8 @@ onBeforeUnmount(() => {
 .current-location-info {
     cursor: pointer;
     padding: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
     background-color: #8ec6f5;
     border-radius: 5px;
     margin-top: 10px;
@@ -593,11 +681,10 @@ onBeforeUnmount(() => {
 
 .facility-item {
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+    padding: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -606,7 +693,9 @@ onBeforeUnmount(() => {
 
 .facility-info {
     display: flex;
+    margin: 10px;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 .facility-name {
@@ -615,17 +704,19 @@ onBeforeUnmount(() => {
 }
 
 .facility-address {
-    width: 300px;
     color: #666;
+    align-items: flex-start;
 }
 
 /* 병원 예약 및 상담 버튼 스타일 */
 .facility-action {
-    display: flex; /* Flexbox 사용 */
+    display: flex;
     flex-direction: row;
-    justify-content: flex-start; /* 위쪽으로 정렬 */
-    align-items: flex-end; /* 왼쪽으로 정렬 */
-    gap: 10px; /* 버튼 사이의 간격 */
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px; /* 버튼 사이의 간격 */
+    margin-left: auto;
+    margin-right: 5px;
 }
 .facility-action button {
     padding: 5px 10px;
@@ -634,7 +725,17 @@ onBeforeUnmount(() => {
     cursor: pointer;
 }
 
+.reservation-btn,
+.consultation-btn {
+    font-size: 15px;
+    display: inline-block; /* 텍스트가 한 줄에 보이도록 설정 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    border-radius: 5px; /* 버튼 테두리 둥글게 */
+}
+
 .reservation-btn {
+    font-size: 15px;
     background-color: #539ee0;
     color: #fff;
 }
@@ -657,7 +758,7 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: center;
     position: relative;
-    background-color: #f0f0f0;
+    background-color: white;
     padding: 15px 10px;
     font-size: 18px;
     font-weight: bold;
@@ -675,7 +776,7 @@ onBeforeUnmount(() => {
 
 /* 검색 제목 스타일 */
 .search-title {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 /* 카테고리 버튼들 스타일 */
@@ -692,8 +793,8 @@ onBeforeUnmount(() => {
     height: 55px;
     padding-top: 5px;
     border: none;
-    background-color: #b1adad;
-    color: #fff;
+    background-color: #f9f9f9;
+    color: black;
     font-size: 15px;
     cursor: pointer;
     transition: background-color 0.3s;
