@@ -1,6 +1,6 @@
 <template>
     <div id="afterLoginMain">
-        <TopBar />
+        <TopBar2 />
 
         <div id="router-pages">
             <router-view></router-view>
@@ -20,11 +20,11 @@ import { useRoute } from 'vue-router'; // 현재 경로를 감지하기 위해 �
 import { computed } from 'vue'; // computed 함수 import
 import NextButton from './NextButton.vue';
 import PrevNextButton from './PrevNextButton.vue';
-import TopBar from './TopBar.vue';
+import TopBar2 from './TopBar2.vue';
 
 export default {
     components: {
-        TopBar,
+        TopBar2,
         PrevNextButton,
         NextButton,
     },

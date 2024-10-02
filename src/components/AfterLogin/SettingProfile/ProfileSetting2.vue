@@ -1,6 +1,6 @@
 <template>
     <div style="height: inherit">
-        <TopBar />
+        <TopBar2 />
 
         <div style="display: flex; justify-content: center">
             <VueSlider
@@ -78,14 +78,14 @@
 </template>
 
 <script>
-import TopBar from './TopBar.vue';
+import TopBar2 from './TopBar2.vue';
 import PrevNextButtonVue from './PrevNextButton.vue';
 import VueSlider from 'vue-3-slider-component';
 
 export default {
     name: 'setProfilePage2',
     components: {
-        TopBar,
+        TopBar2,
         PrevNextButtonVue,
         VueSlider,
     },

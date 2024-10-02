@@ -1,5 +1,5 @@
 <template>
-    <div id="topBar">
+    <div id="topBar2">
         <div id="mgng-back" class="back_btn" @click="goToBeforeLogin">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +51,7 @@ export default {
 </script>
 
 <style scoped>
-#topBar {
+#topBar2 {
     display: flex;
     align-items: center;
     background-color: white;
@@ -76,6 +76,5 @@ export default {
 }
 .back_btn:hover {
     background-color: lightgray;
-
 }
 </style>
