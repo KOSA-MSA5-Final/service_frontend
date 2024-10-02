@@ -18,6 +18,8 @@ import AddressSetting from '@/components/AfterLogin/Account/AddressSetting.vue';
 import AddAddressPage from '@/components/AfterLogin/Account/AddAddressPage.vue';
 import AddressSearchPage from '@/components/AfterLogin/Account/AddressSearchPage.vue';
 
+import SettingTemplate from '@/components/AfterLogin/Account/SettingTemplate.vue';
+
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
 };
@@ -65,23 +67,43 @@ const routes = [
                 name: 'testProfile',
                 component: testProfile,
             },
+        ],
+    },
+    {
+        path: '/address-setting',
+        name: 'AddressSettingPage',
+        component: SettingTemplate,
+        beforeEnter: (to, from, next) => {
+            if (isLoggedIn()) {
+                next();
+            } else {
+                next('/');
+            }
+        },
+        children: [
             {
-                path: 'settings/address',
-                name: 'AddressSettingPage',
+                path: '',
+                name: 'AddressSettingMain',
                 component: AddressSetting,
             },
             {
-                path: 'settings/address/add',
+                path: 'add',
                 name: 'AddAddressPage',
                 component: AddAddressPage,
             },
             {
-                path: '/settings/address/search',
+                path: 'search',
                 name: 'AddressSearchPage',
                 component: AddressSearchPage, // 실제 주소 검색 화면 컴포넌트
             },
+            {
+                path: '/signup',
+                name: 'SignupPage',
+                component: SignupPage,
+            },
         ],
     },
+
     {
         path: '/signup',
         name: 'SignupPage',

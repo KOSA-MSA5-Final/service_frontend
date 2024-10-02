@@ -1,6 +1,5 @@
 <template>
     <div id="daum-postcode">
-        <button @click="goBack" id="back-button">뒤로가기</button>
         <div id="address-search-container"></div>
     </div>
 </template>
@@ -48,5 +47,9 @@ export default {
     background-color: #f0f0f0;
     border: none;
     cursor: pointer;
+}
+
+#__daum__layer_5 {
+    height: 850px !important;
 }
 </style>
