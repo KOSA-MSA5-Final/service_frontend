@@ -94,7 +94,7 @@
     <PrevNextButton />
 </template>
 
-<script>
+<script scoped>
 import PrevNextButton from './PrevNextButton.vue';
 import TopBar from './TopBar.vue';
 import VueSlider from 'vue-3-slider-component';

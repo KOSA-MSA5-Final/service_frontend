@@ -1,6 +1,6 @@
 <template>
-    <div class="subContainer">
-        <div class="back_btn" @click="goToBeforeLogin">
+    <div id="topBar">
+        <div id="mgng-back" class="back_btn" @click="goToBeforeLogin">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="40"
@@ -15,7 +15,8 @@
                 />
             </svg>
         </div>
-        <div class="skip_btn">건너뛰기</div>
+        <div id="mgng-title">프로필 추가</div>
+        <div id="mgng-skip" class="skip_btn">건너뛰기</div>
     </div>
 </template>
 
@@ -25,14 +26,14 @@ export default {
         return {
             //현재 경로를 이전 경로로 매핑
             routeMap: {
-                '/setProfile1': '/', //맨처음에서 메인 페이지로 돌아감
-                '/setProfile2': '/setProfile1',
-                '/setProfile3': '/setProfile2',
-                '/setProfile4': '/setProfile3',
-                '/setProfile5': '/setProfile4',
-                '/setProfile6': '/setProfile5',
-                '/setProfile7': '/setProfile6',
-                '/setProfile8': '/setProfile7',
+                '/setProfile/1': '/main', //맨처음에서 메인 페이지로 돌아감
+                '/setProfile/2': '/setProfile/1',
+                '/setProfile/3': '/setProfile/2',
+                '/setProfile/4': '/setProfile/3',
+                '/setProfile/5': '/setProfile/4',
+                '/setProfile/6': '/setProfile/5',
+                '/setProfile/7': '/setProfile/6',
+                '/setProfile/8': '/setProfile/7',
             },
         };
     },
@@ -49,20 +50,32 @@ export default {
 };
 </script>
 
-<style>
-.subContainer {
+<style scoped>
+#topBar {
     display: flex;
-    justify-content: space-between;
-    align-content: center;
     align-items: center;
+    background-color: white;
+    height: 70px;
+    margin-bottom: 5px;
     padding: 0 15px;
 }
+#mgng-title {
+    flex: 4;
+}
+#mgng-back {
+    text-align: left;
+}
+#mgng-skip {
+    text-align: right;
+}
 .skip_btn {
+    color: lightgray;
 }
 .skip_btn:hover {
-}
-.back_btn {
+    background-color: rgb(150, 150, 150);
 }
 .back_btn:hover {
+    background-color: lightgray;
+
 }
 </style>
