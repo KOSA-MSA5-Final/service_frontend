@@ -3,31 +3,31 @@
     <div id="setting-container">
         <div id="settings-container">
             <div id="delivery-info-setting" @click="addressSettingsPage">
-                <img src="@/assets/icon-address.svg" alt="Address Icon" />
+                <img class="icon" src="@/assets/icon-home2.svg" alt="Address Icon" />
                 <p class="title">배달지 정보</p>
                 <p class="sstitle">관리하기</p>
             </div>
 
             <div id="account-setting">
-                <img src="@/assets/icon-account.svg" alt="Account Icon" />
+                <img class="icon" src="@/assets/icon-account.svg" alt="Account Icon" />
                 <p class="title">개인 정보</p>
                 <p class="sstitle">관리하기</p>
             </div>
             <div id="change-pwd">
-                <img src="@/assets/icon-password.svg" alt="Password Icon" />
+                <img class="icon" src="@/assets/icon-password.svg" alt="Password Icon" />
                 <p class="title">비밀번호</p>
                 <p class="sstitle">변경하기</p>
             </div>
             <div id="logout" @click="logout">
-                <img src="@/assets/icon-logout.svg" alt="Logout Icon" />
+                <img class="icon" src="@/assets/icon-logout.svg" alt="Logout Icon" />
                 <p class="title">로그아웃</p>
                 <p class="sstitle">하기</p>
             </div>
         </div>
         <div id="separating-line"></div>
-        <p class="title">우리집 아이들</p>
+        <p class="ttitle">우리집 아이들</p>
         <p class="subtitle">반려동물 프로필을 클릭하면</p>
-        <p class="subtitle">계정 프로필이 선택한 프로필로 변경됩니다.</p>
+        <p class="subtitle">현재 계정 프로필이 선택한 프로필로 변경됩니다.</p>
         <div id="mypets-container">
             <div id="mypet-profiles">
                 <div id="profiles" v-if="profiles.length > 0">
@@ -38,8 +38,9 @@
                 </div>
                 <div id="add-profile">
                     <div class="add-profile">
-                        <img src="@/assets/icon-add.svg" alt="Add Icon" />
-                        <p class="title">반려동물 추가</p>
+                        <!-- <img src="@/assets/icon-add.svg" alt="Add Icon" /> -->
+                        <img src="@/assets/jangoon.gif" alt="Strong Jangoon" />
+                        <p>반려동물 추가</p>
                     </div>
                 </div>
             </div>
@@ -98,7 +99,7 @@ export default {
             }
         },
         addressSettingsPage() {
-            this.$router.push('/settings/addressSettings');
+            this.router.push({ name: 'AddressSettingPage' });
         },
     },
 };
@@ -107,20 +108,30 @@ export default {
 <style scoped>
 #settings-title {
     font-size: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+#setting-container {
+    border-radius: 10px;
+    border: 1px solid #71a9db;
+    background-color: white;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 95%;
+    padding: 10px;
 }
 #settings-container {
     display: flex;
-    flex-direction: row; /* 가로로 배치 */
-    justify-content: space-between; /* 요소들 간에 균등한 간격 */
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     border-radius: 10px;
     border: 1px solid white;
     background-color: white;
-    width: 100%; /* 전체 너비 차지 */
+    width: 100%;
 }
 #separating-line {
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #71a9db;
     margin: 10px 0;
 }
 
@@ -148,6 +159,12 @@ p {
 
 .title {
     font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.ttitle {
+    font-size: 16px;
     font-weight: bold;
     color: #333;
 }
@@ -184,6 +201,7 @@ p {
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
+    border: 3px solid #71a9db;
 }
 
 #profiles {
@@ -201,5 +219,9 @@ p {
 
 #add-profile:nth-child(even) {
     grid-column: 2;
+}
+
+.icon {
+    filter: invert(77%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%);
 }
 </style>

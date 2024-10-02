@@ -48,18 +48,19 @@ const navigateToMain = () => {
 }
 
 .image-container {
-    width: 120px;
-    height: 100px;
+    width: 115px;
+    height: 90px;
     overflow: hidden;
     position: relative;
 }
 
 .image-container img {
     position: absolute;
-    top: -10px; /* Adjust this value to crop from the top */
-    left: 0; /* Adjust this value to crop from the left */
-    width: 120px; /* Slightly larger than container to allow for positioning */
+    top: -15px;
+    left: 0;
+    width: 115px;
     height: 120px;
+    -o-object-fit: cover;
     object-fit: cover;
 }
 </style>

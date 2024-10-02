@@ -1,17 +1,17 @@
 <template>
     <div id="buttomBar">
         <div id="left-button">
-            <img src="@/assets/icon-home.svg" @click="goToMain"/>
+            <img src="@/assets/icon-home.svg" @click="goToMain" />
             <p>메인화면</p>
         </div>
 
         <div id="center-button" @click="goToProfile">
-            <img src="https://elliebucket1.s3.ap-northeast-2.amazonaws.com/%ED%86%A0%EB%81%BC%EA%B6%81%EB%94%94.jpg"/>
+            <img src="@/assets/jangoon.gif" />
             <p>반려동물 추가</p>
         </div>
 
         <div id="right-button">
-            <img src="@/assets/icon-my-page.svg" @click="goToSettings"/>
+            <img src="@/assets/icon-my-page.svg" @click="goToSettings" />
             <p>환경설정</p>
         </div>
     </div>
@@ -42,7 +42,7 @@ export default {
             goToMain,
             goToSettings,
         };
-    }
+    },
 };
 </script>
 
@@ -77,7 +77,8 @@ export default {
     margin-top: 8px;
 }
 
-#right-button, #left-button {
+#right-button,
+#left-button {
     margin-top: 20px;
 }
 
