@@ -15,7 +15,7 @@ export default {
         return {
             //현재 경로를 이전 경로로 매핑
             routeMap: {
-                '/setProfile/1': '/main', //맨처음에서 메인 페이지로 돌아감
+                '/setProfile/1': '/main/settings', //맨처음에서 메인 페이지로 돌아감
                 '/setProfile/2': '/setProfile/1',
                 '/setProfile/3': '/setProfile/2',
                 '/setProfile/4': '/setProfile/3',
