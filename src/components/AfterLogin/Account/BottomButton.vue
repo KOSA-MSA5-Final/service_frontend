@@ -41,7 +41,7 @@ export default {
     justify-content: center;
     height: 70px;
     align-items: center;
-    background-color: #1860c3;
+    background-color: #539ee0;
     color: white;
 }
 .addAddressBtn {
@@ -49,14 +49,14 @@ export default {
     justify-content: center;
     height: 70px;
     align-items: center;
-    background-color: #1860c3;
+    background-color: #539ee0;
     color: white;
 }
 #bottomBar {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #1860c3;
+    background-color: #539ee0;
     color: white;
     height: 80px;
 }

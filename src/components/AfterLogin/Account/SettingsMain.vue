@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div id="add-profile">
-                    <div class="add-profile">
+                    <div class="add-profile" @click="addProfile">
                         <!-- <img src="@/assets/icon-add.svg" alt="Add Icon" /> -->
                         <img src="@/assets/jangoon.gif" alt="Strong Jangoon" />
                         <p>반려동물 추가</p>
@@ -100,6 +100,9 @@ export default {
         },
         addressSettingsPage() {
             this.router.push({ name: 'AddressSettingMain' });
+        },
+        addProfile() {
+            this.router.push({ name: 'setProfilePage1' });
         },
     },
 };

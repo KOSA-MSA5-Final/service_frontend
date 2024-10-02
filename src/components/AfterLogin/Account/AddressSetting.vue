@@ -14,7 +14,7 @@
                 <div id="buttonsAndTag">
                     <div id="primary-tag" v-if="address.isPrimary">대표 배송지</div>
                     <div id="change-to-primary-btn" v-if="!address.isPrimary" @click="changePrimaryAddress(address.id)">
-                        대표 배송지로 변경
+                        대표 배송지 <br />설정
                     </div>
                     <div id="delete-btn" v-if="!address.isPrimary">삭제</div>
                 </div>
@@ -37,7 +37,7 @@ export default {
             addresses: [
                 {
                     id: 1,
-                    address: '서울시 강남구 광평로',
+                    address: '서울시 강남구 광평로10길 15, 상록수 아파트 108동',
                     isPrimary: false,
                     receiptant_name: '최혜령',
                     receiptant_telNum: '010-4586-5811',
@@ -87,28 +87,34 @@ export default {
 #addresses {
     text-align: left;
     border-style: solid;
-    border-radius: 20px;
+    border-radius: 10px;
     padding: 10px;
     margin-bottom: 10px;
+    background-color: white;
+    font-size: 14px;
+    border-color: white;
 }
 #primary-tag {
     border-style: double;
     border-radius: 10px;
+    border-color: #71a9db;
     text-align: center;
     position: unset;
     padding: 5px;
+    background-color: #71a9db;
+    color: white;
 }
 #change-to-primary-btn,
 #delete-btn {
+    display: flex;
     border-style: double;
     border-radius: 10px;
+    border-color: #71a9db;
     text-align: center;
     position: unset;
-    cursor: pointer;
-    width: 80px;
-    font-size: 12px;
-    margin-bottom: 5px;
-    padding: 3px;
+    padding: 5px;
+    background-color: #71a9db;
+    color: white;
 }
 #contents {
     display: flex;
