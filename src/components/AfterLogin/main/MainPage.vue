@@ -3,23 +3,24 @@
         <!-- 중간 이미지 섹션 (3분할) -->
         <div class="middle-section">
             <!-- 첫 번째 섹션 -->
+            <div class="section-item" @click="navigateToMaps">
+                <h2>장군이의 시설 찾기</h2>
+                <img src="@/assets/animal_hospital.jpg" />
+            </div>
+            <!-- 두 번째 섹션 -->
             <div class="section-item">
                 <h2>장군이 건강 맞춤 사료</h2>
                 <ProductSlider />
             </div>
-            <!-- 두 번째 섹션 -->
-            <div class="section-item">
-                <img src="https://via.placeholder.com/150" alt="장군이가 좋아할 간식" />
-                <div class="section-description">
-                    <span>장군이가 좋아할 간식</span>
-                </div>
-            </div>
             <!-- 세 번째 섹션 -->
-            <div class="section-item" @click="navigateToMaps">
-                <img src="https://via.placeholder.com/150" alt="장군이의 병원찾기" />
-                <div class="section-description">
-                    <span>장군이의 병원찾기</span>
-                </div>
+            <div class="section-item">
+                <h2>장군이가 좋아할 간식</h2>
+                <ProductSlider />
+            </div>
+            <!-- 네 번째 섹션 -->
+            <div class="section-item">
+                <h2>장군이가 좋아할 영양제</h2>
+                <ProductSlider />
             </div>
         </div>
     </div>
@@ -68,21 +69,15 @@ const navigateToMaps = () => {
 .section-item h2 {
     text-align: center;
     padding: 10px 0;
-    background-color: #007aff;
+    background-color: #539ee0;
     color: #fff;
     margin: 0;
+    font-size: 14px;
 }
 
 .section-item img {
     width: 100%;
     height: 200px;
     object-fit: cover;
-}
-
-.section-description {
-    padding: 10px;
-    background-color: #007aff;
-    color: #fff;
-    text-align: center;
 }
 </style>
