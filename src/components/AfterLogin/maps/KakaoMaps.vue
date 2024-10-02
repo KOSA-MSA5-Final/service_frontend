@@ -1,63 +1,132 @@
 <template>
-    <div class="map-wrapper">
-        <!-- 지도 컨테이너 -->
-        <div class="map-container" ref="mapContainer"></div>
-
-        <!-- 현재 위치 정보 표시 -->
-        <div class="current-location-info">
-            <div class="location-header">
-                <span>📍 현재위치 : {{ currentAddress }}</span>
-                <button class="refresh-btn" @click="refreshUserLocation">
-                    <!-- SVG 아이콘 대신 사용 -->
+    <div class="map-container">
+        <div class="search-page">
+            <!-- 상단 바 -->
+            <div class="top-bar">
+                <!-- 왼쪽에 뒤로가기 버튼 -->
+                <button class="back-button" @click="goBack">
                     <svg
-                        height="25px"
-                        width="25px"
-                        viewBox="-2.4 -2.4 28.80 28.80"
-                        fill="none"
+                        height="30px"
+                        width="30px"
+                        fill="#000000"
+                        viewBox="0 0 200 200"
+                        data-name="Layer 1"
+                        id="Layer_1"
                         xmlns="http://www.w3.org/2000/svg"
                     >
-                        <g id="SVGRepo_bgCarrier" stroke-width="0">
-                            <rect
-                                x="-2.4"
-                                y="-2.4"
-                                width="28.80"
-                                height="28.80"
-                                rx="14.4"
-                                fill="#e1f0fc"
-                                strokewidth="0"
-                            ></rect>
-                        </g>
-                        <g
-                            id="SVGRepo_tracerCarrier"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke="#CCCCCC"
-                            stroke-width="0.144"
-                        ></g>
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                         <g id="SVGRepo_iconCarrier">
+                            <title></title>
                             <path
-                                d="M4.06189 13C4.02104 12.6724 4 12.3387 4 12C4 7.58172 7.58172 4 12 4C14.5006 4 16.7332 5.14727 18.2002 6.94416M19.9381 11C19.979 11.3276 20 11.6613 20 12C20 16.4183 16.4183 20 12 20C9.61061 20 7.46589 18.9525 6 17.2916M9 17H6V17.2916M18.2002 4V6.94416M18.2002 6.94416V6.99993L15.2002 7M6 20V17.2916"
-                                stroke="#000000"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"
                             ></path>
                         </g>
                     </svg>
                 </button>
+
+                <!-- 가운데에 '시설 검색' 텍스트 -->
+                <div class="search-title">시설 검색</div>
+            </div>
+
+            <!-- 시설 카테고리 버튼들 -->
+            <div class="category-buttons">
+                <button
+                    class="category-btn"
+                    :class="{ active: activeCategory === '동물병원' }"
+                    @click="searchCategory('동물병원')"
+                >
+                    동물 병원
+                </button>
+                <button
+                    class="category-btn"
+                    :class="{ active: activeCategory === '반려동물미용' }"
+                    @click="searchCategory('반려동물미용')"
+                >
+                    미용실
+                </button>
+                <button
+                    class="category-btn"
+                    :class="{ active: activeCategory === '애견카페' }"
+                    @click="searchCategory('애견카페')"
+                >
+                    애견 카페
+                </button>
+                <button
+                    class="category-btn"
+                    :class="{ active: activeCategory === '반려동물용품' }"
+                    @click="searchCategory('반려동물용품')"
+                >
+                    반려동물 <br />
+                    용품점
+                </button>
             </div>
         </div>
+        <div class="map-wrapper" :style="{ height: isMapMinimized ? '10vh' : '40vh' }">
+            <!-- 지도 컨테이너 -->
+            <div class="map-container" ref="mapContainer"></div>
 
-        <!-- 병원 정보 리스트 -->
-        <div class="hospital-list">
-            <div class="hospital-item" v-for="(hospital, index) in hospitalList" :key="index">
-                <div class="hospital-info">
-                    <div class="hospital-name">{{ hospital.name }}</div>
-                    <div class="hospital-address">{{ hospital.address }}</div>
+            <!-- 현재 위치 정보 표시 -->
+            <div class="current-location-info" @click="toggleMapSize">
+                <div class="location-header">
+                    <span>📍 현재위치 : {{ currentAddress }}</span>
+                    <button class="refresh-btn" @click.stop="refreshUserLocation">
+                        <!-- SVG 아이콘 대신 사용 -->
+                        <svg
+                            height="25px"
+                            width="25px"
+                            viewBox="-2.4 -2.4 28.80 28.80"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <g id="SVGRepo_bgCarrier" stroke-width="0">
+                                <rect
+                                    x="-2.4"
+                                    y="-2.4"
+                                    width="28.80"
+                                    height="28.80"
+                                    rx="14.4"
+                                    fill="#e1f0fc"
+                                    strokewidth="0"
+                                ></rect>
+                            </g>
+                            <g
+                                id="SVGRepo_tracerCarrier"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke="#CCCCCC"
+                                stroke-width="0.144"
+                            ></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M4.06189 13C4.02104 12.6724 4 12.3387 4 12C4 7.58172 7.58172 4 12 4C14.5006 4 16.7332 5.14727 18.2002 6.94416M19.9381 11C19.979 11.3276 20 11.6613 20 12C20 16.4183 16.4183 20 12 20C9.61061 20 7.46589 18.9525 6 17.2916M9 17H6V17.2916M18.2002 4V6.94416M18.2002 6.94416V6.99993L15.2002 7M6 20V17.2916"
+                                    stroke="#000000"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                ></path>
+                            </g>
+                        </svg>
+                    </button>
                 </div>
-                <div class="hospital-action">
-                    <button class="reservation-btn">예약</button>
-                    <button class="consultation-btn">상담</button>
+            </div>
+
+            <!-- 병원 정보 리스트 -->
+            <div class="facility-list" :style="{ height: isMapMinimized ? '80vh' : '50vh' }">
+                <div
+                    class="facility-item"
+                    v-for="(facility, index) in facilityList"
+                    :key="index"
+                    @click="moveToFacility(facility)"
+                >
+                    <div class="facility-info">
+                        <div class="facility-name">{{ facility.name }}</div>
+                        <div class="facility-address">{{ facility.address }}</div>
+                    </div>
+                    <div class="facility-action">
+                        <button class="reservation-btn">예약</button>
+                        <button class="consultation-btn">상담</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,115 +135,221 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import axios from 'axios';
+// import axios from 'axios';
 
 const mapContainer = ref(null);
 const mapInstance = ref(null);
 const userLocation = ref(null);
 const userMarker = ref(null);
 const isMapReady = ref(false);
+const isMapMinimized = ref(false);
+const mapWrapperHeight = ref('40vh'); // 초기 높이는 40vh
 const currentAddress = ref('위치 정보를 불러오는 중...'); // 현재 위치 주소를 저장할 상태 변수
-const hospitalList = ref([]); // 병원 리스트 데이터를 저장할 변수
+const facilityList = ref([]); // 병원 리스트 데이터를 저장할 변수
+const activeCategory = ref('동물병원'); // 활성화된 카테고리를 저장할 상태 변수
+const markers = ref([]);
 
 // 병원 리스트 예시 데이터
-// const hospitalList = ref([
+// const facilityList = ref([
 //     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
 //     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
 //     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
 // ]);
 
 // 공공데이터 API 정보
-const API_KEY = '8Opb1NFLhzfnHXfd28uPabBZIljNXbqLRy+s8CO3I4744jA/Lzy9vOt/N5ZnnsxnQKcqX8F6IeFpdJ37ggPSSA=='; // Decoding 인증키
-const BASE_URL = 'https://api.odcloud.kr/api/15075937/v1/uddi:d41505f8-093d-4905-aad7-c09e8e3831fd'; // Base URL에 데이터 API 엔드포인트 추가
+// const API_KEY = '8Opb1NFLhzfnHXfd28uPabBZIljNXbqLRy+s8CO3I4744jA/Lzy9vOt/N5ZnnsxnQKcqX8F6IeFpdJ37ggPSSA=='; // Decoding 인증키
+// const BASE_URL = 'https://api.odcloud.kr/api/15075937/v1/uddi:d41505f8-093d-4905-aad7-c09e8e3831fd'; // Base URL에 데이터 API 엔드포인트 추가
 
-// 주소를 위도와 경도로 변환하는 함수
-const convertAddressToLatLng = async (address) => {
-    const geocoder = new window.kakao.maps.services.Geocoder();
-    return new Promise((resolve, reject) => {
-        geocoder.addressSearch(address, (result, status) => {
-            if (status === window.kakao.maps.services.Status.OK) {
-                const { y: latitude, x: longitude } = result[0];
-                resolve({ latitude, longitude });
-            } else {
-                reject(`주소 변환 실패: ${address}`);
+// 공공데이터 API 호출 함수
+// const fetchfacilityData = async () => {
+//     try {
+//         const response = await axios.get(BASE_URL, {
+//             params: {
+//                 serviceKey: API_KEY,
+//                 page: 1,
+//                 perPage: 10,
+//             },
+//             headers: {
+//                 'Content-Type': 'application/json', // 요청의 Content-Type 설정
+//                 Accept: 'application/json', // 서버로부터 받을 데이터 형식 설정
+//             },
+//             withCredentials: false, // 자격 증명(쿠키)을 포함하지 않도록 설정
+//         });
+
+//         // API 호출 결과에서 병원 데이터 추출
+//         console.log('API 응답 전체 데이터:', response.data); // 전체 응답 확인
+
+//         const data = response.data.data;
+//         console.log('병원 데이터:', data); // 추출한 병원 데이터 확인
+
+//         if (!Array.isArray(data)) {
+//             console.error('받아온 데이터가 올바르지 않습니다.', data);
+//             return;
+//         }
+
+//         const facilitysWithLatLng = await Promise.all(
+//             data.map(async (facility) => {
+//                 try {
+//                     // address 변수가 정의되지 않았을 수 있습니다.
+//                     const address = facility.도로명주소 || facility.지번주소;
+//                     const { latitude, longitude } = await convertAddressToLatLng(address);
+//                     return {
+//                         name: facility.사업장명,
+//                         address: facility.도로명주소,
+//                         lat: latitude,
+//                         lng: longitude,
+//                     };
+//                 } catch (error) {
+//                     console.error(`주소 변환 실패: ${facility.지번주소 || facility.도로명주소}`, error);
+//                     return null;
+//                 }
+//             }),
+//         );
+
+//         // 유효한 병원 데이터만 필터링
+//         facilityList.value = facilitysWithLatLng.filter((facility) => facility !== null);
+
+//         // 지도에 병원 마커 추가
+//         addMarkersToMap(facilityList.value);
+//     } catch (error) {
+//         console.error('API 호출 오류:', error);
+//     }
+// };
+
+// 뒤로가기 버튼 클릭 시 동작할 함수
+const goBack = () => {
+    window.history.back(); // 이전 페이지로 이동
+};
+
+const toggleMapSize = () => {
+    isMapMinimized.value = !isMapMinimized.value;
+
+    // 지도의 크기를 동적으로 조정
+    mapWrapperHeight.value = isMapMinimized.value ? '10vh' : '40vh';
+
+    // 애니메이션이 끝나기 전에 지도 중심을 미리 설정
+    if (!isMapMinimized.value && mapInstance.value && userLocation.value) {
+        // 지도가 확장될 때는 panTo 대신 setCenter를 사용하여 즉시 이동
+        mapInstance.value.setCenter(userLocation.value);
+    }
+
+    // 지도 크기 변경 후 중심을 다시 설정
+    setTimeout(() => {
+        window.dispatchEvent(new Event('resize')); // 지도의 크기가 변경되었음을 알림
+
+        // 지도 중심을 사용자 위치로 재설정
+        if (mapInstance.value && userLocation.value) {
+            mapInstance.value.panTo(userLocation.value);
+        }
+    }, 300); // 300ms 후 중심을 설정 (CSS transition 시간과 맞춤)
+};
+
+// 기존 마커들을 모두 지도에서 제거하는 함수
+const clearMarkers = () => {
+    markers.value.forEach((marker) => {
+        marker.setMap(null); // 마커를 지도에서 제거
+    });
+    markers.value = []; // 마커 배열 초기화
+};
+
+// facility-item을 클릭했을 때 해당 위치로 이동하는 함수
+const moveToFacility = (facility) => {
+    if (!mapInstance.value || !facility.lat || !facility.lng) return;
+
+    const facilityLocation = new window.kakao.maps.LatLng(facility.lat, facility.lng);
+
+    // 지도의 중심을 클릭한 시설의 위치로 이동
+    mapInstance.value.panTo(facilityLocation);
+};
+
+// 위치 기반 동물병원 검색 함수 (category_name 필터링 포함)
+const searchfacilitysNearLocation = (lat, lng, category) => {
+    if (!window.kakao || !window.kakao.maps) return;
+
+    const places = new window.kakao.maps.services.Places();
+
+    // 카테고리 검색 콜백 함수
+    const callback = (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+            // 응답 결과에서 선택한 카테고리의 category_name이 포함된 데이터만 필터링
+            let filteredResults;
+            if (category === '동물병원') {
+                filteredResults = result.filter((place) => place.category_name.includes('반려동물 > 동물병원'));
+            } else if (category === '애견카페') {
+                filteredResults = result.filter((place) => place.category_name.includes('애견카페'));
+            } else if (category === '반려동물미용') {
+                filteredResults = result.filter((place) => place.category_name.includes('반려동물미용'));
+            } else if (category === '반려동물용품') {
+                filteredResults = result.filter((place) => place.category_name.includes('반려동물용품'));
             }
-        });
+            updatefacilityListAndMarkers(filteredResults);
+        } else {
+            console.error('장소 검색 실패:', status);
+        }
+    };
+
+    // 키워드 검색 메서드 사용
+    places.keywordSearch(category, callback, {
+        location: new window.kakao.maps.LatLng(lat, lng),
+        radius: 3000, // 반경 3km
     });
 };
 
-// 공공데이터 API 호출 함수
-const fetchHospitalData = async () => {
-    try {
-        const response = await axios.get(BASE_URL, {
-            params: {
-                serviceKey: API_KEY,
-                page: 1,
-                perPage: 10,
-            },
-            headers: {
-                'Content-Type': 'application/json', // 요청의 Content-Type 설정
-                Accept: 'application/json', // 서버로부터 받을 데이터 형식 설정
-            },
-            withCredentials: false, // 자격 증명(쿠키)을 포함하지 않도록 설정
-        });
+// // 새로운 함수로 검색 로직 분리
+// const searchByCategory = (lat, lng, category) => {
+//     if (!lat || !lng) return;
+//     searchfacilitysNearLocation(lat, lng, category);
+// };
 
-        // API 호출 결과에서 병원 데이터 추출
-        console.log('API 응답 전체 데이터:', response.data); // 전체 응답 확인
+// 카테고리 버튼 클릭 시 호출되는 함수
+const searchCategory = (category) => {
+    activeCategory.value = category; // 클릭한 카테고리 버튼을 활성화 상태로 변경
 
-        const data = response.data.data;
-        console.log('병원 데이터:', data); // 추출한 병원 데이터 확인
+    // 기존 마커를 모두 제거
+    clearMarkers();
 
-        if (!Array.isArray(data)) {
-            console.error('받아온 데이터가 올바르지 않습니다.', data);
-            return;
-        }
-
-        const hospitalsWithLatLng = await Promise.all(
-            data.map(async (hospital) => {
-                try {
-                    // address 변수가 정의되지 않았을 수 있습니다.
-                    const address = hospital.도로명주소 || hospital.지번주소;
-                    const { latitude, longitude } = await convertAddressToLatLng(address);
-                    return {
-                        name: hospital.사업장명,
-                        address: hospital.도로명주소,
-                        lat: latitude,
-                        lng: longitude,
-                    };
-                } catch (error) {
-                    console.error(`주소 변환 실패: ${hospital.지번주소 || hospital.도로명주소}`, error);
-                    return null;
-                }
-            }),
-        );
-
-        // 유효한 병원 데이터만 필터링
-        hospitalList.value = hospitalsWithLatLng.filter((hospital) => hospital !== null);
-
-        // 지도에 병원 마커 추가
-        addMarkersToMap(hospitalList.value);
-    } catch (error) {
-        console.error('API 호출 오류:', error);
+    if (userLocation.value) {
+        searchfacilitysNearLocation(userLocation.value.getLat(), userLocation.value.getLng(), category);
     }
 };
 
+// 병원 리스트와 마커 업데이트 함수
+const updatefacilityListAndMarkers = (places) => {
+    // 검색 결과를 facilityList에 저장
+    facilityList.value = places.map((place) => ({
+        name: place.place_name,
+        address: place.road_address_name || place.address_name,
+        lat: place.y,
+        lng: place.x,
+    }));
+
+    // 기존 마커 모두 제거
+    clearMarkers();
+
+    // 검색된 병원들을 지도에 마커로 표시
+    addMarkersToMap(facilityList.value);
+};
+
 // 병원 데이터를 기반으로 지도에 마커 추가
-const addMarkersToMap = (hospitals) => {
+const addMarkersToMap = (facilitys) => {
     if (!isMapReady.value || !window.kakao || !window.kakao.maps) return;
 
-    hospitals.forEach((hospital) => {
-        const position = new window.kakao.maps.LatLng(hospital.lat, hospital.lng);
+    facilitys.forEach((facility) => {
+        const position = new window.kakao.maps.LatLng(facility.lat, facility.lng);
 
         const marker = new window.kakao.maps.Marker({
             position,
             map: mapInstance.value,
-            title: hospital.name,
+            title: facility.name,
         });
 
         // 마커 클릭 시 병원 이름 및 주소 출력
         window.kakao.maps.event.addListener(marker, 'click', () => {
-            alert(`병원명: ${hospital.name}\n주소: ${hospital.address}`);
+            alert(`시설명: ${facility.name}\n주소: ${facility.address}`);
         });
+
+        // 마커 배열에 저장
+        markers.value.push(marker);
     });
 };
 
@@ -188,10 +363,16 @@ const loadKakaoMap = (container) => {
         script.onload = () => {
             window.kakao.maps.load(() => {
                 initializeMap(container);
+                // 지도 로드 완료 후 사용자 위치 새로고침 호출
+                isMapReady.value = true;
+                refreshUserLocation();
             });
         };
     } else {
         initializeMap(container);
+        // 지도 로드 완료 후 사용자 위치 새로고침 호출
+        isMapReady.value = true;
+        refreshUserLocation();
     }
 };
 
@@ -199,7 +380,7 @@ const loadKakaoMap = (container) => {
 const initializeMap = (container) => {
     const options = {
         center: new window.kakao.maps.LatLng(37.583713, 126.999971),
-        level: 1, // 지도 확대 수준
+        level: 3, // 지도 확대 수준
     };
     mapInstance.value = new window.kakao.maps.Map(container, options);
 
@@ -212,7 +393,7 @@ const initializeMap = (container) => {
     window.kakao.maps.event.addListener(mapInstance.value, 'click', (mouseEvent) => {
         const latLng = mouseEvent.latLng;
         moveToLocation(latLng.getLat(), latLng.getLng());
-        fetchHospitalData(latLng.getLat(), latLng.getLng()); // 클릭한 위치를 기준으로 병원 데이터 가져오기
+        // fetchfacilityData(latLng.getLat(), latLng.getLng()); // 클릭한 위치를 기준으로 병원 데이터 가져오기
     });
 
     // 초기 위치를 기준으로 병원 데이터 가져오기
@@ -237,20 +418,12 @@ const updateUserMarker = (lat, lng) => {
         title: '현재 위치',
         draggable: false,
         image: new window.kakao.maps.MarkerImage(
-            `data:image/svg+xml;base64,${btoa(` 
-            <svg height="200px" width="200px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 293.334 293.334" xml:space="preserve" fill="#007AFF">
-                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                <g id="SVGRepo_iconCarrier"> 
-                    <g> 
-                        <g> 
-                            <path style="fill:#007AFF;" d="M146.667,0C94.903,0,52.946,41.957,52.946,93.721c0,22.322,7.849,42.789,20.891,58.878 c4.204,5.178,11.237,13.331,14.903,18.906c21.109,32.069,48.19,78.643,56.082,116.864c1.354,6.527,2.986,6.641,4.743,0.212 c5.629-20.609,20.228-65.639,50.377-112.757c3.595-5.619,10.884-13.483,15.409-18.379c6.554-7.098,12.009-15.224,16.154-24.084 c5.651-12.086,8.882-25.466,8.882-39.629C240.387,41.962,198.43,0,146.667,0z M146.667,144.358 c-28.892,0-52.313-23.421-52.313-52.313c0-28.887,23.421-52.307,52.313-52.307s52.313,23.421,52.313,52.307 C198.98,120.938,175.559,144.358,146.667,144.358z"></path> 
-                            <circle style="fill:#007AFF;" cx="146.667" cy="90.196" r="21.756"></circle> 
-                        </g> 
-                    </g> 
-                </g>
-            </svg>
-        `)}`,
+            `data:image/svg+xml;base64,${btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                    <circle cx="60" cy="50" r="40" fill="#FF0000" opacity="0.2"/>
+                    <circle cx="60" cy="50" r="25" fill="#FF0000"/>
+                </svg>
+            `)}`,
             new window.kakao.maps.Size(25, 25),
             {
                 offset: new window.kakao.maps.Point(25, 25),
@@ -258,6 +431,21 @@ const updateUserMarker = (lat, lng) => {
         ),
     });
 };
+
+// 주소를 위도와 경도로 변환하는 함수
+// const convertAddressToLatLng = async (address) => {
+//     const geocoder = new window.kakao.maps.services.Geocoder();
+//     return new Promise((resolve, reject) => {
+//         geocoder.addressSearch(address, (result, status) => {
+//             if (status === window.kakao.maps.services.Status.OK) {
+//                 const { y: latitude, x: longitude } = result[0];
+//                 resolve({ latitude, longitude });
+//             } else {
+//                 reject(`주소 변환 실패: ${address}`);
+//             }
+//         });
+//     });
+// };
 
 // 좌표를 주소로 변환하는 함수
 const getAddressFromCoords = (lat, lng) => {
@@ -280,15 +468,17 @@ const moveToLocation = (lat, lng) => {
     const location = new window.kakao.maps.LatLng(lat, lng);
     userLocation.value = location;
 
-    mapInstance.value.setCenter(location);
-    mapInstance.value.setLevel(1);
+    // 지도 중심을 부드럽게 이동 (panTo 사용)
+    mapInstance.value.panTo(location);
 
     // 사용자 위치 마커 업데이트
     updateUserMarker(lat, lng);
     // 주소 업데이트
     getAddressFromCoords(lat, lng);
+    // 현재 활성화된 카테고리로 병원 데이터 검색
+    searchfacilitysNearLocation(lat, lng, activeCategory.value);
     // API 호출하여 병원 데이터 가져오기
-    fetchHospitalData(lat, lng);
+    // fetchfacilityData(lat, lng);
 };
 
 // 사용자 위치 새로고침 함수
@@ -297,10 +487,18 @@ const refreshUserLocation = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 moveToLocation(position.coords.latitude, position.coords.longitude);
-                fetchHospitalData(position.coords.latitude, position.coords.longitude); // 사용자 위치를 기준으로 병원 데이터 가져오기
+                // 사용자 위치 기반 반경 2km 내 병원 검색
+                searchfacilitysNearLocation(position.coords.latitude, position.coords.longitude, activeCategory.value);
+                // 사용자 위치를 기준으로 병원 데이터 가져오기
+                // fetchfacilityData(position.coords.latitude, position.coords.longitude);
             },
             (error) => {
                 console.error('사용자 위치를 가져오는 중 오류 발생: ', error);
+            },
+            {
+                enableHighAccuracy: true, // 정확도 높은 위치 요청
+                timeout: 5000, // 위치 요청 타임아웃 설정
+                maximumAge: 0, // 캐시된 위치 정보 사용 방지
             },
         );
     } else {
@@ -322,13 +520,21 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.map-container {
+    background-color: #cee2f5;
+}
+
 .map-wrapper {
+    padding: 5px;
     position: relative;
     width: 100%;
     height: 40vh;
+    transition: height 0.3s ease;
 }
 
 .map-container {
+    border: none;
+    border-radius: 3px;
     width: 100%;
     height: 100%;
 }
@@ -352,8 +558,10 @@ onBeforeUnmount(() => {
 
 /* 현재 위치 정보 스타일 */
 .current-location-info {
-    width: 100%;
-    padding: 15px;
+    cursor: pointer;
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
     background-color: #8ec6f5;
     border-radius: 5px;
     margin-top: 10px;
@@ -374,48 +582,52 @@ onBeforeUnmount(() => {
     cursor: pointer;
 }
 
-/* 병원 리스트 스타일 */
-.hospital-list {
+/* 시설 리스트 스타일 */
+.facility-list {
+    overflow-y: auto;
     width: 100%;
+    height: 100%;
     margin-top: 10px;
+    transition: height 0.3s ease;
 }
 
-.hospital-item {
+.facility-item {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 15px;
-    background-color: #fff;
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
     margin-bottom: 10px;
 }
 
-.hospital-info {
+.facility-info {
     display: flex;
     flex-direction: column;
 }
 
-.hospital-name {
+.facility-name {
     font-size: 18px;
     font-weight: bold;
 }
 
-.hospital-address {
-    width: 440px;
+.facility-address {
+    width: 300px;
     color: #666;
 }
 
 /* 병원 예약 및 상담 버튼 스타일 */
-.hospital-action {
+.facility-action {
     display: flex; /* Flexbox 사용 */
-    flex-direction: column; /* 버튼들을 위아래로 정렬 */
+    flex-direction: row;
     justify-content: flex-start; /* 위쪽으로 정렬 */
     align-items: flex-end; /* 왼쪽으로 정렬 */
     gap: 10px; /* 버튼 사이의 간격 */
 }
-.hospital-action button {
-    margin-left: 5px;
+.facility-action button {
     padding: 5px 10px;
     border: none;
     border-radius: 5px;
@@ -423,12 +635,80 @@ onBeforeUnmount(() => {
 }
 
 .reservation-btn {
-    background-color: #007aff;
+    background-color: #539ee0;
     color: #fff;
 }
 
 .consultation-btn {
     background-color: #ff6f61;
     color: #fff;
+}
+
+.search-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 상단 바 스타일 */
+.top-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: #f0f0f0;
+    padding: 15px 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+/* 뒤로가기 버튼 스타일 */
+.back-button {
+    position: absolute;
+    left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* 검색 제목 스타일 */
+.search-title {
+    font-size: 18px;
+}
+
+/* 카테고리 버튼들 스타일 */
+.category-buttons {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+/* 각 카테고리 버튼 스타일 */
+.category-btn {
+    flex: 1; /* 동일한 너비를 가지도록 설정 */
+    margin: 0 0px;
+    height: 55px;
+    padding-top: 5px;
+    border: none;
+    background-color: #b1adad;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* 버튼 호버 시 배경색 변경 */
+.category-btn:hover {
+    background-color: #539ee0;
+}
+
+/* 활성화된 버튼에 적용되는 스타일 */
+.category-btn.active {
+    background-color: #539ee0; /* 활성화된 버튼의 배경색 */
+    font-weight: bold; /* 활성화된 버튼의 글씨 두껍게 */
+    color: #fff; /* 활성화된 버튼의 글자색 */
+    border: 2px solid #539ee0; /* 테두리 추가 */
 }
 </style>
