@@ -1,25 +1,25 @@
 // stores/profileStore.js
 import { defineStore } from 'pinia';
 
-export const useProfileStore = defineStore('profilePage1Store', {
+export const usePetStore = defineStore('pet', {
     state: () => ({
         petName: '',
+        imageFile: null,
         gender: '',
         animalType: '',
-        neutered: '',
+        birthDate: '',
+        neuteredStatus: '',
+        willNeutered: '',
     }),
     actions: {
-        setPetName(name) {
-            this.petName = name;
-        },
-        setGender(gender) {
-            this.gender = gender;
-        },
-        setAnimalType(type) {
-            this.animalType = type;
-        },
-        setNeuteredStatus(status) {
-            this.neutered = status;
+        setPetData(data) {
+            this.petName = data.petName;
+            this.imageFile = data.imageFile;
+            this.gender = data.gender;
+            this.animalType = data.animalType;
+            this.birthDate = data.birthDate;
+            this.neuteredStatus = data.neuteredStatus;
+            this.willNeutered = data.willNeutered;
         },
     },
 });

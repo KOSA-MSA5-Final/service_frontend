@@ -238,7 +238,11 @@
                             width: 100%;
                         "
                     >
-                        <input type="date" style="border-width: 0; height: 30px; text-align: center; outline: none" />
+                        <input
+                            type="date"
+                            style="border-width: 0; height: 30px; text-align: center; outline: none"
+                            v-model="birthDate"
+                        />
                     </div>
                 </div>
             </div>
@@ -323,6 +327,7 @@ export default {
             willneutered: '',
             dogs: [],
             cats: [],
+            birthDate: '',
         };
     },
     computed: {
@@ -389,7 +394,7 @@ export default {
                 formData.append('image', this.selectedFile);
 
                 // 백엔드로 이미지 업로드 요청 보내기
-                const response = await axios.post('http://localhost:9000/api/upload', formData, {
+                const response = await axios.post('http://localhost:8081/api/uploadProfileImage', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },

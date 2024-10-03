@@ -37,7 +37,7 @@
                         />
                     </svg>
                 </div>
-                <input class="searchInput" type="text" placeholder="알레르기원을 검색하세요" />
+                <input class="searchInput" type="text" v-model="searchKeyword" placeholder="알레르기원을 검색하세요" />
             </div>
             <!-- 알레르기가 없어요 -->
             <div class="allergyDiv" @click="toggleAllergy" style="display: flex">
@@ -75,17 +75,18 @@
             </div>
             <!-- 드롭다운 -->
             <div class="combo-box">
-                <button @click="toggleComboBox" class="combo-button">
-                    우유/계란
-                    <span class="arrow">{{ isOpen ? '▲' : '▼' }}</span>
-                </button>
-                <div v-if="isOpen" class="checkbox-list">
-                    <label v-for="(isChecked, item) in checkedItems" :key="item" class="checkbox-item">
-                        <input type="checkbox" v-model="checkedItems[item]" class="hidden-checkbox" />
+                <div class="checkbox-list">
+                    <label v-for="(allergy, index) in filteredAllergies" :key="index" class="checkbox-item">
+                        <input
+                            type="checkbox"
+                            v-model="checkedItems[allergy.name]"
+                            class="hidden-checkbox"
+                            @change="checkboxChanged(allergy)"
+                        />
                         <span class="custom-checkbox">
-                            <span v-if="isChecked" class="checkmark">✓</span>
+                            <span v-if="checkedItems[allergy.name]" class="checkmark">✓</span>
                         </span>
-                        {{ item }}
+                        {{ allergy.name }} ({{ allergy.type }})
                     </label>
                 </div>
             </div>
@@ -94,32 +95,73 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     components: {},
-
+    mounted() {
+        this.getAllergies(); // 페이지가 로드될 때 알레르기 목록을 가져옵니다.
+    },
     data() {
         return {
             isAllergy: 'n',
             value: [],
             isOpen: false,
-            checkedItems: {
-                '계란 흰자': false,
-                '계란 노른자': false,
-                우유: false,
-                체다치즈: false,
-                요거트: false,
-                버터: false,
-                'B-락토글로불린': false,
-                카제인: false,
-            },
+            checkedItems: {}, // 알레르기 항목들이 동적으로 추가될 예정
+            allergies: [], // 알레르기 목록을 저장할 배열
+            searchKeyword: '', // 사용자가 입력한 검색어
         };
+    },
+    computed: {
+        filteredAllergies() {
+            // 검색어를 기준으로 알레르기 목록을 필터링합니다.
+            if (!this.searchKeyword) {
+                return this.allergies;
+            }
+            return this.allergies.filter((allergy) =>
+                allergy.name.toLowerCase().includes(this.searchKeyword.toLowerCase()),
+            );
+        },
     },
     methods: {
         toggleAllergy() {
             this.isAllergy = this.isAllergy === 'y' ? 'n' : 'y';
+
+            if (this.isAllergy === 'y') {
+                // 알레르기 체크박스들을 모두 해제
+                Object.keys(this.checkedItems).forEach((key) => {
+                    this.checkedItems[key] = false;
+                });
+            }
         },
         toggleComboBox() {
             this.isOpen = !this.isOpen;
+        },
+        async getAllergies() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://localhost:8081/api/profile/allergies', {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                    },
+                });
+                this.allergies = response.data;
+                this.initializeCheckedItems(); //checkedItems 초기화
+            } catch (error) {
+                console.error('알러지 정보를 가져오는데 실패함', error);
+            }
+        },
+        // checkedItems 객체를 알레르기 목록으로 초기화
+        initializeCheckedItems() {
+            this.allergies.forEach((allergy) => {
+                this.checkedItems[allergy.name] = false; // 모든 알레르기 항목을 false로 초기화
+            });
+        },
+        checkboxChanged(allergy) {
+            // 체크박스가 클릭되었을 때 "알레르기가 없어요"의 상태를 lightgray로 바꾸기
+            if (this.checkedItems[allergy.name]) {
+                this.isAllergy = 'n'; // 체크박스를 누르면 알레르기가 없어요 상태를 false로 변경
+            }
         },
     },
 };
@@ -197,7 +239,7 @@ export default {
     width: 50%;
     justify-content: space-around;
 }
-/* combobox */
+/* 콤보박스 */
 .combo-box {
     font-family: Arial, sans-serif;
     margin-top: 10px;
@@ -220,8 +262,9 @@ export default {
 }
 .checkbox-list {
     border: 1px solid #ccc;
-    border-top: none;
     border-radius: 0 0 4px 4px;
+    height: 380px;
+    overflow-y: auto;
 }
 .checkbox-item {
     display: flex;
