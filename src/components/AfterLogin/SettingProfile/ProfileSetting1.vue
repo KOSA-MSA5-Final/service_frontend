@@ -177,7 +177,7 @@
                                     placeholder="강아지 종류는 무엇인가요?"
                                 />
                             </div>
-                            <ul style="padding: 10px 20px">
+                            <ul style="padding: 10px 20px; height: 400px; overflow-y: auto">
                                 <li v-for="(dog, index) in filteredDogs" :key="index" @click="selectAnimal(dog)">
                                     {{ dog }}
                                 </li>
@@ -207,7 +207,7 @@
                                     placeholder="고양이 종류는 무엇인가요?"
                                 />
                             </div>
-                            <ul style="padding: 10px 20px">
+                            <ul style="padding: 10px 20px; height: 400px; overflow-y: auto">
                                 <li v-for="(cat, index) in filteredCats" :key="index" @click="selectAnimal(cat)">
                                     {{ cat }}
                                 </li>
@@ -302,6 +302,9 @@ import axios from 'axios';
 
 export default {
     name: 'setProfilePage1',
+    mounted() {
+        this.getInfoAnimalType();
+    },
     components: {
         // NextButton,
     },
@@ -318,24 +321,8 @@ export default {
             searchTerm: '', // 강아지 검색어 저장
             searchCatTerm: '', // 고양이 검색어 저장
             willneutered: '',
-            dogs: [
-                // 강아지 종류 배열
-                '기타',
-                '가정용 반려 강아지',
-                '믹스',
-                '푸들',
-                '골든 리트리버',
-                '시바 이누',
-            ],
-            cats: [
-                // 고양이 종류 배열
-                '기타',
-                '고양이',
-                '샴',
-                '페르시안',
-                '스코티시 폴드',
-                '버미즈',
-            ],
+            dogs: [],
+            cats: [],
         };
     },
     computed: {
@@ -415,6 +402,22 @@ export default {
                 this.selectedFile = null;
             } catch (error) {
                 console.error('이미지 업로드 실패:', error);
+            }
+        },
+        async getInfoAnimalType() {
+            try {
+                console.log('나 불러지고 있어요');
+                const token = localStorage.getItem('token');
+
+                const response = await axios.get('https://localhost:8081/api/profile/animalDetails', {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                    },
+                });
+                this.dogs = response.data.dogs;
+                this.cats = response.data.cats;
+            } catch (error) {
+                console.error('품종정보가져오는거 실패', error);
             }
         },
     },
