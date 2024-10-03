@@ -20,13 +20,13 @@
             <div class="icon-grid">
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('skin') }"
-                    @click="toggleDisease('skin')"
+                    :class="{ 'active-border': isDisease.includes('피부계통(귀)') }"
+                    @click="toggleDisease('피부계통(귀)')"
                 >
                     <img src="@/assets/skin.png" alt="피부계통" />
                     <p>피부(귀)</p>
                     <img
-                        v-if="isDisease.includes('skin')"
+                        v-if="isDisease.includes('피부계통(귀)')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -34,13 +34,13 @@
                 </div>
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('eye') }"
-                    @click="toggleDisease('eye')"
+                    :class="{ 'active-border': isDisease.includes('눈') }"
+                    @click="toggleDisease('눈')"
                 >
                     <img src="@/assets/eye.png" alt="눈" />
                     <p>눈</p>
                     <img
-                        v-if="isDisease.includes('eye')"
+                        v-if="isDisease.includes('눈')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -48,13 +48,13 @@
                 </div>
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('stomach') }"
-                    @click="toggleDisease('stomach')"
+                    :class="{ 'active-border': isDisease.includes('소화기계통') }"
+                    @click="toggleDisease('소화기계통')"
                 >
                     <img src="@/assets/stomach.png" alt="소화기" />
                     <p>소화기</p>
                     <img
-                        v-if="isDisease.includes('stomach')"
+                        v-if="isDisease.includes('소화기계통')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -62,13 +62,13 @@
                 </div>
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('muscle') }"
-                    @click="toggleDisease('muscle')"
+                    :class="{ 'active-border': isDisease.includes('근골격계통') }"
+                    @click="toggleDisease('근골격계통')"
                 >
                     <img src="@/assets/muscle.png" alt="근골격" />
                     <p>근골격</p>
                     <img
-                        v-if="isDisease.includes('muscle')"
+                        v-if="isDisease.includes('근골격계통')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -76,13 +76,13 @@
                 </div>
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('nerve') }"
-                    @click="toggleDisease('nerve')"
+                    :class="{ 'active-border': isDisease.includes('신경계통') }"
+                    @click="toggleDisease('신경계통')"
                 >
                     <img src="@/assets/nerve.png" alt="신경" />
                     <p>신경</p>
                     <img
-                        v-if="isDisease.includes('nerve')"
+                        v-if="isDisease.includes('신경계통')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -90,13 +90,13 @@
                 </div>
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('obesity') }"
-                    @click="toggleDisease('obesity')"
+                    :class="{ 'active-border': isDisease.includes('대사계통') }"
+                    @click="toggleDisease('대사계통')"
                 >
                     <img width="50" height="50" src="https://img.icons8.com/ios/50/fat-dog.png" alt="fat-dog" />
                     <p>대사(비만)</p>
                     <img
-                        v-if="isDisease.includes('obesity')"
+                        v-if="isDisease.includes('대사계통')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -105,13 +105,13 @@
 
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('heart') }"
-                    @click="toggleDisease('heart')"
+                    :class="{ 'active-border': isDisease.includes('순환계통(심장)') }"
+                    @click="toggleDisease('순환계통(심장)')"
                 >
                     <img src="@/assets/heart.png" alt="심장" />
                     <p>심장</p>
                     <img
-                        v-if="isDisease.includes('heart')"
+                        v-if="isDisease.includes('순환계통(심장)')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -119,13 +119,13 @@
                 </div>
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('mouth') }"
-                    @click="toggleDisease('mouth')"
+                    :class="{ 'active-border': isDisease.includes('구강') }"
+                    @click="toggleDisease('구강')"
                 >
                     <img src="@/assets/mouth.png" alt="구강" />
                     <p>구강</p>
                     <img
-                        v-if="isDisease.includes('mouth')"
+                        v-if="isDisease.includes('구강')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -133,13 +133,13 @@
                 </div>
                 <div
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('lung') }"
-                    @click="toggleDisease('lung')"
+                    :class="{ 'active-border': isDisease.includes('호흡기계통') }"
+                    @click="toggleDisease('호흡기계통')"
                 >
                     <img src="@/assets/lung.png" alt="호흡기" />
                     <p>호흡기</p>
                     <img
-                        v-if="isDisease.includes('lung')"
+                        v-if="isDisease.includes('호흡기계통')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -153,13 +153,13 @@
                 <div
                     v-else
                     class="icon-item"
-                    :class="{ 'active-border': isDisease.includes('kidney') }"
-                    @click="toggleDisease('kidney')"
+                    :class="{ 'active-border': isDisease.includes('비뇨생식계통') }"
+                    @click="toggleDisease('비뇨생식계통')"
                 >
                     <img src="@/assets/kidney.png" alt="비뇨생식" />
                     <p>비뇨생식</p>
                     <img
-                        v-if="isDisease.includes('kidney')"
+                        v-if="isDisease.includes('비뇨생식계통')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -168,8 +168,8 @@
                 <div
                     class="icon-item"
                     v-if="showAdditionalIcons"
-                    :class="{ 'active-border': isDisease.includes('tumor') }"
-                    @click="toggleDisease('tumor')"
+                    :class="{ 'active-border': isDisease.includes('종양성') }"
+                    @click="toggleDisease('종양성')"
                 >
                     <img
                         width="50"
@@ -179,7 +179,7 @@
                     />
                     <p>종양</p>
                     <img
-                        v-if="isDisease.includes('tumor')"
+                        v-if="isDisease.includes('종양성')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -188,8 +188,8 @@
                 <div
                     class="icon-item"
                     v-if="showAdditionalIcons"
-                    :class="{ 'active-border': isDisease.includes('hormone') }"
-                    @click="toggleDisease('hormone')"
+                    :class="{ 'active-border': isDisease.includes('내분비(호르몬)계통') }"
+                    @click="toggleDisease('내분비(호르몬)계통')"
                 >
                     <img
                         width="50"
@@ -199,7 +199,7 @@
                     />
                     <p>호르몬</p>
                     <img
-                        v-if="isDisease.includes('hormone')"
+                        v-if="isDisease.includes('내분비(호르몬)계통')"
                         class="check-icon"
                         src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
                         alt="check-mark"
@@ -214,34 +214,25 @@
 </template>
 
 <script>
+import { useDiseaseStore } from '@/stores/profileDiseaseStore';
+import { storeToRefs } from 'pinia';
+import { ref } from 'vue'; // ref를 import
+
 export default {
-    data() {
-        return {
-            showAdditionalIcons: false,
-            isDisease: [], // 배열로 변경
+    setup() {
+        const diseaseStore = useDiseaseStore();
+        const { isDisease } = storeToRefs(diseaseStore);
+        const showAdditionalIcons = ref(false); // showAdditionalIcons를 ref로 선언
+
+        const toggleDisease = (disease) => {
+            diseaseStore.toggleDisease(disease);
         };
-    },
-    methods: {
-        toggleView() {
-            this.showAdditionalIcons = !this.showAdditionalIcons;
-        },
-        toggleDisease(disease) {
-            const index = this.isDisease.indexOf(disease);
-            if (index > -1) {
-                // 이미 선택된 경우 배열에서 제거
-                this.isDisease.splice(index, 1);
-            } else {
-                // 선택되지 않은 경우 배열에 추가
-                this.isDisease.push(disease);
-            }
-        },
-        handleClick() {
-            if (this.showAdditionalIcons) {
-                this.toggleDisease('kidney'); // 비뇨생식 클릭 시 실행
-            } else {
-                this.toggleView(); // 전체보기 클릭 시 실행
-            }
-        },
+
+        const toggleView = () => {
+            showAdditionalIcons.value = !showAdditionalIcons.value;
+        };
+
+        return { isDisease, toggleDisease, showAdditionalIcons, toggleView };
     },
 };
 </script>
@@ -250,7 +241,7 @@ export default {
 .pageContainer {
     flex-grow: 1;
     overflow-y: auto;
-    height: 92%; /* 스크롤바 숨기기 */
+    height: 100%; /* 스크롤바 숨기기 */
     scrollbar-width: none;
 }
 .bannerDiv {

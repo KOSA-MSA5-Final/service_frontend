@@ -14,7 +14,7 @@ export default {
     },
     methods: {
         goToNextPage() {
-            this.$router.push('/setProfile/4');
+            this.$router.push({ path: '/setProfile/4', state: { diseases: this.isDisease } });
         },
         goToBeforeLogin() {
             this.$router.push('/setProfile/2');
