@@ -18,7 +18,7 @@
 
         <!-- /setProfile/3일 때 EndButton을 표시 -->
         <div v-else-if="isPageThree">
-            <PrevNextButton />
+            <PrevNextButton2 />
         </div>
 
         <!-- /setProfile/3일 때 EndButton을 표시 -->
@@ -33,6 +33,8 @@ import { useRoute } from 'vue-router'; // 현재 경로를 감지하기 위해 �
 import { computed } from 'vue'; // computed 함수 import
 import NextButton from './NextButton.vue';
 import PrevNextButton from './PrevNextButton.vue';
+import PrevNextButton2 from './PrevNextButton2.vue';
+
 import EndButton from './EndButton.vue';
 
 import TopBar2 from './TopBar2.vue';
@@ -43,6 +45,7 @@ export default {
         PrevNextButton,
         NextButton,
         EndButton,
+        PrevNextButton2,
     },
     setup() {
         const route = useRoute(); // 현재 라우트를 감지
