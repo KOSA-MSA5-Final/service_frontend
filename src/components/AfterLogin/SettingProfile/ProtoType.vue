@@ -60,6 +60,10 @@ export default {
             isPageFour,
         };
     },
+    data() {
+        return {};
+    },
+    methods: {},
 };
 </script>
 

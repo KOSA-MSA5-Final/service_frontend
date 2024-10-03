@@ -11,11 +11,25 @@
             상태는 어떤가요?
             <img class="petwoman" :src="require('@/assets/medicine.png')" alt="" />
         </div>
+
+        <div class="whiteContentDiv">
+            <!-- <h2>선택된 질병 목록:</h2>
+            <ul>
+                <li v-for="disease in diseases" :key="disease">{{ disease }}</li>
+            </ul> -->
+        </div>
     </div>
 </template>
 
 <script>
-export default {};
+export default {
+    data() {
+        return {
+            diseases: [],
+        };
+    },
+    methods: {},
+};
 </script>
 
 <style scoped>
@@ -46,5 +60,13 @@ export default {};
     position: absolute; /* 부모 요소 내에서 위치를 조정 */
     right: 50px; /* 오른쪽으로 이동 */
     bottom: 30px; /* 하단 여백 설정 */
+}
+.whiteContentDiv {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    background-color: white;
+    padding: 20px 0px;
+    text-align: left;
 }
 </style>

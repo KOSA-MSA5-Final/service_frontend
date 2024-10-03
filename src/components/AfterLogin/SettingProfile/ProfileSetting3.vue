@@ -25,6 +25,12 @@
                 >
                     <img src="@/assets/skin.png" alt="피부계통" />
                     <p>피부(귀)</p>
+                    <img
+                        v-if="isDisease.includes('skin')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -33,6 +39,12 @@
                 >
                     <img src="@/assets/eye.png" alt="눈" />
                     <p>눈</p>
+                    <img
+                        v-if="isDisease.includes('eye')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -41,6 +53,12 @@
                 >
                     <img src="@/assets/stomach.png" alt="소화기" />
                     <p>소화기</p>
+                    <img
+                        v-if="isDisease.includes('stomach')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -49,6 +67,12 @@
                 >
                     <img src="@/assets/muscle.png" alt="근골격" />
                     <p>근골격</p>
+                    <img
+                        v-if="isDisease.includes('muscle')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -57,6 +81,12 @@
                 >
                     <img src="@/assets/nerve.png" alt="신경" />
                     <p>신경</p>
+                    <img
+                        v-if="isDisease.includes('nerve')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -65,6 +95,12 @@
                 >
                     <img width="50" height="50" src="https://img.icons8.com/ios/50/fat-dog.png" alt="fat-dog" />
                     <p>대사(비만)</p>
+                    <img
+                        v-if="isDisease.includes('obesity')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
 
                 <div
@@ -74,6 +110,12 @@
                 >
                     <img src="@/assets/heart.png" alt="심장" />
                     <p>심장</p>
+                    <img
+                        v-if="isDisease.includes('heart')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -82,6 +124,12 @@
                 >
                     <img src="@/assets/mouth.png" alt="구강" />
                     <p>구강</p>
+                    <img
+                        v-if="isDisease.includes('mouth')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -90,6 +138,12 @@
                 >
                     <img src="@/assets/lung.png" alt="호흡기" />
                     <p>호흡기</p>
+                    <img
+                        v-if="isDisease.includes('lung')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div v-if="!showAdditionalIcons" class="icon-item" @click="toggleView">
                     <img src="@/assets/plus.png" alt="전체보기" />
@@ -104,6 +158,12 @@
                 >
                     <img src="@/assets/kidney.png" alt="비뇨생식" />
                     <p>비뇨생식</p>
+                    <img
+                        v-if="isDisease.includes('kidney')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -118,6 +178,12 @@
                         alt="external-tumor-cell-medical-marijuana-medicine-cannabis-indica-medical-marijuana-ddara-lineal-ddara"
                     />
                     <p>종양</p>
+                    <img
+                        v-if="isDisease.includes('tumor')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div
                     class="icon-item"
@@ -132,6 +198,12 @@
                         alt="external-thyroid-gland-internal-human-organs-victoruler-outline-victoruler"
                     />
                     <p>호르몬</p>
+                    <img
+                        v-if="isDisease.includes('hormone')"
+                        class="check-icon"
+                        src="https://img.icons8.com/emoji/48/check-mark-emoji.png"
+                        alt="check-mark"
+                    />
                 </div>
                 <div class="icon-item hidden" v-if="showAdditionalIcons"></div>
                 <div class="icon-item hidden" v-if="showAdditionalIcons"></div>
@@ -231,6 +303,7 @@ export default {
 }
 
 .icon-item {
+    position: relative; /* 자식 요소인 check-icon의 위치를 설정하기 위해 relative 사용 */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -249,8 +322,12 @@ export default {
     font-size: 14px;
     text-align: center;
 }
-.icon-item.active-border {
-    border-color: black; /* 활성화된 박스의 테두리 색상 */
-    background-color: #71a9db;
+/* .icon-item.active-border {
+    border-color: red; 
+} */
+.check-icon {
+    position: absolute;
+    top: -5px;
+    right: -5px;
 }
 </style>
