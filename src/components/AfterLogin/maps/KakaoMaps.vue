@@ -120,7 +120,10 @@
                     @click="moveToFacility(facility)"
                 >
                     <div class="facility-info">
-                        <div class="facility-name">{{ facility.name }}</div>
+                        <div class="facility-name">
+                            {{ facility.name }}
+                            <span v-if="isAffiliated(facility)"> (제휴) </span>
+                        </div>
                         <div class="facility-address">{{ facility.address }}</div>
                     </div>
                     <div class="facility-action">
@@ -134,7 +137,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useFacilityStore } from '@/stores/facilityStore'; // Pinia 스토어 가져오기
 // import axios from 'axios';
 
 const mapContainer = ref(null);
@@ -146,6 +150,7 @@ const isMapMinimized = ref(false);
 const mapWrapperHeight = ref('40vh'); // 초기 높이는 40vh
 const currentAddress = ref('위치 정보를 불러오는 중...'); // 현재 위치 주소를 저장할 상태 변수
 const facilityList = ref([]); // 병원 리스트 데이터를 저장할 변수
+const facilityStore = useFacilityStore(); // Pinia 스토어 인스턴스 사용
 const activeCategory = ref('동물병원'); // 활성화된 카테고리를 저장할 상태 변수
 const markers = ref([]);
 const infoWindow = ref(null); // 인포윈도우 객체를 저장할 변수 선언
@@ -333,21 +338,56 @@ const searchCategory = (category) => {
     }
 };
 
+const mapKakaoDataToHospitalDTO = (kakaoData) => {
+    return {
+        name: kakaoData.place_name,
+        address: kakaoData.road_address_name || kakaoData.address_name,
+        phoneNumber: kakaoData.phone,
+        id: kakaoData.id,
+        isOurs: false, // 기본값은 제휴되지 않은 병원으로 설정
+    };
+};
+
 // 병원 리스트와 마커 업데이트 함수
-const updatefacilityListAndMarkers = (places) => {
-    // 검색 결과를 facilityList에 저장
-    facilityList.value = places.map((place) => ({
-        name: place.place_name,
-        address: place.road_address_name || place.address_name,
-        lat: place.y,
-        lng: place.x,
-        phone: place.phone,
-    }));
+const updatefacilityListAndMarkers = async (places) => {
+    // Kakao API 결과를 DTO 형태로 변환
+    const facilitiesWithLatLng = await Promise.all(
+        places.map(async (place) => {
+            const facilityDTO = mapKakaoDataToHospitalDTO(place);
+
+            // 제휴 병원 데이터와 비교하여 제휴 여부 설정
+            facilityDTO.isOurs = facilityStore.affiliatedFacilities.some(
+                (affiliated) => affiliated.name === facilityDTO.name && affiliated.address === facilityDTO.address,
+            );
+
+            try {
+                // 주소를 위도와 경도로 변환하여 추가
+                const { latitude, longitude } = await convertAddressToLatLng(facilityDTO.address);
+                facilityDTO.lat = latitude;
+                facilityDTO.lng = longitude;
+            } catch (error) {
+                console.error('Error converting address to lat/lng:', facilityDTO.address, error);
+            }
+
+            return facilityDTO;
+        }),
+    );
 
     // 기존 마커 모두 제거
     clearMarkers();
 
-    // 검색된 병원들을 지도에 마커로 표시
+    // 제휴 병원이 상단에 오도록 정렬
+    const sortedFacilities = facilitiesWithLatLng.sort((a, b) => {
+        // 제휴 병원이면 상단에 배치
+        if (a.isOurs && !b.isOurs) return -1;
+        if (!a.isOurs && b.isOurs) return 1;
+
+        // 그 외에는 거리 순서대로 정렬
+        return a.distance - b.distance;
+    });
+
+    // 시설 리스트를 업데이트하고 지도에 마커로 표시
+    facilityList.value = sortedFacilities;
     addMarkersToMap(facilityList.value);
 };
 
@@ -355,16 +395,48 @@ const updatefacilityListAndMarkers = (places) => {
 const addMarkersToMap = (facilities) => {
     if (!isMapReady.value || !window.kakao || !window.kakao.maps) return;
 
+    // 제휴 병원 마커 이미지 설정
+    const affiliatedMarkerImageSrc = `data:image/svg+xml;base64,${btoa(`
+<svg height="30px" width="30px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#000000">
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+    <g id="SVGRepo_iconCarrier">
+        <path style="fill:#DCE5FA;" d="M465.051,8.862H46.95c-21.035,0-38.089,17.053-38.089,38.089v418.101 c0,21.035,17.053,38.089,38.089,38.089h418.1c21.035,0,38.089-17.053,38.089-38.089V46.949 C503.139,25.914,486.086,8.862,465.051,8.862z"></path> 
+        <path style="opacity:0.1;enable-background:new ;" d="M67.933,465.051V46.949c0-21.036,17.053-38.089,38.089-38.089H46.951 c-21.036,0-38.089,17.053-38.089,38.089v418.1c0,21.036,17.053,38.089,38.089,38.089h59.071 C84.986,503.138,67.933,486.086,67.933,465.051z"></path> 
+        <path style="fill:#FF6465;" d="M394.17,210.114h-92.283v-92.284c0-11.65-9.445-21.095-21.097-21.095h-49.578 c-11.651,0-21.097,9.445-21.097,21.095v92.283h-92.285c-11.65,0-21.095,9.445-21.095,21.097v49.578 c0,11.651,9.445,21.096,21.095,21.096h92.283v92.283c0,11.65,9.445,21.095,21.097,21.095h49.578 c11.651,0,21.097-9.445,21.097-21.095v-92.283h92.283c11.65,0,21.095-9.445,21.095-21.096V231.21 C415.265,219.56,405.82,210.114,394.17,210.114z"></path> 
+        <path d="M280.79,424.125h-49.578c-16.519,0-29.957-13.439-29.957-29.956v-83.422h-83.423c-16.517,0-29.956-13.439-29.956-29.957 v-49.578c0-16.519,13.439-29.957,29.956-29.957h83.422v-83.424c0-16.517,13.439-29.956,29.957-29.956h49.578 c16.519,0,29.957,13.439,29.957,29.956v83.422h83.422c16.517,0,29.956,13.439,29.956,29.957v49.578 c0,16.519-13.439,29.957-29.956,29.957h-83.422v83.422C310.747,410.687,297.308,424.125,280.79,424.125z M117.831,218.975 c-6.746,0-12.235,5.489-12.235,12.236v49.578c0,6.747,5.489,12.236,12.235,12.236h92.283c4.893,0,8.861,3.966,8.861,8.861v92.283 c0,6.747,5.489,12.235,12.236,12.235h49.578c6.747,0,12.236-5.489,12.236-12.235v-92.283c0-4.895,3.967-8.861,8.861-8.861h92.283 c6.746,0,12.235-5.489,12.235-12.236v-49.578c0-6.747-5.489-12.236-12.235-12.236h-92.283c-4.893,0-8.861-3.966-8.861-8.861v-92.284 c0-6.747-5.489-12.235-12.236-12.235H231.21c-6.747,0-12.236,5.489-12.236,12.235v92.283c0,4.895-3.967,8.861-8.861,8.861h-92.283 V218.975z"></path> 
+        <path d="M360.591,512H46.95c-25.888,0-46.949-21.061-46.949-46.949V46.949C0.002,21.061,21.063,0,46.95,0h44.273 c4.893,0,8.861,3.966,8.861,8.861s-3.967,8.861-8.861,8.861H46.95c-16.117,0-29.228,13.113-29.228,29.228v418.1 c0,16.117,13.111,29.228,29.228,29.228h313.641c4.893,0,8.861,3.966,8.861,8.861C369.451,508.033,365.484,512,360.591,512z"></path> 
+        <path d="M465.05,512h-69.017c-4.893,0-8.861-3.966-8.861-8.861c0-4.895,3.967-8.861,8.861-8.861h69.017 c16.117,0,29.228-13.113,29.228-29.228V46.949c0-16.117-13.111-29.228-29.228-29.228H126.666c-4.893,0-8.861-3.966-8.861-8.861 S121.772,0,126.666,0H465.05c25.888,0,46.949,21.061,46.949,46.949v418.1C511.999,490.939,490.938,512,465.05,512z"></path> 
+    </g>
+</svg>
+`)}`;
+
+    // 제휴 병원 마커 이미지 객체
+    const affiliatedMarkerImage = new window.kakao.maps.MarkerImage(
+        affiliatedMarkerImageSrc,
+        new window.kakao.maps.Size(30, 30), // 마커 이미지 크기 설정
+        { offset: new window.kakao.maps.Point(15, 30) }, // 마커 위치 오프셋 설정
+    );
+
     facilities.forEach((facility) => {
+        if (!facility.lat || !facility.lng) {
+            console.error('Facility is missing latitude or longitude:', facility);
+            return; // 위도/경도 값이 없는 시설은 건너뜀
+        }
+
         const position = new window.kakao.maps.LatLng(facility.lat, facility.lng);
 
+        // 제휴 여부에 따라 마커 이미지 설정
+        const markerImage = facility.isOurs ? affiliatedMarkerImage : null; // 제휴 병원일 경우만 커스텀 마커 적용
+
+        // 마커 생성 시 이미지 설정
         const marker = new window.kakao.maps.Marker({
             position,
             map: mapInstance.value,
             title: facility.name,
+            image: markerImage, // 마커 이미지 설정 (제휴 병원이 아닐 경우 null로 두어 기본 마커 사용)
         });
 
-        // 마커 클릭 시 인포윈도우 생성
         window.kakao.maps.event.addListener(marker, 'click', () => {
             createInfoWindow(marker, facility);
         });
@@ -514,19 +586,19 @@ const updateUserMarker = (lat, lng) => {
 };
 
 // 주소를 위도와 경도로 변환하는 함수
-// const convertAddressToLatLng = async (address) => {
-//     const geocoder = new window.kakao.maps.services.Geocoder();
-//     return new Promise((resolve, reject) => {
-//         geocoder.addressSearch(address, (result, status) => {
-//             if (status === window.kakao.maps.services.Status.OK) {
-//                 const { y: latitude, x: longitude } = result[0];
-//                 resolve({ latitude, longitude });
-//             } else {
-//                 reject(`주소 변환 실패: ${address}`);
-//             }
-//         });
-//     });
-// };
+const convertAddressToLatLng = async (address) => {
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    return new Promise((resolve, reject) => {
+        geocoder.addressSearch(address, (result, status) => {
+            if (status === window.kakao.maps.services.Status.OK) {
+                const { y: latitude, x: longitude } = result[0];
+                resolve({ latitude, longitude });
+            } else {
+                reject(`주소 변환 실패: ${address}`);
+            }
+        });
+    });
+};
 
 // 좌표를 주소로 변환하는 함수
 const getAddressFromCoords = (lat, lng) => {
@@ -587,13 +659,26 @@ const refreshUserLocation = () => {
     }
 };
 
+// 제휴 병원 데이터와 비교하여 일치하는지 확인하는 함수
+const isAffiliated = (facility) => {
+    return facilityStore.affiliatedFacilities.some(
+        (affiliated) => affiliated.name === facility.name && affiliated.address === facility.address,
+    );
+};
+
 // 지도 초기화 및 이벤트 등록
 onMounted(async () => {
     try {
+        // 제휴 병원 데이터를 불러옴
+        await facilityStore.fetchAffiliatedFacilities();
+
+        // Kakao Maps SDK를 로드하고 초기화 (완료될 때까지 기다림)
         await loadKakaoMap(mapContainer.value);
-        nextTick(() => {
-            addMapClickListener(); // Kakao Maps SDK가 로드된 이후에만 이벤트 리스너 등록
-        });
+
+        // Kakao Maps SDK가 정상적으로 로드된 이후, 이벤트 리스너 등록
+        addMapClickListener();
+
+        console.log('Kakao Map 초기화 및 이벤트 리스너 등록 완료');
     } catch (error) {
         console.error('Kakao Map 로드 중 오류 발생:', error);
     }
