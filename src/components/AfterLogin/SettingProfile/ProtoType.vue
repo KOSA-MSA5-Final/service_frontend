@@ -16,8 +16,6 @@
 <script>
 import { useRoute } from 'vue-router'; // 현재 경로를 감지하기 위해 사용
 import { computed } from 'vue'; // computed 함수 import
-// import NextButton from './NextButton.vue';
-// import PrevNextButton from './PrevNextButton.vue';
 import PrevNextButton2 from './PrevNextButton2.vue';
 
 import TopBar2 from './TopBar2.vue';
@@ -25,25 +23,15 @@ import TopBar2 from './TopBar2.vue';
 export default {
     components: {
         TopBar2,
-        // PrevNextButton,
-        // NextButton,
-
         PrevNextButton2,
     },
     setup() {
         const route = useRoute(); // 현재 라우트를 감지
 
-        // 현재 경로에 따른 컴포넌트 표시
-        const isPageOne = computed(() => route.path === '/setProfile/1');
-        const isPageTwo = computed(() => route.path === '/setProfile/2');
         const isPageThree = computed(() => route.path === '/setProfile/3');
-        const isPageFour = computed(() => route.path === '/setProfile/4');
 
         return {
-            isPageOne,
-            isPageTwo,
             isPageThree,
-            isPageFour,
         };
     },
     data() {

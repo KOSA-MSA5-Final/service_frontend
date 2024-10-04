@@ -267,6 +267,7 @@
                 </div>
             </div>
         </div>
+
         <NextButton class="nextButton" @click="handleNextButton" />
     </div>
 </template>
@@ -302,6 +303,7 @@ export default {
             dogs: [],
             cats: [],
             birthDate: '',
+            showError: false, // 에러 메시지 표시 여부
         };
     },
     computed: {
@@ -325,6 +327,7 @@ export default {
         // 중성화 선택 메소드
         selectNeutered(type) {
             this.neuteredselected = type;
+            this.showError = false; // 선택 시 에러 메시지 숨김
         },
         openModal() {
             this.isModalOpen = true; // 클릭하면 모달 열림
@@ -410,6 +413,12 @@ export default {
                 willneutered: this.willneutered,
             });
             console.log('안녕하세요' + petStore.petName);
+
+            if (this.neuteredselected && this.petName && this.birthDate && this.inputValue && this.maleselected) {
+                this.$router.push('/setProfile/2');
+            } else {
+                alert('값을 다 입력해주세요');
+            }
         },
     },
 };

@@ -1,6 +1,6 @@
 <template>
     <div class="btnContainer">
-        <div @click="goToNextPage" class="nextBtn">
+        <div class="nextBtn">
             &nbsp; 다음
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -26,11 +26,7 @@ export default {
             //현재 경로를 다음 경로로 매핑
         };
     },
-    methods: {
-        goToNextPage() {
-            this.$router.push('/setProfile/2');
-        },
-    },
+    methods: {},
 };
 </script>
 
