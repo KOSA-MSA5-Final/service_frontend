@@ -12,7 +12,7 @@
         </div>
 
         <!-- contents가 존재하면 프로필 정보 표시 -->
-        <div id="center-button" v-else @click="goToProfile">
+        <div id="center-button" v-else @click="goToProfile(contents)">
             <img :src="contents.pictureUrl" :alt="contents.name" />
             <p>{{ contents.name }}</p>
         </div>
@@ -38,9 +38,12 @@ export default defineComponent({
         const { contents } = storeToRefs(store);
 
         // Navigation functions
-        const goToProfile = () => {
-            if (contents.value) {
-                router.push('/main/profile');
+        const goToProfile = (contents) => {
+            if (contents) {
+                router.push({
+                    name: 'ProfileMainPage', // 해당 페이지의 라우트 이름
+                    params: { profileData: contents },
+                });
             }
         };
 
