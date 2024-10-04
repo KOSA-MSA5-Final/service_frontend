@@ -37,10 +37,21 @@
                         />
                     </svg>
                 </div>
-                <input class="searchInput" type="text" v-model="searchKeyword" placeholder="알레르기원을 검색하세요" />
+                <input
+                    class="searchInput"
+                    type="text"
+                    v-model="searchKeyword"
+                    placeholder="알레르기원을 검색하세요"
+                    @input="handleSearch"
+                />
             </div>
             <!-- 알레르기가 없어요 -->
-            <div class="allergyDiv" @click="toggleAllergy" style="display: flex">
+            <div
+                class="allergyDiv"
+                @click="toggleAllergy"
+                :style="{ color: anyChecked ? 'lightgray' : 'black' }"
+                style="display: flex"
+            >
                 <div v-if="isAllergy === 'y'">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -74,39 +85,44 @@
                 </div>
             </div>
             <!-- 드롭다운 -->
-            <div class="combo-box">
-                <div class="checkbox-list">
-                    <label v-for="(allergy, index) in filteredAllergies" :key="index" class="checkbox-item">
+            <div class="combo-box" v-for="(allergyItems, type) in groupedAllergies" :key="type">
+                <button @click="toggleComboBox(type)" class="combo-button">
+                    {{ type }}
+                    <span class="arrow">{{ isOpen === type ? '▲' : '▼' }}</span>
+                </button>
+                <div v-if="isOpen === type" class="checkbox-list">
+                    <label v-for="(allergy, index) in allergyItems" :key="index" class="checkbox-item">
                         <input
                             type="checkbox"
                             v-model="checkedItems[allergy.name]"
                             class="hidden-checkbox"
-                            @change="checkboxChanged(allergy)"
+                            @change="updateAllergyStatus"
                         />
                         <span class="custom-checkbox">
                             <span v-if="checkedItems[allergy.name]" class="checkmark">✓</span>
                         </span>
-                        {{ allergy.name }} ({{ allergy.type }})
+                        {{ allergy.name }}
                     </label>
                 </div>
             </div>
         </div>
+        <PrevNextButton class="prevNextButton" @click="handlePrevNextButton" />
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import PrevNextButton from './PrevNextButton.vue';
+import { usePage2Store } from '@/stores/profilePage2Store';
 
 export default {
-    components: {},
     mounted() {
         this.getAllergies(); // 페이지가 로드될 때 알레르기 목록을 가져옵니다.
     },
     data() {
         return {
             isAllergy: 'n',
-            value: [],
-            isOpen: false,
+            isOpen: null, // 각 콤보박스의 열림 상태를 관리
             checkedItems: {}, // 알레르기 항목들이 동적으로 추가될 예정
             allergies: [], // 알레르기 목록을 저장할 배열
             searchKeyword: '', // 사용자가 입력한 검색어
@@ -122,6 +138,21 @@ export default {
                 allergy.name.toLowerCase().includes(this.searchKeyword.toLowerCase()),
             );
         },
+        groupedAllergies() {
+            // allergy.type을 기준으로 그룹화합니다.
+            return this.filteredAllergies.reduce((groups, allergy) => {
+                const type = allergy.type;
+                if (!groups[type]) {
+                    groups[type] = [];
+                }
+                groups[type].push(allergy);
+                return groups;
+            }, {});
+        },
+        anyChecked() {
+            // 하나 이상의 체크박스가 체크되었는지 확인하는 로직
+            return Object.values(this.checkedItems).some((value) => value === true);
+        },
     },
     methods: {
         toggleAllergy() {
@@ -134,8 +165,8 @@ export default {
                 });
             }
         },
-        toggleComboBox() {
-            this.isOpen = !this.isOpen;
+        toggleComboBox(type) {
+            this.isOpen = this.isOpen === type ? null : type;
         },
         async getAllergies() {
             try {
@@ -146,7 +177,7 @@ export default {
                     },
                 });
                 this.allergies = response.data;
-                this.initializeCheckedItems(); //checkedItems 초기화
+                this.initializeCheckedItems(); // checkedItems 초기화
             } catch (error) {
                 console.error('알러지 정보를 가져오는데 실패함', error);
             }
@@ -157,12 +188,32 @@ export default {
                 this.checkedItems[allergy.name] = false; // 모든 알레르기 항목을 false로 초기화
             });
         },
-        checkboxChanged(allergy) {
-            // 체크박스가 클릭되었을 때 "알레르기가 없어요"의 상태를 lightgray로 바꾸기
-            if (this.checkedItems[allergy.name]) {
-                this.isAllergy = 'n'; // 체크박스를 누르면 알레르기가 없어요 상태를 false로 변경
+        updateAllergyStatus() {
+            // 체크박스 상태가 변경될 때 호출되는 함수
+            if (this.anyChecked) {
+                this.isAllergy = 'n'; // 알레르기가 하나라도 체크되면 "알레르기가 없어요" 상태를 끔
             }
         },
+        // 검색할 때 관련된 콤보박스를 자동으로 엽니다.
+        handleSearch() {
+            const filtered = this.filteredAllergies;
+            if (filtered.length > 0) {
+                const firstType = filtered[0].type; // 첫 번째 필터된 항목의 타입을 기준으로 콤보박스를 엽니다.
+                this.isOpen = firstType;
+            } else {
+                this.isOpen = null; // 검색 결과가 없으면 모든 콤보박스를 닫습니다.
+            }
+        },
+        async handlePrevNextButton() {
+            const page2Store = usePage2Store();
+            page2Store.setCheckedItems({
+                checkedItems: this.checkedItems,
+            });
+            console.log('안녕하세요 page2예요' + JSON.stringify(page2Store.checkedItems, null, 2));
+        },
+    },
+    components: {
+        PrevNextButton,
     },
 };
 </script>
@@ -263,7 +314,7 @@ export default {
 .checkbox-list {
     border: 1px solid #ccc;
     border-radius: 0 0 4px 4px;
-    height: 380px;
+    height: auto;
     overflow-y: auto;
 }
 .checkbox-item {
@@ -291,5 +342,10 @@ export default {
 .checkmark {
     color: black;
     font-size: 14px;
+}
+.prevNextButton {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 </style>

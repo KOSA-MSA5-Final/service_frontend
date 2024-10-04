@@ -6,18 +6,8 @@
             <router-view></router-view>
         </div>
 
-        <!-- /setProfile/1일 때 NextButton을 표시 -->
-        <div v-if="isPageOne">
-            <NextButton />
-        </div>
-
-        <!-- /setProfile/2일 때 PrevNextButton을 표시 -->
-        <div v-else-if="isPageTwo">
-            <PrevNextButton />
-        </div>
-
         <!-- /setProfile/3일 때 EndButton을 표시 -->
-        <div v-else-if="isPageThree">
+        <div v-if="isPageThree">
             <PrevNextButton2 />
         </div>
 
@@ -31,8 +21,8 @@
 <script>
 import { useRoute } from 'vue-router'; // 현재 경로를 감지하기 위해 사용
 import { computed } from 'vue'; // computed 함수 import
-import NextButton from './NextButton.vue';
-import PrevNextButton from './PrevNextButton.vue';
+// import NextButton from './NextButton.vue';
+// import PrevNextButton from './PrevNextButton.vue';
 import PrevNextButton2 from './PrevNextButton2.vue';
 
 import EndButton from './EndButton.vue';
@@ -42,8 +32,8 @@ import TopBar2 from './TopBar2.vue';
 export default {
     components: {
         TopBar2,
-        PrevNextButton,
-        NextButton,
+        // PrevNextButton,
+        // NextButton,
         EndButton,
         PrevNextButton2,
     },

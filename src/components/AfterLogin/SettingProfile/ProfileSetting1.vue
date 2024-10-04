@@ -91,36 +91,7 @@
                     v-model="inputValue"
                 />
             </div>
-            <div v-if="inputValue == '기타'" style="margin-top: 10px">
-                <!-- input -->
-                <div style="align-items: center; display: flex; align-content: center; flex-direction: row">
-                    <!-- 기타 품종을 적는 input  -->
-                    <div
-                        style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            border-radius: 40px;
-                            border: 1px solid lightgray;
-                            height: 40px;
-                            width: 100%;
-                        "
-                    >
-                        <input
-                            type="text"
-                            style="
-                                border-width: 0;
-                                height: 30px;
-                                text-align: center;
-                                outline: none;
-                                width: inherit;
-                                border-radius: 90%;
-                            "
-                            placeholder="해당 이름이 없다면 이름을 적어주세요"
-                        />
-                    </div>
-                </div>
-            </div>
+
             <!-- 종류를 누르면 팟하고 나오는 창 -->
             <transition name="fade">
                 <div v-if="isModalOpen" class="modalOverlay" @click="closeModal">
@@ -296,21 +267,24 @@
                 </div>
             </div>
         </div>
+        <NextButton class="nextButton" @click="handleNextButton" />
     </div>
-    <!-- <NextButton /> -->
 </template>
 
 <script>
-// import NextButton from './NextButton.vue';
+import NextButton from './NextButton.vue';
+import { usePetStore } from '@/stores/profilePage1Store';
+
 import axios from 'axios';
 
 export default {
     name: 'setProfilePage1',
+    setup() {},
     mounted() {
         this.getInfoAnimalType();
     },
     components: {
-        // NextButton,
+        NextButton,
     },
     data() {
         return {
@@ -424,6 +398,18 @@ export default {
             } catch (error) {
                 console.error('품종정보가져오는거 실패', error);
             }
+        },
+        async handleNextButton() {
+            const petStore = usePetStore();
+            petStore.setPetProfile({
+                petName: this.petName,
+                maleselected: this.maleselected,
+                selectedAnimalType: this.selectedAnimalType,
+                birthDate: this.birthDate,
+                neuteredselected: this.neuteredselected,
+                willneutered: this.willneutered,
+            });
+            console.log('안녕하세요' + petStore.petName);
         },
     },
 };
@@ -630,5 +616,10 @@ export default {
 }
 li {
     list-style: none;
+}
+.nextButton {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 </style>

@@ -32,7 +32,6 @@
 import { useDiseaseStore } from '@/stores/profileDiseaseStore';
 import axios from 'axios';
 import { storeToRefs } from 'pinia';
-import { usePetStore } from '@/stores/profilePage1Store';
 
 export default {
     data() {
@@ -45,20 +44,8 @@ export default {
         const diseaseStore = useDiseaseStore();
         const { isDisease } = storeToRefs(diseaseStore);
 
-        // Pinia에서 petStore의 상태를 가져옴
-        const petStore = usePetStore();
-        const { petName, imageFile, gender, animalType, birthDate, neuteredStatus, willNeutered } =
-            storeToRefs(petStore);
-
         return {
             isDisease,
-            petName,
-            imageFile,
-            gender,
-            animalType,
-            birthDate,
-            neuteredStatus,
-            willNeutered,
         };
     },
     mounted() {

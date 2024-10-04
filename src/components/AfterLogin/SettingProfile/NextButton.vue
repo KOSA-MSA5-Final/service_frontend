@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import { usePetStore } from '@/stores/profilePage1Store';
-
 export default {
     data() {
         return {
@@ -30,18 +28,6 @@ export default {
     },
     methods: {
         goToNextPage() {
-            const petStore = usePetStore();
-
-            petStore.setPetData({
-                petName: this.petName,
-                imageFile: this.selectedFile,
-                gender: this.maleselected,
-                animalType: this.inputValue,
-                birthDate: this.birthDate, // 생일을 저장하는 변수
-                neuteredStatus: this.neuteredselected,
-                willNeutered: this.willneutered,
-            });
-
             this.$router.push('/setProfile/2');
         },
     },
