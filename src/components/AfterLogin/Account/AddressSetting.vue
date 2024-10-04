@@ -1,71 +1,66 @@
 <template>
-    <div id="addresses-container">
+    <div id="addresses-container" v-if="addresses.length > 0">
         <div id="addresses" v-for="address in addresses" :key="address.id">
             <div id="contents">
                 <div id="infos">
                     <div id="address">주소 : {{ address.address }}</div>
-
-                    <div id="receiptant_name">수령자 이름 : {{ address.receiptant_name }}</div>
-                    <div id="receiptant_addess">
-                        수령자 연락처 :
-                        {{ address.receiptant_telNum }}
-                    </div>
+                    <div id="receiptant_name">수령자 이름 : {{ address.receipientName }}</div>
+                    <div id="receiptant_telNum">수령자 연락처 : {{ address.receipientTellNum }}</div>
                 </div>
                 <div id="buttonsAndTag">
-                    <div id="primary-tag" v-if="address.isPrimary">대표 배송지</div>
-                    <div id="change-to-primary-btn" v-if="!address.isPrimary" @click="changePrimaryAddress(address.id)">
+                    <div id="primary-tag" v-if="address.isPrimary === 'T'">대표 배송지</div>
+                    <div
+                        id="change-to-primary-btn"
+                        v-if="address.isPrimary === 'F'"
+                        @click="changePrimaryAddress(address.id)"
+                    >
                         대표 배송지 <br />설정
                     </div>
-                    <div id="delete-btn" v-if="!address.isPrimary">삭제</div>
+                    <div id="delete-btn" v-if="address.isPrimary === 'F'">삭제</div>
                 </div>
             </div>
         </div>
+    </div>
+    <div id="No address" v-else>
+        <p>저장된 배송지 주소가 없습니다. 추가해 주세요!</p>
     </div>
 </template>
 
 <script>
 import { useRouter } from 'vue-router';
+import { fetchAddressList } from '@/fetch_datas/addressStore';
+
 export default {
     name: 'AddressSettingPage',
     setup() {
         const router = useRouter();
+        const addressStore = fetchAddressList();
 
-        return { router };
+        return { router, addressStore };
     },
     data() {
         return {
-            addresses: [
-                {
-                    id: 1,
-                    address: '서울시 강남구 광평로10길 15, 상록수 아파트 108동',
-                    isPrimary: false,
-                    receiptant_name: '최혜령',
-                    receiptant_telNum: '010-4586-5811',
-                },
-                {
-                    id: 2,
-                    address: '서울시 강남구 광평로 10길',
-                    isPrimary: true,
-                    receiptant_name: '나선주',
-                    receiptant_telNum: '010-9999-1111',
-                },
-            ],
+            addresses: [],
         };
+    },
+    async created() {
+        try {
+            await this.addressStore.fetchContents();
+            this.addresses = this.addressStore.contents; // 서버에서 가져온 주소 데이터를 설정
+        } catch (error) {
+            console.error('Error fetching addresses:', error);
+        }
     },
     methods: {
         changePrimaryAddress(newPrimaryId) {
-            // 기존의 대표 배송지를 찾아 isPrimary를 false로 변경
             const oldPrimary = this.addresses.find((addr) => addr.isPrimary);
             if (oldPrimary) {
                 oldPrimary.isPrimary = false;
             }
-
-            // 선택한 배송지의 isPrimary를 true로 변경
             const newPrimary = this.addresses.find((addr) => addr.id === newPrimaryId);
             if (newPrimary) {
                 newPrimary.isPrimary = true;
             }
-
             console.log('대표 배송지가 변경되었습니다.');
         },
     },
