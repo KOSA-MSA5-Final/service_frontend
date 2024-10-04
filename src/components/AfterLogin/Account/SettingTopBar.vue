@@ -2,17 +2,22 @@
     <div id="topBar2">
         <div id="mgng-back" class="back_btn" @click="goToBack">
             <svg
+                width="30px"
+                height="30px"
+                fill="#000000"
+                viewBox="0 0 200 200"
+                data-name="Layer 1"
+                id="Layer_1"
                 xmlns="http://www.w3.org/2000/svg"
-                width="40"
-                height="40"
-                fill="currentColor"
-                class="bi bi-arrow-left"
-                viewBox="0 0 16 16"
             >
-                <path
-                    fill-rule="evenodd"
-                    d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
-                />
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <title></title>
+                    <path
+                        d="M160,89.75H56l53-53a9.67,9.67,0,0,0,0-14,9.67,9.67,0,0,0-14,0l-56,56a30.18,30.18,0,0,0-8.5,18.5c0,1-.5,1.5-.5,2.5a6.34,6.34,0,0,0,.5,3,31.47,31.47,0,0,0,8.5,18.5l56,56a9.9,9.9,0,0,0,14-14l-52.5-53.5H160a10,10,0,0,0,0-20Z"
+                    ></path>
+                </g>
             </svg>
         </div>
         <div id="mgng-title">
@@ -54,18 +59,26 @@ export default {
 
 <style scoped>
 #topBar2 {
+    width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
+    position: relative;
     background-color: white;
-    height: 70px;
-    margin-bottom: 5px;
-    padding: 0 15px;
+    padding: 15px 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
 }
 #mgng-title {
-    flex: 4;
+    font-size: 20px;
 }
 #mgng-back {
-    text-align: left;
+    position: absolute;
+    left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 #mgng-skip {
     text-align: right;

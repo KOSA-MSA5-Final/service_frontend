@@ -114,6 +114,11 @@ const routes = [
         name: 'MapsPage',
         component: KakaoMaps,
     },
+    {
+        path: '/main/upload_receipt',
+        name: 'RegisterReceiptPage',
+        component: RegisterReceipt,
+    },
 ];
 
 const router = createRouter({
