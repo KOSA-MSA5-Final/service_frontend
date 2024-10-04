@@ -13,32 +13,41 @@
                 <p class="title">개인 정보</p>
                 <p class="sstitle">관리하기</p>
             </div>
+
             <div id="change-pwd">
                 <img class="icon" src="@/assets/icon-password.svg" alt="Password Icon" />
                 <p class="title">비밀번호</p>
                 <p class="sstitle">변경하기</p>
             </div>
-            <div id="logout" @click="logout">
+
+            <div id="logout" @click="handleLogout">
                 <img class="icon" src="@/assets/icon-logout.svg" alt="Logout Icon" />
                 <p class="title">로그아웃</p>
                 <p class="sstitle">하기</p>
             </div>
         </div>
+
         <div id="separating-line"></div>
+
         <p class="ttitle">우리집 아이들</p>
         <p class="subtitle">반려동물 프로필을 클릭하면</p>
         <p class="subtitle">현재 계정 프로필이 선택한 프로필로 변경됩니다.</p>
+
         <div id="mypets-container">
             <div id="mypet-profiles">
-                <div id="profiles" v-if="profiles.length > 0">
-                    <div class="profile" v-for="profile in profiles" :key="profile.profile_id">
-                        <img :src="profile.profile_picture_url" :alt="profile.profile_name" />
-                        <p>{{ profile.profile_name }}</p>
+                <div id="profiles" v-if="profiles && profiles.length > 0">
+                    <div
+                        class="profile"
+                        v-for="profile in profiles"
+                        :key="profile.id"
+                        @click="handleProfileSelect(profile)"
+                    >
+                        <img :src="profile.pictureUrl" :alt="profile.name" />
+                        <p>{{ profile.name }}</p>
                     </div>
                 </div>
                 <div id="add-profile">
-                    <div class="add-profile" @click="addProfile">
-                        <!-- <img src="@/assets/icon-add.svg" alt="Add Icon" /> -->
+                    <div class="add-profile" @click="handleAddProfile">
                         <img src="@/assets/jangoon.gif" alt="Strong Jangoon" />
                         <p>반려동물 추가</p>
                     </div>
@@ -49,63 +58,78 @@
 </template>
 
 <script>
-import { useAuthStore } from '@/post_datas/loginStore';
+import { defineComponent, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/post_datas/loginStore';
+import { useUserAllInfoStore } from '@/fetch_datas/userAllInfoStore';
+import { storeToRefs } from 'pinia';
 
-export default {
+export default defineComponent({
     name: 'SettingsMainPage',
-    setup() {
-        const authStore = useAuthStore();
-        const router = useRouter();
 
-        return { authStore, router };
-    },
-    data() {
+    setup() {
+        const router = useRouter();
+        const authStore = useAuthStore();
+        const userAllInfoStore = useUserAllInfoStore();
+
+        // Pinia store에서 반응형 데이터 가져오기
+        const { userInfo, loading } = storeToRefs(userAllInfoStore);
+
+        // 컴퓨티드 속성으로 프로필과 멤버 정보 관리
+        const profiles = computed(() => userAllInfoStore.getAllProfiles);
+        const memberInfo = computed(() => userAllInfoStore.getMemberInfo);
+
+        // 컴포넌트 마운트 시 데이터 로드
+        onMounted(async () => {
+            try {
+                await userAllInfoStore.fetchUserAllInfo();
+            } catch (error) {
+                console.error('Failed to fetch user info:', error);
+                // 에러 처리 로직 추가 가능
+            }
+        });
+
+        // 이벤트 핸들러들
+        const handleLogout = async () => {
+            try {
+                await authStore.logout();
+                userAllInfoStore.clearStore(); // 사용자 정보 클리어
+                router.push('/');
+            } catch (error) {
+                console.error('Logout error:', error);
+                // 에러 처리 로직 추가 가능
+            }
+        };
+
+        const handleProfileSelect = (profile) => {
+            // 프로필 선택 로직 구현
+            console.log('Selected profile:', profile);
+            // 필요한 경우 추가 로직 구현
+        };
+
+        const handleAddProfile = () => {
+            router.push({ name: 'setProfilePage1' });
+        };
+
+        const addressSettingsPage = () => {
+            router.push({ name: 'AddressSettingMain' });
+        };
+
         return {
-            profiles: [
-                {
-                    profile_id: 1,
-                    profile_picture_url:
-                        'https://elliebucket1.s3.ap-northeast-2.amazonaws.com/%ED%86%A0%EB%81%BC%EA%B6%81%EB%94%94.jpg',
-                    profile_name: '토깽이',
-                },
-                {
-                    profile_id: 2,
-                    profile_picture_url:
-                        'https://elliebucket1.s3.ap-northeast-2.amazonaws.com/%ED%86%A0%EB%81%BC%EA%B6%81%EB%94%94.jpg',
-                    profile_name: '장구니',
-                },
-                {
-                    profile_id: 3,
-                    profile_picture_url:
-                        'https://elliebucket1.s3.ap-northeast-2.amazonaws.com/%ED%86%A0%EB%81%BC%EA%B6%81%EB%94%94.jpg',
-                    profile_name: '멍멍이',
-                },
-            ],
+            // 상태
+            profiles,
+            memberInfo,
+            userInfo,
+            loading,
+
+            // 메소드
+            handleLogout,
+            handleProfileSelect,
+            handleAddProfile,
+            addressSettingsPage,
         };
     },
-    methods: {
-        async logout() {
-            try {
-                this.authStore.logout();
-
-                console.log('로그아웃 성공');
-
-                // 로그아웃 후 로그인 페이지로 리디렉션
-                this.$router.push('/');
-            } catch (error) {
-                console.error('로그아웃 중 오류 발생:', error);
-                // 오류 처리 로직을 추가할 수 있습니다.
-            }
-        },
-        addressSettingsPage() {
-            this.router.push({ name: 'AddressSettingMain' });
-        },
-        addProfile() {
-            this.router.push({ name: 'setProfilePage1' });
-        },
-    },
-};
+});
 </script>
 
 <style scoped>
