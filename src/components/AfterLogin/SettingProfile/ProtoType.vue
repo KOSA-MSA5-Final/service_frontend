@@ -6,19 +6,9 @@
             <router-view></router-view>
         </div>
 
-        <!-- /setProfile/1일 때 NextButton을 표시 -->
-        <div v-if="isPageOne">
-            <NextButton />
-        </div>
-
-        <!-- /setProfile/2일 때 PrevNextButton을 표시 -->
-        <div v-else-if="isPageTwo">
-            <PrevNextButton />
-        </div>
-
         <!-- /setProfile/3일 때 EndButton을 표시 -->
-        <div v-else-if="isPageThree">
-            <EndButton />
+        <div v-if="isPageThree">
+            <PrevNextButton2 />
         </div>
     </div>
 </template>
@@ -26,18 +16,19 @@
 <script>
 import { useRoute } from 'vue-router'; // 현재 경로를 감지하기 위해 사용
 import { computed } from 'vue'; // computed 함수 import
-import NextButton from './NextButton.vue';
-import PrevNextButton from './PrevNextButton.vue';
-import EndButton from './EndButton.vue';
+// import NextButton from './NextButton.vue';
+// import PrevNextButton from './PrevNextButton.vue';
+import PrevNextButton2 from './PrevNextButton2.vue';
 
 import TopBar2 from './TopBar2.vue';
 
 export default {
     components: {
         TopBar2,
-        PrevNextButton,
-        NextButton,
-        EndButton,
+        // PrevNextButton,
+        // NextButton,
+
+        PrevNextButton2,
     },
     setup() {
         const route = useRoute(); // 현재 라우트를 감지
@@ -46,13 +37,19 @@ export default {
         const isPageOne = computed(() => route.path === '/setProfile/1');
         const isPageTwo = computed(() => route.path === '/setProfile/2');
         const isPageThree = computed(() => route.path === '/setProfile/3');
+        const isPageFour = computed(() => route.path === '/setProfile/4');
 
         return {
             isPageOne,
             isPageTwo,
             isPageThree,
+            isPageFour,
         };
     },
+    data() {
+        return {};
+    },
+    methods: {},
 };
 </script>
 

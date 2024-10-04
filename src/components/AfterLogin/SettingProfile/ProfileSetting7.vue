@@ -224,6 +224,9 @@
                     <br />
                     대사계통(비만)
                 </div>
+                <div class="diseaseBox"></div>
+                <div class="diseaseBox"></div>
+                <div class="diseaseBox"></div>
             </div>
         </div>
     </div>

@@ -2,7 +2,6 @@
     <div id="topBar2">
         <div id="mgng-back" class="back_btn" @click="goToBeforeLogin">
             <img class="petwoman" :src="require('@/assets/icon-home.svg')" alt="" style="width: 30px; height: 30px" />
-
         </div>
         <div id="mgng-title">프로필 추가</div>
         <div id="mgng-skip" class="skip_btn">건너뛰기</div>
@@ -16,13 +15,8 @@ export default {
             //현재 경로를 이전 경로로 매핑
             routeMap: {
                 '/setProfile/1': '/main/settings', //맨처음에서 메인 페이지로 돌아감
-                '/setProfile/2': '/setProfile/1',
-                '/setProfile/3': '/setProfile/2',
-                '/setProfile/4': '/setProfile/3',
-                '/setProfile/5': '/setProfile/4',
-                '/setProfile/6': '/setProfile/5',
-                '/setProfile/7': '/setProfile/6',
-                '/setProfile/8': '/setProfile/7',
+                '/setProfile/2': '/main/settings',
+                '/setProfile/3': '/main/settings',
             },
         };
     },

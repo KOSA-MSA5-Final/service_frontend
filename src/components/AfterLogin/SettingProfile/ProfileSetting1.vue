@@ -4,7 +4,7 @@
             <div class="bannerFlexDiv">
                 <div style="color: gray">설정하기</div>
                 <div style="color: gray">
-                    <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">1</span>/ 3
+                    <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">1</span>/ 4
                 </div>
             </div>
             함께하고있는<br />
@@ -91,36 +91,7 @@
                     v-model="inputValue"
                 />
             </div>
-            <div v-if="inputValue == '기타'" style="margin-top: 10px">
-                <!-- input -->
-                <div style="align-items: center; display: flex; align-content: center; flex-direction: row">
-                    <!-- 기타 품종을 적는 input  -->
-                    <div
-                        style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            border-radius: 40px;
-                            border: 1px solid lightgray;
-                            height: 40px;
-                            width: 100%;
-                        "
-                    >
-                        <input
-                            type="text"
-                            style="
-                                border-width: 0;
-                                height: 30px;
-                                text-align: center;
-                                outline: none;
-                                width: inherit;
-                                border-radius: 90%;
-                            "
-                            placeholder="해당 이름이 없다면 이름을 적어주세요"
-                        />
-                    </div>
-                </div>
-            </div>
+
             <!-- 종류를 누르면 팟하고 나오는 창 -->
             <transition name="fade">
                 <div v-if="isModalOpen" class="modalOverlay" @click="closeModal">
@@ -177,7 +148,7 @@
                                     placeholder="강아지 종류는 무엇인가요?"
                                 />
                             </div>
-                            <ul style="padding: 10px 20px">
+                            <ul style="padding: 10px 20px; height: 400px; overflow-y: auto">
                                 <li v-for="(dog, index) in filteredDogs" :key="index" @click="selectAnimal(dog)">
                                     {{ dog }}
                                 </li>
@@ -207,7 +178,7 @@
                                     placeholder="고양이 종류는 무엇인가요?"
                                 />
                             </div>
-                            <ul style="padding: 10px 20px">
+                            <ul style="padding: 10px 20px; height: 400px; overflow-y: auto">
                                 <li v-for="(cat, index) in filteredCats" :key="index" @click="selectAnimal(cat)">
                                     {{ cat }}
                                 </li>
@@ -238,7 +209,11 @@
                             width: 100%;
                         "
                     >
-                        <input type="date" style="border-width: 0; height: 30px; text-align: center; outline: none" />
+                        <input
+                            type="date"
+                            style="border-width: 0; height: 30px; text-align: center; outline: none"
+                            v-model="birthDate"
+                        />
                     </div>
                 </div>
             </div>
@@ -292,18 +267,24 @@
                 </div>
             </div>
         </div>
+        <NextButton class="nextButton" @click="handleNextButton" />
     </div>
-    <!-- <NextButton /> -->
 </template>
 
 <script>
-// import NextButton from './NextButton.vue';
+import NextButton from './NextButton.vue';
+import { usePetStore } from '@/stores/profilePage1Store';
+
 import axios from 'axios';
 
 export default {
     name: 'setProfilePage1',
+    setup() {},
+    mounted() {
+        this.getInfoAnimalType();
+    },
     components: {
-        // NextButton,
+        NextButton,
     },
     data() {
         return {
@@ -318,24 +299,9 @@ export default {
             searchTerm: '', // 강아지 검색어 저장
             searchCatTerm: '', // 고양이 검색어 저장
             willneutered: '',
-            dogs: [
-                // 강아지 종류 배열
-                '기타',
-                '가정용 반려 강아지',
-                '믹스',
-                '푸들',
-                '골든 리트리버',
-                '시바 이누',
-            ],
-            cats: [
-                // 고양이 종류 배열
-                '기타',
-                '고양이',
-                '샴',
-                '페르시안',
-                '스코티시 폴드',
-                '버미즈',
-            ],
+            dogs: [],
+            cats: [],
+            birthDate: '',
         };
     },
     computed: {
@@ -402,7 +368,7 @@ export default {
                 formData.append('image', this.selectedFile);
 
                 // 백엔드로 이미지 업로드 요청 보내기
-                const response = await axios.post('http://localhost:9000/api/upload', formData, {
+                const response = await axios.post('http://localhost:8081/api/uploadProfileImage', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -416,6 +382,34 @@ export default {
             } catch (error) {
                 console.error('이미지 업로드 실패:', error);
             }
+        },
+        async getInfoAnimalType() {
+            try {
+                console.log('나 불러지고 있어요');
+                const token = localStorage.getItem('token');
+
+                const response = await axios.get('https://localhost:8081/api/profile/animalDetails', {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                    },
+                });
+                this.dogs = response.data.dogs;
+                this.cats = response.data.cats;
+            } catch (error) {
+                console.error('품종정보가져오는거 실패', error);
+            }
+        },
+        async handleNextButton() {
+            const petStore = usePetStore();
+            petStore.setPetProfile({
+                petName: this.petName,
+                maleselected: this.maleselected,
+                selectedAnimalType: this.inputValue,
+                birthDate: this.birthDate,
+                neuteredselected: this.neuteredselected,
+                willneutered: this.willneutered,
+            });
+            console.log('안녕하세요' + petStore.petName);
         },
     },
 };
@@ -622,5 +616,10 @@ export default {
 }
 li {
     list-style: none;
+}
+.nextButton {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 </style>
