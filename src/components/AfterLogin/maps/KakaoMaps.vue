@@ -138,7 +138,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useFacilityStore } from '@/stores/facilityStore'; // Pinia 스토어 가져오기
+import { useFacilityStore } from '@/fetch_datas/facilityStore'; // Pinia 스토어 가져오기
 // import axios from 'axios';
 
 const mapContainer = ref(null);
