@@ -5,9 +5,16 @@
             <p>메인화면</p>
         </div>
 
-        <div id="center-button" @click="goToProfile">
+        <!-- contents가 null이거나 비어있으면 반려동물 추가 버튼 표시 -->
+        <div id="center-button" v-if="!contents" @click="goToCreateProfile">
             <img src="@/assets/jangoon.gif" />
             <p>반려동물 추가</p>
+        </div>
+
+        <!-- contents가 존재하면 프로필 정보 표시 -->
+        <div id="center-button" v-else @click="goToProfile">
+            <img :src="contents.pictureUrl" :alt="contents.name" />
+            <p>{{ contents.name }}</p>
         </div>
 
         <div id="right-button">
@@ -18,32 +25,43 @@
 </template>
 
 <script>
+import { defineComponent, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useCurrentProfileStore } from '@/fetch_datas/currentProfileStore';
+import { storeToRefs } from 'pinia';
 
-export default {
-    name: 'ButtomBar',
+export default defineComponent({
+    name: 'BottomBar',
     setup() {
-        const router = useRouter(); // Use the Vue Router
+        const router = useRouter();
+        const store = useCurrentProfileStore();
+        const { contents } = storeToRefs(store);
 
+        // Navigation functions
         const goToProfile = () => {
-            router.push('/main/profile'); // Navigate to the profile page
+            if (contents.value) {
+                router.push('/main/profile');
+            }
         };
 
-        const goToMain = () => {
-            router.push('/main');
-        };
+        const goToMain = () => router.push('/main');
+        const goToSettings = () => router.push('/main/settings');
+        const goToCreateProfile = () => router.push('/setProfile/1');
 
-        const goToSettings = () => {
-            router.push('/main/settings');
-        };
+        // Fetch profile data when component is mounted
+        onMounted(async () => {
+            await store.fetchContents();
+        });
 
         return {
+            contents,
             goToProfile,
             goToMain,
             goToSettings,
+            goToCreateProfile,
         };
     },
-};
+});
 </script>
 
 <style scoped>
