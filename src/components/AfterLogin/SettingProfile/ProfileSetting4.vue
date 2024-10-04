@@ -14,17 +14,31 @@
 
         <div class="whiteContentDiv">
             <h2>질병 및 하위 질병 목록:</h2>
+
             <div v-if="diseaseData && Object.keys(diseaseData).length > 0">
                 <div v-for="(subDiseaseList, diseaseName) in diseaseData" :key="diseaseName">
-                    <h3>{{ diseaseName }}</h3>
-                    <ul>
-                        <li v-for="subDisease in subDiseaseList" :key="subDisease">{{ subDisease }}</li>
-                    </ul>
+                    <button @click="toggleComboBox(diseaseName)" class="combo-button">
+                        {{ diseaseName }}
+                        <span class="arrow">{{ isComboOpen[diseaseName] ? '▲' : '▼' }}</span>
+                    </button>
+                    <div v-if="isComboOpen[diseaseName]" class="checkbox-list">
+                        <label v-for="(subDisease, index) in subDiseaseList" :key="index" class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                v-model="checkedItems[diseaseName][subDisease]"
+                                class="hidden-checkbox"
+                            />
+                            <span class="custom-checkbox">
+                                <span v-if="checkedItems[diseaseName][subDisease]" class="checkmark">✓</span>
+                            </span>
+                            {{ subDisease }}
+                        </label>
+                    </div>
                 </div>
             </div>
             <p v-else>선택된 질병 정보가 없습니다.</p>
-            <!-- 선택된 항목이 없을 경우 -->
         </div>
+        <EndButton class="endButton" @click="saveProfile" />
     </div>
 </template>
 
@@ -32,12 +46,21 @@
 import { useDiseaseStore } from '@/stores/profileDiseaseStore';
 import axios from 'axios';
 import { storeToRefs } from 'pinia';
+import { usePage2Store } from '@/stores/profilePage2Store';
+import { usePetStore } from '@/stores/profilePage1Store';
+
+import EndButton from './EndButton.vue';
 
 export default {
     data() {
         return {
-            diseaseData: {}, //서버에서 받은 질병과 하위 질병 데이터를 저장
+            diseaseData: {}, // 서버에서 받은 질병과 하위 질병 데이터를 저장
+            isComboOpen: {}, // 각 질병에 대한 콤보박스 열림 상태를 관리
+            checkedItems: {}, // 각 질병과 하위 항목에 대한 체크박스 상태를 관리
         };
+    },
+    components: {
+        EndButton,
     },
     setup() {
         // Pinia에서 isDisease 상태를 가져옴
@@ -50,26 +73,115 @@ export default {
     },
     mounted() {
         this.fetchSubDiseases();
+        this.fetchUserInfo(); // 사용자 정보를 가져오기 위해 호출
     },
     methods: {
+        toggleComboBox(diseaseName) {
+            // 콤보박스 열림 상태를 토글
+            this.isComboOpen[diseaseName] = !this.isComboOpen[diseaseName];
+        },
         async fetchSubDiseases() {
             try {
-                //isDisease 배열을 서버에 보내고 데이터를 받아옴
-                const token = localStorage.getItem('token'); // 저장된
+                // isDisease 배열을 서버에 보내고 데이터를 받아옴
+                const token = localStorage.getItem('token');
                 const response = await axios.post(
                     '/profile/subdiseases',
-                    this.isDisease, //pinia에서 보내온 값을 가져옴
+                    this.isDisease, // pinia에서 가져온 값을 보냄
                     {
                         headers: {
                             Authorization: `Bearer ${token}`, // JWT 토큰 포함
                         },
                     },
                 );
-                //서버로부터 받은 질병과 하위 질병 데이터를 저장
+                // 서버로부터 받은 질병과 하위 질병 데이터를 저장
                 this.diseaseData = response.data;
                 console.log(this.diseaseData);
+
+                // 각 질병에 대해 상태 초기화
+                this.initializeComboState();
             } catch (error) {
                 console.error('Error fetching sub disease: ', error);
+            }
+        },
+        initializeComboState() {
+            // 받은 데이터에 기반하여 isComboOpen 및 checkedItems를 초기화
+            for (const diseaseName in this.diseaseData) {
+                // 콤보박스 상태 초기화
+                this.isComboOpen[diseaseName] = false;
+
+                // 체크박스 상태 초기화
+                this.checkedItems[diseaseName] = {};
+                this.diseaseData[diseaseName].forEach((subDisease) => {
+                    this.checkedItems[diseaseName][subDisease] = false;
+                });
+            }
+        },
+        async fetchUserInfo() {
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await axios.get('https://localhost:8081/auth/userinfo', {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                    },
+                });
+                this.userInfo = response.data; // 사용자 정보 저장
+                console.log('User Info:', this.userInfo); // 사용자 정보 출력
+            } catch (error) {
+                console.error('Failed to fetch user info:', error.response.data);
+            }
+        },
+        async saveProfile() {
+            const token = localStorage.getItem('token');
+            console.log('token' + token);
+            try {
+                const page2Store = usePage2Store();
+                const petStore = usePetStore();
+
+                //페이지2스토어에서 필요한 데이터 가져오기
+                const selectedAllergies = Object.keys(page2Store.checkedItems).filter(
+                    (item) => page2Store.checkedItems[item],
+                );
+                console.log(selectedAllergies); // ["우유", "보리", "메밀"]
+
+                //페이지1스토어에서 필요한 데이터 가져오기
+                const petName = petStore.petName;
+                const petType = petStore.selectedAnimalType;
+                const petGender = petStore.maleselected;
+                const petBirthDate = petStore.birthDate;
+                const petIsNeutered = petStore.neuteredselected;
+                const petWillNeutered = petStore.willneutered;
+
+                const diseaseStore = useDiseaseStore();
+                const { isDisease } = storeToRefs(diseaseStore);
+
+                const checkedDiseases = this.checkedItems;
+
+                const username = this.userInfo.username;
+                //백엔드로 보내기 위한 데이터 준비
+                const profileData = {
+                    petName,
+                    petType,
+                    petGender,
+                    petBirthDate,
+                    petIsNeutered,
+                    petWillNeutered,
+                    selectedAllergies,
+                    isDisease,
+                    checkedDiseases,
+                    username, // 사용자 정보 추가
+                };
+
+                const response = await axios.post('https://localhost:8081/api/profile/saveProfile', profileData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                    },
+                });
+                if (response.status === 200) {
+                    alert('프로필이 성공적으로 저장되었습니다');
+                }
+            } catch (error) {
+                console.error('프로필 저장 실패: ', error);
             }
         },
     },
@@ -112,5 +224,62 @@ export default {
     background-color: white;
     padding: 20px 0px;
     text-align: left;
+}
+/* 콤보박스 */
+.combo-box {
+    font-family: Arial, sans-serif;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+}
+.combo-button {
+    width: 100%;
+    padding: 6px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.arrow {
+    font-size: 12px;
+}
+.checkbox-list {
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+}
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+}
+.checkbox-item:hover {
+    background-color: #f0f0f0;
+}
+.hidden-checkbox {
+    display: none;
+}
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #999;
+    border-radius: 3px;
+    margin-right: 8px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+.checkmark {
+    color: black;
+    font-size: 14px;
+}
+.endButton {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
 }
 </style>

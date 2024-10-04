@@ -404,7 +404,7 @@ export default {
             petStore.setPetProfile({
                 petName: this.petName,
                 maleselected: this.maleselected,
-                selectedAnimalType: this.selectedAnimalType,
+                selectedAnimalType: this.inputValue,
                 birthDate: this.birthDate,
                 neuteredselected: this.neuteredselected,
                 willneutered: this.willneutered,

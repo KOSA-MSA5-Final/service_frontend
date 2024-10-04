@@ -10,11 +10,6 @@
         <div v-if="isPageThree">
             <PrevNextButton2 />
         </div>
-
-        <!-- /setProfile/3일 때 EndButton을 표시 -->
-        <div v-else-if="isPageFour">
-            <EndButton />
-        </div>
     </div>
 </template>
 
@@ -25,8 +20,6 @@ import { computed } from 'vue'; // computed 함수 import
 // import PrevNextButton from './PrevNextButton.vue';
 import PrevNextButton2 from './PrevNextButton2.vue';
 
-import EndButton from './EndButton.vue';
-
 import TopBar2 from './TopBar2.vue';
 
 export default {
@@ -34,7 +27,7 @@ export default {
         TopBar2,
         // PrevNextButton,
         // NextButton,
-        EndButton,
+
         PrevNextButton2,
     },
     setup() {
