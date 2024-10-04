@@ -106,13 +106,17 @@
                 </div>
             </div>
         </div>
-        <PrevNextButton class="prevNextButton" @click="handlePrevNextButton" />
+        <div class="prevNextButton">
+            <div class="btnContainer">
+                <div class="prevBtnDiv" @click="goToBeforeLogin">이전</div>
+                <div class="nextBtnDiv" @click="handlePrevNextButton">다음</div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-import PrevNextButton from './PrevNextButton.vue';
 import { usePage2Store } from '@/stores/profilePage2Store';
 
 export default {
@@ -210,11 +214,18 @@ export default {
                 checkedItems: this.checkedItems,
             });
             console.log('안녕하세요 page2예요' + JSON.stringify(page2Store.checkedItems, null, 2));
+
+            if (this.isAllergy === 'n') {
+                alert('알레르기여부를 체크해주세요');
+            } else {
+                this.$router.push('/setProfile/3');
+            }
+        },
+        goToBeforeLogin() {
+            this.$router.push('/setProfile/1');
         },
     },
-    components: {
-        PrevNextButton,
-    },
+    components: {},
 };
 </script>
 
@@ -347,5 +358,38 @@ export default {
     position: absolute;
     bottom: 0;
     width: 100%;
+}
+.btnContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    text-align: center;
+    align-content: center;
+}
+.prevBtnDiv {
+    flex: 1;
+    background-color: #d9d9d9;
+    align-content: center;
+    cursor: pointer;
+    text-align: center;
+    height: inherit;
+    font-size: 15px;
+}
+.nextBtnDiv {
+    flex: 1.5;
+    background-color: #1860c3;
+    height: inherit;
+    color: white;
+    align-content: center;
+    cursor: pointer;
+    text-align: center;
+    font-size: 15px;
+}
+.prevBtnDiv:hover {
+    opacity: 80%;
+}
+.nextBtnDiv:hover {
+    opacity: 80%;
 }
 </style>

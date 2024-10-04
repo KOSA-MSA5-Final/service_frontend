@@ -38,7 +38,12 @@
             </div>
             <p v-else>선택된 질병 정보가 없습니다.</p>
         </div>
-        <EndButton class="endButton" @click="saveProfile" />
+        <div class="endButton">
+            <div class="btnContainer">
+                <div class="prevBtnDiv" @click="goToBeforeLogin">이전</div>
+                <div class="nextBtnDiv" @click="saveProfile">프로필 생성하기</div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -49,8 +54,6 @@ import { storeToRefs } from 'pinia';
 import { usePage2Store } from '@/stores/profilePage2Store';
 import { usePetStore } from '@/stores/profilePage1Store';
 
-import EndButton from './EndButton.vue';
-
 export default {
     data() {
         return {
@@ -59,9 +62,7 @@ export default {
             checkedItems: {}, // 각 질병과 하위 항목에 대한 체크박스 상태를 관리
         };
     },
-    components: {
-        EndButton,
-    },
+    components: {},
     setup() {
         // Pinia에서 isDisease 상태를 가져옴
         const diseaseStore = useDiseaseStore();
@@ -180,9 +181,13 @@ export default {
                 if (response.status === 200) {
                     alert('프로필이 성공적으로 저장되었습니다');
                 }
+                this.$router.push('/main');
             } catch (error) {
                 console.error('프로필 저장 실패: ', error);
             }
+        },
+        goToBeforeLogin() {
+            this.$router.push('/setProfile/3');
         },
     },
 };
@@ -281,5 +286,38 @@ export default {
     position: absolute;
     width: 100%;
     bottom: 0;
+}
+.btnContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    text-align: center;
+    align-content: center;
+}
+.prevBtnDiv {
+    flex: 1;
+    background-color: #d9d9d9;
+    align-content: center;
+    cursor: pointer;
+    text-align: center;
+    height: inherit;
+    font-size: 15px;
+}
+.nextBtnDiv {
+    flex: 1.5;
+    background-color: #ffbf6b;
+    height: inherit;
+    color: black;
+    align-content: center;
+    cursor: pointer;
+    text-align: center;
+    font-size: 15px;
+}
+.prevBtnDiv:hover {
+    opacity: 80%;
+}
+.nextBtnDiv:hover {
+    opacity: 80%;
 }
 </style>
