@@ -29,6 +29,7 @@
 <script>
 import { useRouter } from 'vue-router';
 import { fetchAddressList } from '@/fetch_datas/addressStore';
+import { changePrimaryAddress } from '@/post_datas/changePrimaryAddress';
 
 export default {
     name: 'AddressSettingPage',
@@ -52,16 +53,27 @@ export default {
         }
     },
     methods: {
-        changePrimaryAddress(newPrimaryId) {
-            const oldPrimary = this.addresses.find((addr) => addr.isPrimary);
-            if (oldPrimary) {
-                oldPrimary.isPrimary = false;
+        async changePrimaryAddress(newPrimaryId) {
+            try {
+                // 서버로 대표 배송지 변경 요청
+                await changePrimaryAddress(newPrimaryId);
+
+                // 로컬에서 기존의 대표 배송지를 찾아 비활성화
+                const oldPrimary = this.addresses.find((addr) => addr.isPrimary === 'T');
+                if (oldPrimary) {
+                    oldPrimary.isPrimary = 'F';
+                }
+
+                // 선택한 주소를 새로운 대표 배송지로 설정
+                const newPrimary = this.addresses.find((addr) => addr.id === newPrimaryId);
+                if (newPrimary) {
+                    newPrimary.isPrimary = 'T';
+                }
+
+                console.log('대표 배송지가 변경되었습니다.');
+            } catch (error) {
+                console.error('Failed to change primary address:', error);
             }
-            const newPrimary = this.addresses.find((addr) => addr.id === newPrimaryId);
-            if (newPrimary) {
-                newPrimary.isPrimary = true;
-            }
-            console.log('대표 배송지가 변경되었습니다.');
         },
     },
 };
