@@ -13,8 +13,32 @@
         </div>
 
         <div class="whiteContentDiv">
-            <h2>질병 및 하위 질병 목록:</h2>
+            <div>
+                <img
+                    width="15"
+                    height="15"
+                    src="https://img.icons8.com/fluency-systems-filled/50/dog-footprint.png"
+                    alt="dog-footprint"
+                />
+                관련된 지병이 있으시다면 체크를 해주세요
+            </div>
+            <div class="diseaseCheckDiv" :style="{ color: isHealthy ? 'black' : 'lightgray' }" @click="toggleHealthy">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-check-circle-fill"
+                    viewBox="0 0 16 16"
+                >
+                    <path
+                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                    />
+                </svg>
+                건강해요
+            </div>
 
+            <!-- 콤보박스 -->
             <div v-if="diseaseData && Object.keys(diseaseData).length > 0">
                 <div
                     v-for="(subDiseaseList, diseaseName) in diseaseData"
@@ -31,6 +55,7 @@
                                 type="checkbox"
                                 v-model="checkedItems[diseaseName][subDisease]"
                                 class="hidden-checkbox"
+                                @change="handleCheckboxChange"
                             />
                             <span class="custom-checkbox">
                                 <span v-if="checkedItems[diseaseName][subDisease]" class="checkmark">✓</span>
@@ -64,6 +89,7 @@ export default {
             diseaseData: {}, // 서버에서 받은 질병과 하위 질병 데이터를 저장
             isComboOpen: {}, // 각 질병에 대한 콤보박스 열림 상태를 관리
             checkedItems: {}, // 각 질병과 하위 항목에 대한 체크박스 상태를 관리
+            isHealthy: false, // 건강 상태 체크 관리
         };
     },
     components: {},
@@ -84,6 +110,24 @@ export default {
         toggleComboBox(diseaseName) {
             // 콤보박스 열림 상태를 토글
             this.isComboOpen[diseaseName] = !this.isComboOpen[diseaseName];
+        },
+        toggleHealthy() {
+            this.isHealthy = !this.isHealthy;
+
+            // 건강해요 버튼 클릭 시 체크박스를 모두 초기화
+            if (this.isHealthy) {
+                for (const diseaseName in this.checkedItems) {
+                    for (const subDisease in this.checkedItems[diseaseName]) {
+                        this.checkedItems[diseaseName][subDisease] = false;
+                    }
+                }
+            }
+        },
+        handleCheckboxChange() {
+            // 체크박스가 클릭되면 건강해요 버튼을 lightgray로 변경
+            if (this.isHealthy) {
+                this.isHealthy = false;
+            }
         },
         async fetchSubDiseases() {
             try {
@@ -137,6 +181,16 @@ export default {
             }
         },
         async saveProfile() {
+            if (
+                this.isHealthy === false &&
+                Object.keys(this.checkedItems).every((disease) =>
+                    Object.values(this.checkedItems[disease]).every((checked) => checked === false),
+                )
+            ) {
+                alert('항목을 체크해야합니다');
+                return; // 프로필 저장을 막음
+            }
+
             const token = localStorage.getItem('token');
             console.log('token' + token);
             try {
@@ -231,7 +285,7 @@ export default {
     flex-direction: column;
     margin-top: 10px;
     background-color: white;
-    padding: 20px 0px;
+    padding: 20px;
     text-align: left;
 }
 /* 콤보박스 */
@@ -323,5 +377,14 @@ export default {
 }
 .nextBtnDiv:hover {
     opacity: 80%;
+}
+.diseaseCheckDiv {
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 50%;
+    justify-content: space-around;
+    margin-bottom: 10px;
 }
 </style>
