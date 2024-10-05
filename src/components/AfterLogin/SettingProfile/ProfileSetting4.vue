@@ -65,6 +65,69 @@
                     </div>
                 </div>
             </div>
+            <!-- 기타 -->
+            <div>
+                <button @click="toggleEtcBox" class="combo-button2">
+                    기타<span class="arrow">{{ isEtcOpen ? '▲' : '▼' }}</span>
+                </button>
+                <div v-if="isEtcOpen" class="checkbox-list">
+                    <div class="checkbox-item" style="flex-direction: column; align-items: flex-start">
+                        <div style="margin-bottom: 3px">
+                            ● 없는 병명일시 병을 추가해주세요
+                            <span @click="addEtcDisease">
+                                &nbsp;
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-plus-circle"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                    <path
+                                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"
+                                    />
+                                </svg>
+                            </span>
+                        </div>
+                        <div v-for="(diseaseEntry, index) in etcDisease" :key="index" style="margin-bottom: 10px">
+                            <span>
+                                <svg
+                                    @click="removeEtcDisease(index)"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-dash-circle"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                    <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8" />
+                                </svg>
+                                &nbsp;
+                            </span>
+                            <select v-model="diseaseEntry.selectedDisease" style="height: 30px; width: 100px">
+                                <!-- diseaseData에서 diseaseName을 반복하여 select option 생성 -->
+                                <option
+                                    v-for="(diseaseName, nameIndex) in Object.keys(diseaseData)"
+                                    :key="nameIndex"
+                                    :value="diseaseName"
+                                >
+                                    {{ diseaseName }}
+                                </option>
+                            </select>
+                            &nbsp;
+                            <input
+                                type="text"
+                                v-model="diseaseEntry.inputData"
+                                placeholder="병명을 입력해주세요"
+                                style="width: 50%"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- <p v-else>선택된 질병 정보가 없습니다.</p> -->
         </div>
@@ -91,6 +154,8 @@ export default {
             isComboOpen: {}, // 각 질병에 대한 콤보박스 열림 상태를 관리
             checkedItems: {}, // 각 질병과 하위 항목에 대한 체크박스 상태를 관리
             isHealthy: false, // 건강 상태 체크 관리
+            isEtcOpen: false, // 기타 병명을 추가하는 섹션 열림 상태
+            etcDisease: [], // 추가되는 기타 병명을 저장하는 배열 (배열로 초기화)
         };
     },
     components: {},
@@ -123,6 +188,17 @@ export default {
                     }
                 }
             }
+        },
+        toggleEtcBox() {
+            this.isEtcOpen = !this.isEtcOpen;
+        },
+        addEtcDisease() {
+            // 병명 input 필드를 추가할 때 배열에 빈 객체를 추가
+            this.etcDisease.push({ selectedDisease: '', inputData: '' });
+        },
+        removeEtcDisease(index) {
+            // 해당 인덱스의 병명 input을 제거
+            this.etcDisease.splice(index, 1);
         },
         handleCheckboxChange() {
             // 체크박스가 클릭되면 건강해요 버튼을 lightgray로 변경
@@ -182,14 +258,18 @@ export default {
             }
         },
         async saveProfile() {
-            //데이터 체크 확인
-            if (
-                this.isHealthy === false &&
-                Object.keys(this.checkedItems).every((disease) =>
-                    Object.values(this.checkedItems[disease]).every((checked) => checked === false),
-                )
-            ) {
-                alert('항목을 체크해야합니다');
+            // 데이터 체크 확인
+            const isAnyCheckboxChecked = Object.keys(this.checkedItems).some((disease) =>
+                Object.values(this.checkedItems[disease]).some((checked) => checked === true),
+            );
+
+            const isEtcDiseaseFilled = this.etcDisease.every(
+                (diseaseEntry) => diseaseEntry.selectedDisease && diseaseEntry.inputData,
+            );
+
+            // 건강해요 버튼이나 체크박스 또는 기타병명 입력 여부 확인
+            if (!this.isHealthy && !isAnyCheckboxChecked && !isEtcDiseaseFilled) {
+                alert('항목을 체크하거나 병명을 입력해야합니다');
                 return; // 프로필 저장을 막음
             }
             //백엔드에 데이터 저장 로직
@@ -219,6 +299,8 @@ export default {
                 const checkedDiseases = this.checkedItems;
 
                 const username = this.userInfo.username;
+                const etcDisease = this.etcDisease; // 추가된 기타 병명 데이터
+
                 //백엔드로 보내기 위한 데이터 준비
                 const profileData = {
                     petName,
@@ -231,6 +313,7 @@ export default {
                     isDisease,
                     checkedDiseases,
                     username, // 사용자 정보 추가
+                    etcDisease, // 기타 병명 추가
                 };
 
                 const response = await axios.post('https://localhost:8081/api/profile/saveProfile', profileData, {
@@ -261,7 +344,7 @@ export default {
 .pageContainer {
     flex-grow: 1;
     overflow-y: auto;
-    height: 100%; /* 스크롤바 숨기기 */
+    height: 90%; /* 스크롤바 숨기기 */
     scrollbar-width: none;
 }
 .bannerDiv {
@@ -304,6 +387,17 @@ export default {
     text-align: center;
 }
 .combo-button {
+    width: 100%;
+    padding: 6px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.combo-button2 {
     width: 100%;
     padding: 6px;
     background-color: #f0f0f0;
