@@ -10,12 +10,13 @@ export const fetch_userInfo = defineStore('userInfoAll', {
     actions: {
         async fetchContents() {
             try {
+                const token = localStorage.getItem('token');
                 const response = await axios.get('https://localhost:8081/auth/userinfo-all', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
                     },
                 });
-                this.contents = response.data; // 데이터 저장
+                this.contents = Array.isArray(response.data) ? response.data : []; // 데이터가 배열인지 확인
                 console.log('Fetched content:', this.contents); // 확인용 로그
             } catch (err) {
                 console.error('Fetch ERROR!', err);
