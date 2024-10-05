@@ -4,7 +4,7 @@
             <div class="bannerFlexDiv">
                 <div style="color: gray">설정하기</div>
                 <div style="color: gray">
-                    <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">1</span>/ 3
+                    <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">1</span>/ 4
                 </div>
             </div>
             함께하고있는<br />
@@ -91,36 +91,7 @@
                     v-model="inputValue"
                 />
             </div>
-            <div v-if="inputValue == '기타'" style="margin-top: 10px">
-                <!-- input -->
-                <div style="align-items: center; display: flex; align-content: center; flex-direction: row">
-                    <!-- 기타 품종을 적는 input  -->
-                    <div
-                        style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            border-radius: 40px;
-                            border: 1px solid lightgray;
-                            height: 40px;
-                            width: 100%;
-                        "
-                    >
-                        <input
-                            type="text"
-                            style="
-                                border-width: 0;
-                                height: 30px;
-                                text-align: center;
-                                outline: none;
-                                width: inherit;
-                                border-radius: 90%;
-                            "
-                            placeholder="해당 이름이 없다면 이름을 적어주세요"
-                        />
-                    </div>
-                </div>
-            </div>
+
             <!-- 종류를 누르면 팟하고 나오는 창 -->
             <transition name="fade">
                 <div v-if="isModalOpen" class="modalOverlay" @click="closeModal">
@@ -177,7 +148,7 @@
                                     placeholder="강아지 종류는 무엇인가요?"
                                 />
                             </div>
-                            <ul style="padding: 10px 20px">
+                            <ul style="padding: 10px 20px; height: 400px; overflow-y: auto">
                                 <li v-for="(dog, index) in filteredDogs" :key="index" @click="selectAnimal(dog)">
                                     {{ dog }}
                                 </li>
@@ -207,7 +178,7 @@
                                     placeholder="고양이 종류는 무엇인가요?"
                                 />
                             </div>
-                            <ul style="padding: 10px 20px">
+                            <ul style="padding: 10px 20px; height: 400px; overflow-y: auto">
                                 <li v-for="(cat, index) in filteredCats" :key="index" @click="selectAnimal(cat)">
                                     {{ cat }}
                                 </li>
@@ -224,9 +195,35 @@
                     alt="dog-footprint"
                 />
                 생일
+
+                <div
+                    style="
+                        display: flex;
+                        border: 1px solid #ddd;
+                        overflow: hidden;
+                        border-radius: 10px;
+                        margin-bottom: 10px;
+                    "
+                >
+                    <button
+                        :class="['consumer-button', { selected: birthType === 'date' }]"
+                        @click="selectBirthType('date')"
+                    >
+                        알아요
+                    </button>
+                    <button
+                        :class="['consumer-button', { selected: birthType === 'age' }]"
+                        @click="selectBirthType('age')"
+                    >
+                        잘 모르겠어요
+                    </button>
+                </div>
                 <!-- input -->
-                <div style="align-items: center; display: flex; align-content: center; flex-direction: row">
-                    <!-- 생일적는 input  -->
+                <!-- 생일을 아는 경우: input type="date" -->
+                <div
+                    v-if="birthType === 'date'"
+                    style="align-items: center; display: flex; align-content: center; flex-direction: row"
+                >
                     <div
                         style="
                             display: flex;
@@ -238,7 +235,39 @@
                             width: 100%;
                         "
                     >
-                        <input type="date" style="border-width: 0; height: 30px; text-align: center; outline: none" />
+                        <input
+                            type="date"
+                            style="border-width: 0; height: 30px; text-align: center; outline: none"
+                            v-model="birthDate"
+                        />
+                    </div>
+                </div>
+
+                <!-- 생일을 모르는 경우: input type="number" -->
+                <div
+                    v-if="birthType === 'age'"
+                    style="align-items: center; display: flex; align-content: center; flex-direction: row"
+                >
+                    <div
+                        style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 40px;
+                            border: 1px solid lightgray;
+                            height: 40px;
+                            width: 100%;
+                        "
+                    >
+                        <input
+                            type="number"
+                            placeholder="대략적인 나이를 입력해주세요"
+                            v-model="approximateAge"
+                            @input="convertAgeToDate"
+                            style="outline: none; border: none; border-bottom: 1px solid gray; text-align: center"
+                            class="age-input"
+                        />
+                        살
                     </div>
                 </div>
             </div>
@@ -292,18 +321,25 @@
                 </div>
             </div>
         </div>
+
+        <NextButton class="nextButton" @click="handleNextButton" />
     </div>
-    <!-- <NextButton /> -->
 </template>
 
 <script>
-// import NextButton from './NextButton.vue';
+import NextButton from './NextButton.vue';
+import { usePetStore } from '@/stores/profilePage1Store';
+
 import axios from 'axios';
 
 export default {
     name: 'setProfilePage1',
+    setup() {},
+    mounted() {
+        this.getInfoAnimalType();
+    },
     components: {
-        // NextButton,
+        NextButton,
     },
     data() {
         return {
@@ -318,24 +354,12 @@ export default {
             searchTerm: '', // 강아지 검색어 저장
             searchCatTerm: '', // 고양이 검색어 저장
             willneutered: '',
-            dogs: [
-                // 강아지 종류 배열
-                '기타',
-                '가정용 반려 강아지',
-                '믹스',
-                '푸들',
-                '골든 리트리버',
-                '시바 이누',
-            ],
-            cats: [
-                // 고양이 종류 배열
-                '기타',
-                '고양이',
-                '샴',
-                '페르시안',
-                '스코티시 폴드',
-                '버미즈',
-            ],
+            dogs: [],
+            cats: [],
+            birthDate: '',
+            showError: false, // 에러 메시지 표시 여부
+            approximateAge: '', // 대략적인 나이를 입력하는 필드
+            birthType: '', // 생일을 아는지 모르는지 상태값
         };
     },
     computed: {
@@ -349,6 +373,16 @@ export default {
         },
     },
     methods: {
+        selectBirthType(type) {
+            this.birthType = type;
+        },
+        convertAgeToDate() {
+            if (this.approximateAge) {
+                const currentYear = new Date().getFullYear();
+                const birthYear = currentYear - this.approximateAge;
+                this.birthDate = `${birthYear}-01-01`; // 대략적인 나이를 기준으로 생일을 추정하여 설정
+            }
+        },
         goToBeforeLogin() {
             this.$router.push('/');
         },
@@ -359,6 +393,7 @@ export default {
         // 중성화 선택 메소드
         selectNeutered(type) {
             this.neuteredselected = type;
+            this.showError = false; // 선택 시 에러 메시지 숨김
         },
         openModal() {
             this.isModalOpen = true; // 클릭하면 모달 열림
@@ -391,6 +426,7 @@ export default {
             // 파일 선택 대화상자 열기
             fileInput.click();
         },
+
         async uploadImage() {
             if (!this.selectedFile) {
                 return;
@@ -402,7 +438,7 @@ export default {
                 formData.append('image', this.selectedFile);
 
                 // 백엔드로 이미지 업로드 요청 보내기
-                const response = await axios.post('http://localhost:9000/api/upload', formData, {
+                const response = await axios.post('http://localhost:8081/api/uploadProfileImage', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -415,6 +451,40 @@ export default {
                 this.selectedFile = null;
             } catch (error) {
                 console.error('이미지 업로드 실패:', error);
+            }
+        },
+        async getInfoAnimalType() {
+            try {
+                console.log('나 불러지고 있어요');
+                const token = localStorage.getItem('token');
+
+                const response = await axios.get('https://localhost:8081/api/profile/animalDetails', {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                    },
+                });
+                this.dogs = response.data.dogs;
+                this.cats = response.data.cats;
+            } catch (error) {
+                console.error('품종정보가져오는거 실패', error);
+            }
+        },
+        async handleNextButton() {
+            const petStore = usePetStore();
+            petStore.setPetProfile({
+                petName: this.petName,
+                maleselected: this.maleselected,
+                selectedAnimalType: this.inputValue,
+                birthDate: this.birthDate,
+                neuteredselected: this.neuteredselected,
+                willneutered: this.willneutered,
+            });
+            console.log('안녕하세요' + petStore.petName);
+
+            if (this.neuteredselected && this.petName && this.birthDate && this.inputValue && this.maleselected) {
+                this.$router.push('/setProfile/2');
+            } else {
+                alert('값을 다 입력해주세요');
             }
         },
     },
@@ -465,7 +535,7 @@ export default {
 .pageContainer {
     flex-grow: 1;
     overflow-y: auto;
-    height: 100%; /* 스크롤바 숨기기 */
+    height: 90%; /* 스크롤바 숨기기 */
     scrollbar-width: none;
 }
 /* .cardBoard {
@@ -622,5 +692,13 @@ export default {
 }
 li {
     list-style: none;
+}
+.nextButton {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.age-input::placeholder {
+    color: rgb(233, 233, 233);
 }
 </style>

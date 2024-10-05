@@ -4,14 +4,16 @@
         <div id="profile-info">
             <div id="profile-img">
                 <div id="profile-img-container">
-                    <img
-                        src="https://elliebucket1.s3.ap-northeast-2.amazonaws.com/%ED%86%A0%EB%81%BC%EA%B6%81%EB%94%94.jpg"
-                        alt="Profile Image"
-                    />
+                    <img v-if="contents && contents.pictureUrl" :src="contents.pictureUrl" :alt="contents.name" />
+
+                    <img v-else src="@/assets/jangoon.gif" />
                 </div>
             </div>
             <div id="profile-name">
-                <p>토깽이</p>
+                <!-- Check if contents and name exist before rendering -->
+                <p v-if="contents && contents.name">{{ contents.name }}</p>
+                <p v-else>Loading...</p>
+                <!-- Display fallback text while loading -->
             </div>
             <div id="edit-button">
                 <img src="@/assets/icon-edit.svg" alt="Edit Icon" />
@@ -93,8 +95,10 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import { ref, computed, watch } from 'vue';
+import { useCurrentProfileStore } from '@/fetch_datas/currentProfileStore';
+import { ref, computed, watch, onMounted } from 'vue';
 import MyPetProductSlider from './MyPetProductSlider.vue';
+import { storeToRefs } from 'pinia';
 
 export default {
     name: 'ProfileMainPage',
@@ -103,7 +107,14 @@ export default {
     },
     setup() {
         const router = useRouter();
+
+        const store = useCurrentProfileStore();
+        const { contents } = storeToRefs(store);
+
         const selectedCategory = ref('feedstuffs'); // 초기값을 '사료'로 설정
+        onMounted(async () => {
+            await store.fetchContents();
+        });
 
         const feedstuffs = ref([
             {
@@ -258,6 +269,7 @@ export default {
         return {
             selectedCategory,
             displayedProducts,
+            contents,
             selectCategory,
             goToUploadReceipt,
             goToMaps,
