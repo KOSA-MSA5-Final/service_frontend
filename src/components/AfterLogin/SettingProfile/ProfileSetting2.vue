@@ -215,7 +215,7 @@ export default {
             });
             console.log('안녕하세요 page2예요' + JSON.stringify(page2Store.checkedItems, null, 2));
 
-            if (this.isAllergy === 'n') {
+            if (this.isAllergy === 'n' && this.checkedItems.size === 0) {
                 alert('알레르기여부를 체크해주세요');
             } else {
                 this.$router.push('/setProfile/3');
