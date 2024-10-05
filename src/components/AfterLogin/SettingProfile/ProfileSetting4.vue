@@ -13,8 +13,17 @@
         </div>
 
         <div class="whiteContentDiv">
-            <h2>질병 및 하위 질병 목록:</h2>
+            <div>
+                <img
+                    width="15"
+                    height="15"
+                    src="https://img.icons8.com/fluency-systems-filled/50/dog-footprint.png"
+                    alt="dog-footprint"
+                />
+                관련된 지병이 있으시다면 체크를 해주세요
+            </div>
 
+            <!-- 콤보박스 -->
             <div v-if="diseaseData && Object.keys(diseaseData).length > 0">
                 <div
                     v-for="(subDiseaseList, diseaseName) in diseaseData"
