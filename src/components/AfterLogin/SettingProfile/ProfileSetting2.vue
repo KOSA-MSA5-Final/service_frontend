@@ -215,8 +215,9 @@ export default {
             });
             console.log('안녕하세요 page2예요' + JSON.stringify(page2Store.checkedItems, null, 2));
 
-            if (this.isAllergy === 'n' && this.checkedItems.size === 0) {
-                alert('알레르기여부를 체크해주세요');
+            // 아무 알레르기 항목도 체크되지 않았고, '알레르기가 없습니다' 버튼도 누르지 않았을 경우
+            if (!this.anyChecked && this.isAllergy === 'n') {
+                alert('알레르기 여부를 선택해주세요.');
             } else {
                 this.$router.push('/setProfile/3');
             }
