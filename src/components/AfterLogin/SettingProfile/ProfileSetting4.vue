@@ -16,7 +16,11 @@
             <h2>질병 및 하위 질병 목록:</h2>
 
             <div v-if="diseaseData && Object.keys(diseaseData).length > 0">
-                <div v-for="(subDiseaseList, diseaseName) in diseaseData" :key="diseaseName">
+                <div
+                    v-for="(subDiseaseList, diseaseName) in diseaseData"
+                    :key="diseaseName"
+                    style="margin-bottom: 10px"
+                >
                     <button @click="toggleComboBox(diseaseName)" class="combo-button">
                         {{ diseaseName }}
                         <span class="arrow">{{ isComboOpen[diseaseName] ? '▲' : '▼' }}</span>
@@ -180,8 +184,8 @@ export default {
                 });
                 if (response.status === 200) {
                     alert('프로필이 성공적으로 저장되었습니다');
+                    this.$router.push('/main');
                 }
-                this.$router.push('/main');
             } catch (error) {
                 console.error('프로필 저장 실패: ', error);
             }
