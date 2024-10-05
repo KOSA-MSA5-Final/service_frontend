@@ -295,6 +295,7 @@ const searchfacilitysNearLocation = (lat, lng, category) => {
 
     // 카테고리 검색 콜백 함수
     const callback = (result, status) => {
+        console.log('카카오맵 API 응답 데이터:', result);
         if (status === window.kakao.maps.services.Status.OK) {
             // 응답 결과에서 선택한 카테고리의 category_name이 포함된 데이터만 필터링
             let filteredResults;
@@ -455,7 +456,7 @@ const createInfoWindow = (marker, facility) => {
         <div style="padding:10px; width:200px; height:80px; display:flex; flex-direction: column; align-items: center; justify-content: center; text-align:center;">
             <p style="margin:0; font-size:14px;">${facility.name}</p>
             <p style="margin:5px 0; font-size:12px;">${facility.address}</p>
-            <p style="margin:5px 0; font-size:12px;">${facility.phone}</p>
+            <p style="margin:5px 0; font-size:12px;">${facility.phoneNumber}</p>
         </div>
     `;
 

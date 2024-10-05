@@ -13,7 +13,7 @@
                 <img src="@/assets/animal_hospital.jpg" />
             </div>
             <!-- 두 번째 섹션 -->
-            <div class="section-item" @click="navigateToMaps">
+            <div class="section-item">
                 <div id="title-container">
                     <div id="title-p-container">장군이 건강 맞춤 사료&nbsp;&nbsp;</div>
                     <div id="title-img-container">
@@ -24,7 +24,7 @@
             </div>
 
             <!-- 세 번째 섹션 -->
-            <div class="section-item" @click="navigateToMaps">
+            <div class="section-item">
                 <div id="title-container">
                     <div id="title-p-container">장군이가 좋아할 간식&nbsp;&nbsp;&nbsp;</div>
                     <div id="title-img-container">
@@ -35,7 +35,7 @@
             </div>
 
             <!-- 네 번째 섹션 -->
-            <div class="section-item" @click="navigateToMaps">
+            <div class="section-item">
                 <div id="title-container">
                     <div id="title-p-container">장군이가 좋아할 영양제</div>
                     <div id="title-img-container">
@@ -111,8 +111,8 @@ const navigateToMaps = () => {
     object-fit: cover;
 }
 
-#title-img-container {
-}
+/* #title-img-container {
+} */
 
 .icon {
     filter: invert(100%) sepia(0%) saturate(7483%) hue-rotate(253deg) brightness(108%) contrast(104%);

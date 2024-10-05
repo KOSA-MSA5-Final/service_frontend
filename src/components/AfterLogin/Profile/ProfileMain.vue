@@ -57,7 +57,7 @@
                     <img class="icon" src="@/assets/icon-receipt.svg" alt="Medical Receipt Icon" />
                     <div class="title">전체 진료 내역 확인하기</div>
                 </div>
-                <div id="health-history">
+                <div id="health-history" @click="goToCurrentHealth">
                     <img class="icon" src="@/assets/icon-health.svg" alt="Medical Receipt Icon" />
                     <div class="title">현재 건강 상태 보기/내보내기</div>
                 </div>
@@ -246,6 +246,10 @@ export default {
             router.push('/main/maps');
         };
 
+        const goToCurrentHealth = () => {
+            router.push('/main/profile/current-health');
+        };
+
         // selectedCategory가 변경될 때마다 실행되는 watch 함수
         watch(
             selectedCategory,
@@ -269,6 +273,7 @@ export default {
             selectCategory,
             goToUploadReceipt,
             goToMaps,
+            goToCurrentHealth,
         };
     },
 };
