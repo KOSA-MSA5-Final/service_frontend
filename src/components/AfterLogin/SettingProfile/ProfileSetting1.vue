@@ -195,9 +195,35 @@
                     alt="dog-footprint"
                 />
                 생일
+
+                <div
+                    style="
+                        display: flex;
+                        border: 1px solid #ddd;
+                        overflow: hidden;
+                        border-radius: 10px;
+                        margin-bottom: 10px;
+                    "
+                >
+                    <button
+                        :class="['consumer-button', { selected: birthType === 'date' }]"
+                        @click="selectBirthType('date')"
+                    >
+                        알아요
+                    </button>
+                    <button
+                        :class="['consumer-button', { selected: birthType === 'age' }]"
+                        @click="selectBirthType('age')"
+                    >
+                        잘 모르겠어요
+                    </button>
+                </div>
                 <!-- input -->
-                <div style="align-items: center; display: flex; align-content: center; flex-direction: row">
-                    <!-- 생일적는 input  -->
+                <!-- 생일을 아는 경우: input type="date" -->
+                <div
+                    v-if="birthType === 'date'"
+                    style="align-items: center; display: flex; align-content: center; flex-direction: row"
+                >
                     <div
                         style="
                             display: flex;
@@ -214,6 +240,34 @@
                             style="border-width: 0; height: 30px; text-align: center; outline: none"
                             v-model="birthDate"
                         />
+                    </div>
+                </div>
+
+                <!-- 생일을 모르는 경우: input type="number" -->
+                <div
+                    v-if="birthType === 'age'"
+                    style="align-items: center; display: flex; align-content: center; flex-direction: row"
+                >
+                    <div
+                        style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 40px;
+                            border: 1px solid lightgray;
+                            height: 40px;
+                            width: 100%;
+                        "
+                    >
+                        <input
+                            type="number"
+                            placeholder="대략적인 나이를 입력해주세요"
+                            v-model="approximateAge"
+                            @input="convertAgeToDate"
+                            style="outline: none; border: none; border-bottom: 1px solid gray; text-align: center"
+                            class="age-input"
+                        />
+                        살
                     </div>
                 </div>
             </div>
@@ -304,6 +358,8 @@ export default {
             cats: [],
             birthDate: '',
             showError: false, // 에러 메시지 표시 여부
+            approximateAge: '', // 대략적인 나이를 입력하는 필드
+            birthType: '', // 생일을 아는지 모르는지 상태값
         };
     },
     computed: {
@@ -317,6 +373,16 @@ export default {
         },
     },
     methods: {
+        selectBirthType(type) {
+            this.birthType = type;
+        },
+        convertAgeToDate() {
+            if (this.approximateAge) {
+                const currentYear = new Date().getFullYear();
+                const birthYear = currentYear - this.approximateAge;
+                this.birthDate = `${birthYear}-01-01`; // 대략적인 나이를 기준으로 생일을 추정하여 설정
+            }
+        },
         goToBeforeLogin() {
             this.$router.push('/');
         },
@@ -360,6 +426,7 @@ export default {
             // 파일 선택 대화상자 열기
             fileInput.click();
         },
+
         async uploadImage() {
             if (!this.selectedFile) {
                 return;
@@ -630,5 +697,8 @@ li {
     position: absolute;
     bottom: 0;
     width: 100%;
+}
+.age-input::placeholder {
+    color: rgb(233, 233, 233);
 }
 </style>

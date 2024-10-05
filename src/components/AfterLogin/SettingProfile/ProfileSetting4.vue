@@ -65,7 +65,8 @@
                     </div>
                 </div>
             </div>
-            <p v-else>선택된 질병 정보가 없습니다.</p>
+
+            <!-- <p v-else>선택된 질병 정보가 없습니다.</p> -->
         </div>
         <div class="endButton">
             <div class="btnContainer">
@@ -181,6 +182,7 @@ export default {
             }
         },
         async saveProfile() {
+            //데이터 체크 확인
             if (
                 this.isHealthy === false &&
                 Object.keys(this.checkedItems).every((disease) =>
@@ -190,7 +192,7 @@ export default {
                 alert('항목을 체크해야합니다');
                 return; // 프로필 저장을 막음
             }
-
+            //백엔드에 데이터 저장 로직
             const token = localStorage.getItem('token');
             console.log('token' + token);
             try {
@@ -238,6 +240,10 @@ export default {
                 });
                 if (response.status === 200) {
                     alert('프로필이 성공적으로 저장되었습니다');
+
+                    // Pinia 스토어의 isDisease 값을 초기화
+                    diseaseStore.isDisease = []; // 초기화 (비어 있는 배열 또는 초기 상태로 설정)
+
                     this.$router.push('/main');
                 }
             } catch (error) {
@@ -287,6 +293,8 @@ export default {
     background-color: white;
     padding: 20px;
     text-align: left;
+    height: 100%;
+    overflow-y: auto;
 }
 /* 콤보박스 */
 .combo-box {
