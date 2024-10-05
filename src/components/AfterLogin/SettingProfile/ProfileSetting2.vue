@@ -4,13 +4,12 @@
             <div class="bannerFlexDiv">
                 <div style="color: gray">설정하기</div>
                 <div style="color: gray">
-                    <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">2</span>/ 3
+                    <span style="background-color: #1860c3; padding: 4px; color: white; border-radius: 5px">2</span>/ 4
                 </div>
             </div>
             평소 반려동물에게 <br />
             가려야할 음식이 있나요?
             <img class="petwoman" :src="require('@/assets/food.png')" alt="" />
-
         </div>
 
         <div class="whiteContentDiv">
@@ -38,10 +37,21 @@
                         />
                     </svg>
                 </div>
-                <input class="searchInput" type="text" placeholder="알레르기원을 검색하세요" />
+                <input
+                    class="searchInput"
+                    type="text"
+                    v-model="searchKeyword"
+                    placeholder="알레르기원을 검색하세요"
+                    @input="handleSearch"
+                />
             </div>
             <!-- 알레르기가 없어요 -->
-            <div class="allergyDiv" @click="toggleAllergy" style="display: flex">
+            <div
+                class="allergyDiv"
+                @click="toggleAllergy"
+                :style="{ color: anyChecked ? 'lightgray' : 'black' }"
+                style="display: flex"
+            >
                 <div v-if="isAllergy === 'y'">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -75,54 +85,148 @@
                 </div>
             </div>
             <!-- 드롭다운 -->
-            <div class="combo-box">
-                <button @click="toggleComboBox" class="combo-button">
-                    우유/계란
-                    <span class="arrow">{{ isOpen ? '▲' : '▼' }}</span>
+            <div class="combo-box" v-for="(allergyItems, type) in groupedAllergies" :key="type">
+                <button @click="toggleComboBox(type)" class="combo-button">
+                    {{ type }}
+                    <span class="arrow">{{ isOpen === type ? '▲' : '▼' }}</span>
                 </button>
-                <div v-if="isOpen" class="checkbox-list">
-                    <label v-for="(isChecked, item) in checkedItems" :key="item" class="checkbox-item">
-                        <input type="checkbox" v-model="checkedItems[item]" class="hidden-checkbox" />
+                <div v-if="isOpen === type" class="checkbox-list">
+                    <label v-for="(allergy, index) in allergyItems" :key="index" class="checkbox-item">
+                        <input
+                            type="checkbox"
+                            v-model="checkedItems[allergy.name]"
+                            class="hidden-checkbox"
+                            @change="updateAllergyStatus"
+                        />
                         <span class="custom-checkbox">
-                            <span v-if="isChecked" class="checkmark">✓</span>
+                            <span v-if="checkedItems[allergy.name]" class="checkmark">✓</span>
                         </span>
-                        {{ item }}
+                        {{ allergy.name }}
                     </label>
                 </div>
+            </div>
+        </div>
+        <div class="prevNextButton">
+            <div class="btnContainer">
+                <div class="prevBtnDiv" @click="goToBeforeLogin">이전</div>
+                <div class="nextBtnDiv" @click="handlePrevNextButton">다음</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-export default {
-    components: {},
+import axios from 'axios';
+import { usePage2Store } from '@/stores/profilePage2Store';
 
+export default {
+    mounted() {
+        this.getAllergies(); // 페이지가 로드될 때 알레르기 목록을 가져옵니다.
+    },
     data() {
         return {
             isAllergy: 'n',
-            value: [],
-            isOpen: false,
-            checkedItems: {
-                '계란 흰자': false,
-                '계란 노른자': false,
-                우유: false,
-                체다치즈: false,
-                요거트: false,
-                버터: false,
-                'B-락토글로불린': false,
-                카제인: false,
-            },
+            isOpen: null, // 각 콤보박스의 열림 상태를 관리
+            checkedItems: {}, // 알레르기 항목들이 동적으로 추가될 예정
+            allergies: [], // 알레르기 목록을 저장할 배열
+            searchKeyword: '', // 사용자가 입력한 검색어
         };
+    },
+    computed: {
+        filteredAllergies() {
+            // 검색어를 기준으로 알레르기 목록을 필터링합니다.
+            if (!this.searchKeyword) {
+                return this.allergies;
+            }
+            return this.allergies.filter((allergy) =>
+                allergy.name.toLowerCase().includes(this.searchKeyword.toLowerCase()),
+            );
+        },
+        groupedAllergies() {
+            // allergy.type을 기준으로 그룹화합니다.
+            return this.filteredAllergies.reduce((groups, allergy) => {
+                const type = allergy.type;
+                if (!groups[type]) {
+                    groups[type] = [];
+                }
+                groups[type].push(allergy);
+                return groups;
+            }, {});
+        },
+        anyChecked() {
+            // 하나 이상의 체크박스가 체크되었는지 확인하는 로직
+            return Object.values(this.checkedItems).some((value) => value === true);
+        },
     },
     methods: {
         toggleAllergy() {
             this.isAllergy = this.isAllergy === 'y' ? 'n' : 'y';
+
+            if (this.isAllergy === 'y') {
+                // 알레르기 체크박스들을 모두 해제
+                Object.keys(this.checkedItems).forEach((key) => {
+                    this.checkedItems[key] = false;
+                });
+            }
         },
-        toggleComboBox() {
-            this.isOpen = !this.isOpen;
+        toggleComboBox(type) {
+            this.isOpen = this.isOpen === type ? null : type;
+        },
+        async getAllergies() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://localhost:8081/api/profile/allergies', {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                    },
+                });
+                this.allergies = response.data;
+                this.initializeCheckedItems(); // checkedItems 초기화
+            } catch (error) {
+                console.error('알러지 정보를 가져오는데 실패함', error);
+            }
+        },
+        // checkedItems 객체를 알레르기 목록으로 초기화
+        initializeCheckedItems() {
+            this.allergies.forEach((allergy) => {
+                this.checkedItems[allergy.name] = false; // 모든 알레르기 항목을 false로 초기화
+            });
+        },
+        updateAllergyStatus() {
+            // 체크박스 상태가 변경될 때 호출되는 함수
+            if (this.anyChecked) {
+                this.isAllergy = 'n'; // 알레르기가 하나라도 체크되면 "알레르기가 없어요" 상태를 끔
+            }
+        },
+        // 검색할 때 관련된 콤보박스를 자동으로 엽니다.
+        handleSearch() {
+            const filtered = this.filteredAllergies;
+            if (filtered.length > 0) {
+                const firstType = filtered[0].type; // 첫 번째 필터된 항목의 타입을 기준으로 콤보박스를 엽니다.
+                this.isOpen = firstType;
+            } else {
+                this.isOpen = null; // 검색 결과가 없으면 모든 콤보박스를 닫습니다.
+            }
+        },
+        async handlePrevNextButton() {
+            const page2Store = usePage2Store();
+            page2Store.setCheckedItems({
+                checkedItems: this.checkedItems,
+            });
+            console.log('안녕하세요 page2예요' + JSON.stringify(page2Store.checkedItems, null, 2));
+
+            // 아무 알레르기 항목도 체크되지 않았고, '알레르기가 없습니다' 버튼도 누르지 않았을 경우
+            if (!this.anyChecked && this.isAllergy === 'n') {
+                alert('알레르기 여부를 선택해주세요.');
+            } else {
+                this.$router.push('/setProfile/3');
+            }
+        },
+        goToBeforeLogin() {
+            this.$router.push('/setProfile/1');
         },
     },
+    components: {},
 };
 </script>
 
@@ -130,7 +234,7 @@ export default {
 .pageContainer {
     flex-grow: 1;
     overflow-y: auto;
-    height: 92%; /* 스크롤바 숨기기 */
+    height: 90%; /* 스크롤바 숨기기 */
     scrollbar-width: none;
 }
 .bannerDiv {
@@ -198,7 +302,7 @@ export default {
     width: 50%;
     justify-content: space-around;
 }
-/* combobox */
+/* 콤보박스 */
 .combo-box {
     font-family: Arial, sans-serif;
     margin-top: 10px;
@@ -221,8 +325,9 @@ export default {
 }
 .checkbox-list {
     border: 1px solid #ccc;
-    border-top: none;
     border-radius: 0 0 4px 4px;
+    height: auto;
+    overflow-y: auto;
 }
 .checkbox-item {
     display: flex;
@@ -249,5 +354,43 @@ export default {
 .checkmark {
     color: black;
     font-size: 14px;
+}
+.prevNextButton {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.btnContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    text-align: center;
+    align-content: center;
+}
+.prevBtnDiv {
+    flex: 1;
+    background-color: #d9d9d9;
+    align-content: center;
+    cursor: pointer;
+    text-align: center;
+    height: inherit;
+    font-size: 15px;
+}
+.nextBtnDiv {
+    flex: 1.5;
+    background-color: #1860c3;
+    height: inherit;
+    color: white;
+    align-content: center;
+    cursor: pointer;
+    text-align: center;
+    font-size: 15px;
+}
+.prevBtnDiv:hover {
+    opacity: 80%;
+}
+.nextBtnDiv:hover {
+    opacity: 80%;
 }
 </style>

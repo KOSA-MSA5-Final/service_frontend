@@ -1,6 +1,6 @@
 <template>
     <div class="btnContainer">
-        <div @click="goToNextPage" class="nextBtn">
+        <div class="nextBtn">
             &nbsp; 다음
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -24,28 +24,9 @@ export default {
     data() {
         return {
             //현재 경로를 다음 경로로 매핑
-            routeMap: {
-                '/setProfile/1': '/setProfile/2',
-                '/setProfile/2': '/setProfile/3',
-                '/setProfile/3': '/setProfile/4',
-                '/setProfile/4': '/setProfile/5',
-                '/setProfile/5': '/setProfile/6',
-                '/setProfile/6': '/setProfile/7',
-                '/setProfile/7': '/setProfile/8',
-                '/setProfile/8': '/main', //마지막에서 메인 페이지로 돌아감
-            },
         };
     },
-    methods: {
-        goToNextPage() {
-            //현재 경로에 따라 다음 경로 설정
-            const currentPath = this.$route.path;
-
-            //현재 경로에 맞는 다음 경로로 이동 (매핑된 경로가 없으면 기본값으로 첫 경로로 이동)
-            const nextPath = this.routeMap[currentPath] || '/';
-            this.$router.push(nextPath);
-        },
-    },
+    methods: {},
 };
 </script>
 

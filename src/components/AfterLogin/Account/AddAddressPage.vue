@@ -2,42 +2,40 @@
     <div id="info-inputs">
         <div id="address-field" @click="goToSearchPage">
             <img src="@/assets/icon-search-address.svg" alt="Search Location Icon" />
-
             <input type="text" id="search-result" v-model="address" placeholder="주소 검색" readonly />
         </div>
         <div id="detailed-address-field">
             <img src="@/assets/icon-detail.svg" alt="Detail Icon" hidden="true" />
-            <input type="text" id="detailed-address" v-model="detailed_address" placeholder="상세 주소 입력" />
+            <input type="text" id="detailed-address" v-model="detailedAddress" placeholder="상세 주소 입력" />
         </div>
-        <div id="personal-info" v-if="detailed_address.length > 0">
+        <div id="personal-info" v-if="detailedAddress.length > 0">
             <div id="receiptant-name-field">
                 <img src="@/assets/icon-person.svg" alt="Person Icon" />
-                <input id="receiptant-name" placeholder="받는 사람 이름" />
+                <input id="receiptant-name" v-model="receiptantName" placeholder="받는 사람 이름" />
             </div>
             <div id="receiptant-telNum-field">
                 <img src="@/assets/icon-telephone.svg" alt="Telephone Icon" />
-                <input id="receiptant-telNum" placeholder="받는 사람 전화번호" />
+                <input id="receiptant-telNum" v-model="receiptantTelNum" placeholder="받는 사람 전화번호" />
             </div>
         </div>
 
-        <div id="receiptant-telNum"></div>
-        <div id="make-it-primary-address">
-            <b-check id="checkbox"> </b-check>
-        </div>
+        <button @click="saveAddress">배송지 저장</button>
     </div>
 </template>
 
 <script>
+import { addAddress } from '@/post_datas/addAddress';
 export default {
     name: 'AddAddressPage',
     data() {
         return {
             address: '',
-            detailed_address: '',
+            detailedAddress: '',
+            receiptantName: '',
+            receiptantTelNum: '',
         };
     },
     mounted() {
-        // 만약 주소가 params로 넘어왔다면, 주소 데이터를 셋팅
         if (this.$route.params.selectedAddress) {
             this.address = this.$route.params.selectedAddress;
         }
@@ -45,6 +43,29 @@ export default {
     methods: {
         goToSearchPage() {
             this.$router.push({ name: 'AddressSearchPage' });
+        },
+        async saveAddress() {
+            // 입력 값 검증 추가
+            if (!this.address || !this.detailedAddress || !this.receiptantName || !this.receiptantTelNum) {
+                alert('모든 필드를 입력해주세요.');
+                return;
+            }
+
+            const addressData = {
+                address: `${this.address} ${this.detailedAddress}`,
+                receipientName: this.receiptantName,
+                receipientTellNum: this.receiptantTelNum,
+            };
+
+            try {
+                await addAddress(addressData);
+                alert('주소가 성공적으로 저장되었습니다.');
+                this.$router.push({ name: 'AddressSettingMain' });
+            } catch (error) {
+                console.error('Error details:', error);
+                alert(error.message || '주소 저장 중 오류가 발생했습니다.');
+                // 에러가 발생했을 때는 페이지 이동을 하지 않음
+            }
         },
     },
 };
