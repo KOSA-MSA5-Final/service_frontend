@@ -234,7 +234,7 @@ export default {
 .pageContainer {
     flex-grow: 1;
     overflow-y: auto;
-    height: 100%; /* 스크롤바 숨기기 */
+    height: 90%; /* 스크롤바 숨기기 */
     scrollbar-width: none;
 }
 .bannerDiv {
