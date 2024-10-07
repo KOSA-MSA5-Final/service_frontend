@@ -41,9 +41,14 @@
                             alt="반려동물 프로필 이미지"
                         />
                         <div class="profile-details">
+                            <p style="font-size: 14px">{{ currentProfile.name }}</p>
                             <p>만 {{ currentProfile.age }}세</p>
                             <p>생일: {{ formatBirthday(currentProfile.birthday) }}</p>
-                            <p>{{ currentProfile.animalType }} {{ currentProfile.gender }}</p>
+                            <p>
+                                {{ currentProfile.animalType }} {{ currentProfile.gender }} ({{
+                                    currentProfile.animalName
+                                }})
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -87,38 +92,60 @@
                 <!-- 현재 앓고 있는 질환 정보 -->
                 <div class="disease-section">
                     <h3>현재 앓고 있는 질환</h3>
-                    <div class="disease-tags">
-                        <div class="disease-tag">피부계통(대분류) - 진균성 피부질환(소분류)</div>
-                        <div class="disease-tag">호흡기계통(대분류) - 상부 호흡기 증후군(소분류)</div>
-                        <div class="disease-tag">호흡기계통(대분류) - 상부 호흡기 증후군(소분류)</div>
+                    <!-- currentProfile.diseases가 정의되어 있고, 길이가 0 이상인 경우에만 렌더링 -->
+                    <div v-if="currentProfile.diseases && currentProfile.diseases.length > 0">
+                        <!-- 각 질병을 감싸는 컨테이너 -->
+                        <div v-for="(disease, index) in currentProfile.diseases" :key="index">
+                            <!-- 질병 이름과 소분류를 나타내는 태그 -->
+                            <div class="disease-tag">{{ disease.diseaseName }} - {{ disease.diseaseSubCategory }}</div>
+
+                            <!-- 진단 날짜 및 진행 상태 -->
+                            <div class="disease-info">
+                                <div class="diagnosis-date">
+                                    진단 날짜: {{ formatDiagnosisDate(disease.diagnosisDate) }}
+                                </div>
+                                <div class="progress-status">
+                                    진행 상태: {{ disease.progressStatus === 'T' ? '진행 중' : '완료' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 질환 정보가 없을 경우 안내 메시지 표시 -->
+                    <div v-else>
+                        <p>현재 등록된 질환 정보가 없습니다.</p>
                     </div>
                 </div>
 
-                <!-- 현재 가지고 있는 알러지원 정보 -->
+                <!-- 현재 가지고 있는 알러지원 정보 섹션 -->
                 <div class="allergies-section">
                     <h3>현재 가지고 있는 알러지원</h3>
-                    <div class="allergies-tags">
-                        <div class="allergy-tag">육류(타입) - 닭고기</div>
-                        <div class="allergy-tag">과일(타입) - 복숭아</div>
+                    <!-- currentProfile.allergies가 정의되어 있고, 길이가 0 이상인 경우에만 렌더링 -->
+                    <div v-if="currentProfile.allergies && currentProfile.allergies.length > 0">
+                        <div v-for="(allergy, index) in currentProfile.allergies" :key="index" class="allergy-tag">
+                            {{ allergy.allergyType }} - {{ allergy.allergyName }}
+                        </div>
+                    </div>
+                    <!-- 알러지원 정보가 없을 경우 안내 메시지 표시 -->
+                    <div v-else>
+                        <p>현재 등록된 알러지원 정보가 없습니다.</p>
                     </div>
                 </div>
-
-                <!-- 하단 버튼들 -->
-                <div class="bottom-bar">
-                    <div class="actions-section">
-                        <button class="action-button">
-                            전체 기록<br />
-                            확인하기
-                        </button>
-                        <button class="action-button">
-                            전체 기록<br />
-                            내보내기
-                        </button>
-                        <button class="action-button">
-                            병원 기록만<br />
-                            내보내기
-                        </button>
-                    </div>
+            </div>
+            <!-- 하단 버튼들 -->
+            <div class="bottom-bar">
+                <div class="actions-section">
+                    <button class="action-button">
+                        전체 기록<br />
+                        확인하기
+                    </button>
+                    <button class="action-button">
+                        전체 기록<br />
+                        내보내기
+                    </button>
+                    <button class="action-button">
+                        병원 기록만<br />
+                        내보내기
+                    </button>
                 </div>
             </div>
         </div>
@@ -130,12 +157,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'; // 'computed' 사용
+import { computed, onMounted } from 'vue';
 import { useUserInfoStore } from '@/fetch_datas/userInfo'; // Pinia Store import
 import { storeToRefs } from 'pinia'; // storeToRefs 추가
-
-// 기본 프로필 이미지 설정
-const defaultProfileImage = require('@/assets/jangoon.gif');
+import defaultProfileImage from '@/assets/jangoon.gif'; // 기본 프로필 이미지 경로 설정
 
 // Pinia Store 인스턴스 가져오기
 const userInfoStore = useUserInfoStore();
@@ -147,10 +172,35 @@ onMounted(async () => {
     await userInfoStore.fetchProfiles(memberId);
 });
 
+// 성별 변환 함수
+const mapGender = (gender) => {
+    const genderMapping = {
+        female: '여아',
+        male: '남아',
+    };
+    return genderMapping[gender] || '알 수 없음';
+};
+
+// 진단 날짜 포맷팅 함수
+const formatDiagnosisDate = (date) => {
+    if (!date) return '알 수 없음';
+    const formattedDate = new Date(date);
+    return `${formattedDate.getFullYear()}년 ${formattedDate.getMonth() + 1}월 ${formattedDate.getDate()}일`;
+};
+
 // 현재 프로필 데이터를 찾는 computed
 const currentProfile = computed(() => {
     const allProfiles = Array.isArray(profiles.value) ? profiles.value : [];
-    return allProfiles.find((profile) => profile.isCurrent === 'T') || {};
+    const profile = allProfiles.find((profile) => profile.isCurrent === 'T') || {};
+
+    // gender 변환 및 기본 이미지 설정, allergies 필드 추가
+    return {
+        ...profile,
+        gender: mapGender(profile.gender),
+        pictureUrl: profile.pictureUrl || defaultProfileImage, // 기본 이미지 설정
+        allergies: profile.allergies || [], // allergies가 없을 경우 빈 배열 설정
+        disease: profile.diseases || [],
+    };
 });
 
 // 생일을 포맷팅하는 함수
@@ -324,7 +374,7 @@ const goBack = () => {
 }
 
 .receipt-button:hover {
-    background-color: #005fa3;
+    background-color: rgb(180, 180, 180);
 }
 
 /* 현재 앓고 있는 질환 및 알러지원 섹션 스타일 */
@@ -346,16 +396,40 @@ const goBack = () => {
 .allergy-tag {
     background-color: #cce7ff;
     padding: 10px 15px;
-    border-radius: 20px;
+    border-radius: 10px;
     margin: 5px;
     color: #333;
+    width: 100%;
+}
+
+/* 진단 날짜와 진행 상태를 나타내는 정보 */
+.disease-info {
+    display: flex;
+    justify-content: space-between; /* 진단 날짜와 진행 상태를 양쪽으로 배치 */
+    font-size: 12px;
+    margin-top: 5px; /* 질병 이름과 간격 조정 */
+    padding: 0px 20px;
+    background-color: #f5faff;
+    border-radius: 5px;
+}
+
+/* 진단 날짜 스타일 */
+.diagnosis-date {
+    flex: 1; /* 공간을 균등하게 차지하도록 설정 */
+    text-align: left; /* 텍스트를 오른쪽으로 정렬 */
+}
+
+/* 진행 상태 스타일 */
+.progress-status {
+    flex: 1; /* 공간을 균등하게 차지하도록 설정 */
+    text-align: right; /* 텍스트를 오른쪽으로 정렬 */
 }
 
 /* 하단 액션 버튼들 스타일 */
 .bottom-bar {
     position: fixed; /* 하단 고정 */
     bottom: 0;
-    left: 0;
+    left: 0px;
     width: 100%;
     background-color: #cee2f5;
     box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
@@ -367,6 +441,7 @@ const goBack = () => {
 .actions-section {
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 
 .action-button {
@@ -382,6 +457,6 @@ const goBack = () => {
 }
 
 .action-button:hover {
-    background-color: white;
+    background-color: rgb(180, 180, 180);
 }
 </style>
