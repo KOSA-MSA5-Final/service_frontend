@@ -25,7 +25,6 @@
             </div>
         </div>
         <div id="content">
-            <h2>GPT 분석 결과</h2>
             <div v-for="(disease, index) in gpt_result" :key="index" class="disease-item">
                 <h3>{{ disease.disease_title }}</h3>
                 <ul>
@@ -40,11 +39,14 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import { useReceiptStore } from '@/stores/receiptStore';
+import { onMounted } from 'vue';
 
 export default {
     name: 'RegisterDiseasePage',
     setup() {
         const router = useRouter();
+        const receiptStore = useReceiptStore();
         const gpt_result = [
             {
                 disease_title: '피부계통(귀)',
@@ -77,6 +79,10 @@ export default {
         const goBack = () => {
             router.go(-1);
         };
+
+        onMounted(() => {
+            console.log(receiptStore.receiptInfo.medicalDTOs);
+        });
 
         return {
             gpt_result,

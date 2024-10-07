@@ -2,8 +2,12 @@
 import { defineStore } from 'pinia';
 
 export const useReceiptStore = defineStore('receiptStore', {
-    state: () => ({}),
+    state: () => ({
+        receiptInfo: null,
+    }),
     actions: {
-        setPetProfile(receiptInfo) {},
+        setReceiptInfo(receiptInfo) {
+            this.receiptInfo = receiptInfo;
+        },
     },
 });

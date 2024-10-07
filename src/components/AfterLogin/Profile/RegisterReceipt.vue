@@ -117,12 +117,14 @@
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import { useFileUploadStore } from '@/post_datas/receiptOCR';
+import { useReceiptStore } from '@/stores/receiptStore';
 
 export default {
     name: 'RegisterReceiptPage',
     setup() {
         const router = useRouter();
         const fileUploadStore = useFileUploadStore();
+        const receiptStore = useReceiptStore();
 
         const isCameraActive = ref(false);
         const photo = ref(null);
@@ -152,6 +154,16 @@ export default {
         };
 
         const detectDisease = () => {
+            // 현재 상태의 영수증 데이터를 저장
+            const currentReceiptData = {
+                ...result.value,
+                medicalDTOs: result.value.medicalDTOs.map((item) => ({ ...item })),
+            };
+
+            // receiptStore에 데이터 저장
+            receiptStore.setReceiptInfo(currentReceiptData);
+
+            // 다음 페이지로 이동
             router.push('/main/upload_receipt/disease');
         };
 
