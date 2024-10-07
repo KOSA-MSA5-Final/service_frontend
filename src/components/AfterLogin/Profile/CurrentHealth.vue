@@ -1,165 +1,166 @@
 <template>
-    <div class="current-health-page">
-        <div class="setting-topbar">
-            <!-- 상단 바 -->
-            <div class="top-bar">
-                <!-- 왼쪽에 뒤로가기 버튼 -->
-                <button class="back-button" @click="goBack">
-                    <svg
-                        width="30px"
-                        height="30px"
-                        fill="#000000"
-                        viewBox="0 0 200 200"
-                        data-name="Layer 1"
-                        id="Layer_1"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                        <g id="SVGRepo_iconCarrier">
-                            <title></title>
-                            <path
-                                d="M160,89.75H56l53-53a9.67,9.67,0,0,0,0-14,9.67,9.67,0,0,0-14,0l-56,56a30.18,30.18,0,0,0-8.5,18.5c0,1-.5,1.5-.5,2.5a6.34,6.34,0,0,0,.5,3,31.47,31.47,0,0,0,8.5,18.5l56,56a9.9,9.9,0,0,0,14-14l-52.5-53.5H160a10,10,0,0,0,0-20Z"
-                            ></path>
-                        </g>
-                    </svg>
-                </button>
-                <!-- 가운데에 '병원 영수증 추가' 텍스트 -->
-                <div class="title">장군이 건강상태</div>
-            </div>
-        </div>
-        <div class="main-content">
-            <!-- 상단 프로필 정보 섹션 -->
-            <div class="header">
-                <div class="profile-card">
-                    <img
-                        class="profile-image"
-                        :src="profileData.pictureUrl || 'path/to/default-image.png'"
-                        alt="반려동물 프로필 이미지"
-                    />
-                    <div class="profile-details">
-                        <p>만 {{ profileData.age }}세 ({{ profileData.ageMonths }}개월)</p>
-                        <p>생일: {{ formatBirthday(profileData.birthday) }}</p>
-                        <p>{{ profileData.animalType }} {{ profileData.gender }} (강아지)</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 최근 병원 방문 정보 섹션 -->
-            <div class="recent-visit-section">
-                <h3>최근 병원 방문</h3>
-                <div class="visit-details-wrapper">
-                    <div class="visit-details">
-                        <p><strong>방문 일자:</strong> 2022년 03월 02일</p>
-                        <p><strong>병원 이름:</strong> 무슨동아지진료병원</p>
-                        <p><strong>병원 위치:</strong> 서울시 강남구 샘플로</p>
-                        <p><strong>방문 사유:</strong> 건강검진 및 중성화</p>
-                        <p><strong>결제 금액:</strong> 200,000원</p>
-                    </div>
-                    <button class="receipt-button">
+    <div v-if="!loading">
+        <!-- 현재 프로필 데이터가 존재하는 경우에만 화면에 표시 -->
+        <div v-if="currentProfile && Object.keys(currentProfile).length > 0" class="current-health-page">
+            <div class="setting-topbar">
+                <!-- 상단 바 -->
+                <div class="top-bar">
+                    <!-- 왼쪽에 뒤로가기 버튼 -->
+                    <button class="back-button" @click="goBack">
                         <svg
-                            height="25px"
-                            width="25px"
-                            viewBox="0 0 24 24"
-                            fill="none"
+                            width="30px"
+                            height="30px"
+                            fill="#000000"
+                            viewBox="0 0 200 200"
+                            data-name="Layer 1"
+                            id="Layer_1"
                             xmlns="http://www.w3.org/2000/svg"
                         >
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                             <g id="SVGRepo_iconCarrier">
+                                <title></title>
                                 <path
-                                    d="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.07989 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.07989 19 6.2V21L12 16L5 21V6.2Z"
-                                    stroke="#000000"
-                                    stroke-width="2"
-                                    stroke-linejoin="round"
+                                    d="M160,89.75H56l53-53a9.67,9.67,0,0,0,0-14,9.67,9.67,0,0,0-14,0l-56,56a30.18,30.18,0,0,0-8.5,18.5c0,1-.5,1.5-.5,2.5a6.34,6.34,0,0,0,.5,3,31.47,31.47,0,0,0,8.5,18.5l56,56a9.9,9.9,0,0,0,14-14l-52.5-53.5H160a10,10,0,0,0,0-20Z"
                                 ></path>
                             </g>
                         </svg>
-                        <br />
-                        영수증 확인
                     </button>
+                    <!-- 가운데에 '건강 상태' 텍스트 -->
+                    <div class="title">{{ currentProfile.name }} 건강상태</div>
                 </div>
             </div>
 
-            <!-- 현재 앓고 있는 질환 정보 -->
-            <div class="disease-section">
-                <h3>현재 앓고 있는 질환</h3>
-                <div class="disease-tags">
-                    <div class="disease-tag">피부계통(대분류) - 진균성 피부질환(소분류)</div>
-                    <div class="disease-tag">호흡기계통(대분류) - 상부 호흡기 증후군(소분류)</div>
+            <div class="main-content">
+                <!-- 상단 프로필 정보 섹션 -->
+                <div class="header">
+                    <div class="profile-card">
+                        <img
+                            class="profile-image"
+                            :src="currentProfile.pictureUrl || defaultProfileImage"
+                            alt="반려동물 프로필 이미지"
+                        />
+                        <div class="profile-details">
+                            <p>만 {{ currentProfile.age }}세</p>
+                            <p>생일: {{ formatBirthday(currentProfile.birthday) }}</p>
+                            <p>{{ currentProfile.animalType }} {{ currentProfile.gender }}</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- 현재 가지고 있는 알러지원 정보 -->
-            <div class="allergies-section">
-                <h3>현재 가지고 있는 알러지원</h3>
-                <div class="allergies-tags">
-                    <div class="allergy-tag">육류(타입) - 닭고기</div>
-                    <div class="allergy-tag">과일(타입) - 복숭아</div>
+                <!-- 최근 병원 방문 정보 섹션 -->
+                <div class="recent-visit-section">
+                    <h3>최근 병원 방문</h3>
+                    <div class="visit-details-wrapper">
+                        <div class="visit-details">
+                            <p><strong>방문 일자:</strong> 2022년 03월 02일</p>
+                            <p><strong>병원 이름:</strong> 무슨동아지진료병원</p>
+                            <p><strong>병원 위치:</strong> 서울시 강남구 샘플로</p>
+                            <p><strong>방문 사유:</strong> 건강검진 및 중성화</p>
+                            <p><strong>결제 금액:</strong> 200,000원</p>
+                        </div>
+                        <button class="receipt-button">
+                            <svg
+                                height="25px"
+                                width="25px"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.07989 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.07989 19 6.2V21L12 16L5 21V6.2Z"
+                                        stroke="#000000"
+                                        stroke-width="2"
+                                        stroke-linejoin="round"
+                                    ></path>
+                                </g>
+                            </svg>
+                            <br />
+                            영수증 확인
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- 하단 버튼들 -->
-            <div class="bottom-bar">
-                <div class="actions-section">
-                    <button class="action-button">
-                        전체 기록<br />
-                        확인하기
-                    </button>
-                    <button class="action-button">
-                        전체 기록<br />
-                        내보내기
-                    </button>
-                    <button class="action-button">
-                        병원 기록만<br />
-                        내보내기
-                    </button>
+                <!-- 현재 앓고 있는 질환 정보 -->
+                <div class="disease-section">
+                    <h3>현재 앓고 있는 질환</h3>
+                    <div class="disease-tags">
+                        <div class="disease-tag">피부계통(대분류) - 진균성 피부질환(소분류)</div>
+                        <div class="disease-tag">호흡기계통(대분류) - 상부 호흡기 증후군(소분류)</div>
+                        <div class="disease-tag">호흡기계통(대분류) - 상부 호흡기 증후군(소분류)</div>
+                    </div>
+                </div>
+
+                <!-- 현재 가지고 있는 알러지원 정보 -->
+                <div class="allergies-section">
+                    <h3>현재 가지고 있는 알러지원</h3>
+                    <div class="allergies-tags">
+                        <div class="allergy-tag">육류(타입) - 닭고기</div>
+                        <div class="allergy-tag">과일(타입) - 복숭아</div>
+                    </div>
+                </div>
+
+                <!-- 하단 버튼들 -->
+                <div class="bottom-bar">
+                    <div class="actions-section">
+                        <button class="action-button">
+                            전체 기록<br />
+                            확인하기
+                        </button>
+                        <button class="action-button">
+                            전체 기록<br />
+                            내보내기
+                        </button>
+                        <button class="action-button">
+                            병원 기록만<br />
+                            내보내기
+                        </button>
+                    </div>
                 </div>
             </div>
+        </div>
+        <!-- 프로필 데이터가 없는 경우를 처리하는 메시지 -->
+        <div v-else>
+            <p>프로필 데이터가 없습니다.</p>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { fetch_userInfo } from '@/fetch_datas/fetch_userInfo';
+import { computed, onMounted } from 'vue'; // 'computed' 사용
+import { useUserInfoStore } from '@/fetch_datas/userInfo'; // Pinia Store import
+import { storeToRefs } from 'pinia'; // storeToRefs 추가
 
-// Pinia 스토어 가져오기
-const userInfoStore = fetch_userInfo();
+// 기본 프로필 이미지 설정
+const defaultProfileImage = require('@/assets/jangoon.gif');
 
-// 데이터 로드 완료 여부 체크
-const isDataFetched = ref(false);
+// Pinia Store 인스턴스 가져오기
+const userInfoStore = useUserInfoStore();
+const { profiles, loading } = storeToRefs(userInfoStore); // profiles와 loading 상태 가져오기
 
-// 컴포넌트가 마운트될 때 데이터 가져오기
+// 컴포넌트가 마운트될 때 서버에서 프로필 데이터를 가져옴
 onMounted(async () => {
-    await userInfoStore.fetchContents();
-    isDataFetched.value = true;
+    const memberId = 1; // 특정 회원 ID (로그인한 사용자 ID)
+    await userInfoStore.fetchProfiles(memberId);
 });
 
-// 현재 프로필 데이터를 가져오는 computed
-const profileData = computed(() => {
-    // 데이터가 배열인지 확인 후 처리
-    const profiles = Array.isArray(userInfoStore.contents) ? userInfoStore.contents : [];
-    const profile = profiles.find((item) => item.isCurrent === 'T') || {};
-    return {
-        name: profile.name || '',
-        age: profile.age || 0,
-        birthday: profile.birthday || '',
-        gender: profile.gender || '',
-        pictureUrl: profile.pictureUrl || '',
-        animalType: profile.animalDetail?.type || '강아지',
-        ageMonths: profile.ageMonths || 0, // 나이를 월 단위로 계산
-    };
+// 현재 프로필 데이터를 찾는 computed
+const currentProfile = computed(() => {
+    const allProfiles = Array.isArray(profiles.value) ? profiles.value : [];
+    return allProfiles.find((profile) => profile.isCurrent === 'T') || {};
 });
 
 // 생일을 포맷팅하는 함수
 const formatBirthday = (date) => {
-    if (!date) return '';
+    if (!date) return '알 수 없음';
     const formattedDate = new Date(date);
     return `${formattedDate.getFullYear()}년 ${formattedDate.getMonth() + 1}월 ${formattedDate.getDate()}일`;
 };
 
-// 뒤로가기 버튼 클릭 핸들러
+// 뒤로가기 버튼 클릭 함수
 const goBack = () => {
     window.history.back();
 };
@@ -381,6 +382,6 @@ const goBack = () => {
 }
 
 .action-button:hover {
-    background-color: #005fa3;
+    background-color: white;
 }
 </style>

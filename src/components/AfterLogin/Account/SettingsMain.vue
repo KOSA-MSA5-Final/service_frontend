@@ -244,9 +244,9 @@ p {
     grid-column: 1;
 }
 
-#add-profile:nth-child(even) {
-    grid-column: 2;
-}
+/* #add-profile:nth-child(even) {
+    grid-column: 1;
+} */
 
 .icon {
     filter: invert(77%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%);
