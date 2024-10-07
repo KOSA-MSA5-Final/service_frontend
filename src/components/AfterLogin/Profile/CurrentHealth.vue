@@ -143,7 +143,7 @@
                         내보내기
                     </button>
                     <button class="action-button">
-                        병원 기록만<br />
+                        현재 기록<br />
                         내보내기
                     </button>
                 </div>
