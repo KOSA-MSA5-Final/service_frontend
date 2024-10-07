@@ -1,6 +1,7 @@
 // fetch_userAllInfo.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { useCurrentProfileStore } from './currentProfileStore';
 
 export const useUserAllInfoStore = defineStore('userAllInfo', {
     state: () => ({
@@ -36,6 +37,49 @@ export const useUserAllInfoStore = defineStore('userAllInfo', {
                 this.userInfo = null;
                 console.error('Failed to fetch user info in store:', error);
                 throw error;
+            } finally {
+                this.loading = false;
+            }
+        },
+        async changeCurrentProfile(profileId) {
+            this.loading = true;
+            this.error = null;
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+            try {
+                const response = await axios.post(
+                    `https://localhost:8081/auth/changeCurrentProfile?profileId=${profileId}`,
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+
+                if (response.data === 'success') {
+                    console.log('Profile changed successfully');
+                    await this.fetchUserAllInfo(); // 사용자 정보 새로고침
+
+                    // 현재 프로필 스토어 업데이트
+                    const currentProfileStore = useCurrentProfileStore();
+                    if (currentProfileStore && typeof currentProfileStore.fetchContents === 'function') {
+                        await currentProfileStore.fetchContents();
+                    } else {
+                        console.error('fetchContents method not found in currentProfileStore');
+                    }
+
+                    return true;
+                } else {
+                    throw new Error('Failed to change profile');
+                }
+            } catch (error) {
+                console.error('Error changing profile:', error.response || error);
+                this.error = error.response?.data || error.message;
+                return false;
             } finally {
                 this.loading = false;
             }
