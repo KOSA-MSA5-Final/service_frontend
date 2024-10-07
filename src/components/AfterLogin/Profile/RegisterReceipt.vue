@@ -105,7 +105,10 @@
             <div v-else>
                 <p>결과를 불러오는 중에 문제가 발생했습니다. 다시 시도해 주세요.</p>
             </div>
-            <button class="button" @click="resetForm">새 영수증 등록</button>
+            <div id="buttons">
+                <button class="button" @click="resetForm">새 영수증 등록</button>
+                <button id="nextBtn" @click="detectDisease">다음</button>
+            </div>
         </div>
     </div>
 </template>
@@ -146,6 +149,10 @@ export default {
 
         const goBack = () => {
             router.go(-1);
+        };
+
+        const detectDisease = () => {
+            router.push('/main/upload_receipt/disease');
         };
 
         const toggleCamera = () => {
@@ -368,6 +375,7 @@ export default {
             video,
             filteredResult,
             goBack,
+            detectDisease,
             toggleCamera,
             onFileChange,
             capturePhoto,
