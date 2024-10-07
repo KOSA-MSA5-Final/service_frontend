@@ -101,10 +101,19 @@ export default defineComponent({
             }
         };
 
-        const handleProfileSelect = (profile) => {
-            // 프로필 선택 로직 구현
-            console.log('Selected profile:', profile);
-            // 필요한 경우 추가 로직 구현
+        const handleProfileSelect = async (profile) => {
+            try {
+                const success = await userAllInfoStore.changeCurrentProfile(profile.id);
+                if (success) {
+                    router.push('/main');
+                } else {
+                    console.error('Failed to change profile:', userAllInfoStore.error);
+                    // 여기에 사용자에게 에러를 표시하는 로직을 추가할 수 있습니다.
+                }
+            } catch (error) {
+                console.error('Error in handleProfileSelect:', error);
+                // 여기에 사용자에게 에러를 표시하는 로직을 추가할 수 있습니다.
+            }
         };
 
         const handleAddProfile = () => {

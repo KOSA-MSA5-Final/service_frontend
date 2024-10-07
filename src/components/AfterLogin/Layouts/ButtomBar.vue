@@ -76,6 +76,7 @@ export default defineComponent({
     padding: 10px; /* 여백 */
     height: 80px;
     margin-bottom: 5px;
+    border-top: 1px solid #bbb;
 }
 
 #buttomBar div {
