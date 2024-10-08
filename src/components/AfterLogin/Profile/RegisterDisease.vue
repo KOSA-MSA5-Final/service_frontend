@@ -25,14 +25,19 @@
             </div>
         </div>
         <div id="content">
-            <div v-for="(disease, index) in gpt_result" :key="index" class="disease-item">
-                <h3>{{ disease.disease_title }}</h3>
-                <ul>
-                    <li v-for="(reason, reasonIndex) in disease.reasons" :key="reasonIndex">
-                        {{ reason }}
-                    </li>
-                </ul>
+            <div v-if="diseaseStore.loading">Loading...</div>
+            <div v-else-if="diseaseStore.error">Error: {{ diseaseStore.error }}</div>
+            <div v-else-if="diseaseStore.contents">
+                <div v-for="(disease, index) in diseaseStore.contents" :key="index" class="disease-item">
+                    <h3>{{ disease.diseaseTitle }}</h3>
+                    <ul>
+                        <li v-for="(reason, reasonIndex) in disease.reasons" :key="reasonIndex">
+                            {{ reason }}
+                        </li>
+                    </ul>
+                </div>
             </div>
+            <div v-else>No data available</div>
         </div>
     </div>
 </template>
@@ -40,6 +45,7 @@
 <script>
 import { useRouter } from 'vue-router';
 import { useReceiptStore } from '@/stores/receiptStore';
+import { useFetchReceiptDiseaseStore } from '@/fetch_datas/receiptDiseaseStore';
 import { onMounted } from 'vue';
 
 export default {
@@ -47,45 +53,27 @@ export default {
     setup() {
         const router = useRouter();
         const receiptStore = useReceiptStore();
-        const gpt_result = [
-            {
-                disease_title: '피부계통(귀)',
-                reasons: [
-                    '진찰료-초진',
-                    '검사-귀-set (검이경, 현미경도말)',
-                    '처치-귀치료 (털제거포함)',
-                    '귀세정제 (MO)',
-                    '귀약-연고(S)-15ml',
-                ],
-            },
-            {
-                disease_title: '피부계통',
-                reasons: ['외용제-소독약 (30ml)', '외용제-N 연고(10g)'],
-            },
-            {
-                disease_title: '근골격계통',
-                reasons: ['미용-발바닥 밀기'],
-            },
-            {
-                disease_title: '비뇨생식계통',
-                reasons: ['네칼라 중/소'],
-            },
-            {
-                disease_title: '소화기계통',
-                reasons: ['내복약 1일'],
-            },
-        ];
+        const diseaseStore = useFetchReceiptDiseaseStore();
+
+        const fetchDiseaseAnalysis = async () => {
+            try {
+                await diseaseStore.fetchContents();
+            } catch (error) {
+                console.error('Failed to fetch disease analysis:', error);
+            }
+        };
 
         const goBack = () => {
             router.go(-1);
         };
 
-        onMounted(() => {
+        onMounted(async () => {
             console.log(receiptStore.receiptInfo.medicalDTOs);
+            await fetchDiseaseAnalysis();
         });
 
         return {
-            gpt_result,
+            diseaseStore,
             goBack,
         };
     },
