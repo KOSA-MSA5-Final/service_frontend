@@ -106,7 +106,7 @@
                 <p>결과를 불러오는 중에 문제가 발생했습니다. 다시 시도해 주세요.</p>
             </div>
             <div id="buttons">
-                <button class="button" @click="resetForm">새 영수증 등록</button>
+                <button id="againBtn" @click="resetForm">영수증 다시 등록</button>
                 <button id="nextBtn" @click="detectDisease">다음</button>
             </div>
         </div>
@@ -565,7 +565,6 @@ video {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 600px;
     height: 100%;
     overflow-y: auto;
 }
@@ -624,6 +623,18 @@ video {
     font-size: 14px;
     margin-left: 10px; /* 내용과 버튼 사이 간격 */
     white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+    transition: background-color 0.2s;
+}
+.delete-button {
+    padding: 5px 5px;
+    background-color: pink;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+    white-space: nowrap;
     transition: background-color 0.2s;
 }
 
@@ -705,7 +716,7 @@ video {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    width: 100%;
     margin: 0 auto;
     overflow-y: auto;
     height: 85%;
@@ -717,5 +728,27 @@ video {
     gap: 10px;
     align-items: center;
     width: 100%;
+}
+
+#buttons {
+    height: 10%;
+    width: 100%;
+}
+#againBtn {
+    border: none;
+    /* border-radius: 5px; */
+    cursor: pointer;
+    margin: 10px 0;
+    width: 40%;
+    height: 100%;
+}
+
+#nextBtn {
+    border: none;
+    /* border-radius: 5px; */
+    cursor: pointer;
+    margin: 10px 0;
+    width: 60%;
+    height: 100%;
 }
 </style>

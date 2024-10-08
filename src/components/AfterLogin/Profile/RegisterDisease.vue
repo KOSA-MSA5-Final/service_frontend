@@ -26,15 +26,85 @@
         </div>
         <div id="content">
             <div v-if="diseaseStore.loading">Loading...</div>
-            <div v-else-if="diseaseStore.error">Error: {{ diseaseStore.error }}</div>
-            <div v-else-if="diseaseStore.contents">
-                <div v-for="(disease, index) in diseaseStore.contents" :key="index" class="disease-item">
-                    <h3>{{ disease.diseaseTitle }}</h3>
-                    <ul>
-                        <li v-for="(reason, reasonIndex) in disease.reasons" :key="reasonIndex">
-                            {{ reason }}
-                        </li>
-                    </ul>
+            <div v-else-if="diseaseStore.error">
+                아이가 건강한 것 같아요. 혹시 아니라면, 직접 진료된 병명들을 기입해 주세요.
+            </div>
+            <div v-if="diseaseStore.contents">
+                <div class="bannerDiv">
+                    <div class="bannerFlexDiv">
+                        <div style="color: gray">진단명 입력하기</div>
+                    </div>
+                    아래는 멍지냥지가 영수증 내역을 토대로 예측해 본 <br />
+                    진단 병명의 대분류들 이에요. <br />
+                    <br />
+                    정확한 내원 기록을 위해, <br />자세한 병명들을 기입해 주세요.
+                    <img class="petwoman" :src="require('@/assets/medicine.png')" alt="" />
+                </div>
+                <div id="result-container">
+                    <div v-for="(disease, index) in diseaseStore.contents" :key="index" class="disease-item">
+                        <div id="disease-reason-health">
+                            <div class="disease-header">
+                                <h3>{{ disease.diseaseTitle }}</h3>
+                                <div @click="showReasons(index)" class="toggle-button">
+                                    <img src="@/assets/icon-question.svg" />
+                                </div>
+                            </div>
+                            <div
+                                class="diseaseCheckDiv"
+                                :style="{ color: isHealthy(index) ? 'black' : 'lightgray' }"
+                                @click="toggleHealthy(index)"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-check-circle-fill"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <path
+                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                                    />
+                                </svg>
+                                건강해요
+                            </div>
+                            <div id="selected-subDiseaseNames"></div>
+                            <div id="select-subDiseaseNames">
+                                <ul>
+                                    <li
+                                        v-for="subDisease in subDiseaseStore.getSubdiseasesByDiseaseName(
+                                            disease.diseaseTitle,
+                                        )"
+                                        :key="subDisease"
+                                    >
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                :value="subDisease"
+                                                v-model="selectedSubDiseases[disease.diseaseTitle]"
+                                            />
+                                            {{ subDisease }}
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div
+                                v-if="
+                                    selectedSubDiseases[disease.diseaseTitle] &&
+                                    selectedSubDiseases[disease.diseaseTitle].length > 0
+                                "
+                                class="selected-diseases"
+                            >
+                                <h4>선택된 하위 질병:</h4>
+                                <p>{{ getSelectedSubDiseasesString(disease.diseaseTitle) }}</p>
+                            </div>
+                            <transition name="fade">
+                                <div v-if="isReasonVisible(index)" class="reasons-popup">
+                                    {{ getCommaSeparatedReasons(disease.reasons) }}
+                                </div>
+                            </transition>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div v-else>No data available</div>
@@ -44,23 +114,73 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import { useReceiptStore } from '@/stores/receiptStore';
 import { useFetchReceiptDiseaseStore } from '@/fetch_datas/receiptDiseaseStore';
-import { onMounted } from 'vue';
+import { useSubdiseasesStore } from '@/fetch_datas/receiptSubDiseaseStore';
+import { onMounted, ref, reactive } from 'vue';
 
 export default {
     name: 'RegisterDiseasePage',
     setup() {
         const router = useRouter();
-        const receiptStore = useReceiptStore();
         const diseaseStore = useFetchReceiptDiseaseStore();
+        const subDiseaseStore = useSubdiseasesStore();
+        const visibleReasons = ref({});
+        const timeouts = ref({});
+        const healthStatus = ref({});
+        const diseases = ref([]);
+        const selectedSubDiseases = reactive({});
+
+        const showReasons = (index) => {
+            visibleReasons.value[index] = true;
+            if (timeouts.value[index]) {
+                clearTimeout(timeouts.value[index]);
+            }
+            timeouts.value[index] = setTimeout(() => {
+                visibleReasons.value[index] = false;
+            }, 3000);
+        };
+
+        const isReasonVisible = (index) => {
+            return visibleReasons.value[index] || false;
+        };
+
+        const getCommaSeparatedReasons = (reasons) => {
+            return reasons.join(', ');
+        };
+
+        const isHealthy = (index) => {
+            return healthStatus.value[index] || false;
+        };
+
+        const toggleHealthy = (index) => {
+            healthStatus.value[index] = !healthStatus.value[index];
+        };
 
         const fetchDiseaseAnalysis = async () => {
             try {
                 await diseaseStore.fetchContents();
+                diseaseStore.contents.forEach((content, index) => {
+                    healthStatus.value[index] = false;
+                    diseases.value.push(content.diseaseTitle);
+                    selectedSubDiseases[content.diseaseTitle] = [];
+                });
             } catch (error) {
                 console.error('Failed to fetch disease analysis:', error);
             }
+        };
+
+        const fetchSubDisease = async () => {
+            try {
+                if (diseases.value.length > 0) {
+                    await subDiseaseStore.fetchSubdiseases(diseases.value);
+                }
+            } catch (error) {
+                console.error('Failed to fetch sub-diseases:', error);
+            }
+        };
+
+        const getSelectedSubDiseasesString = (diseaseTitle) => {
+            return selectedSubDiseases[diseaseTitle].join(', ');
         };
 
         const goBack = () => {
@@ -68,13 +188,22 @@ export default {
         };
 
         onMounted(async () => {
-            console.log(receiptStore.receiptInfo.medicalDTOs);
             await fetchDiseaseAnalysis();
+            await fetchSubDisease();
         });
 
         return {
             diseaseStore,
+            subDiseaseStore,
             goBack,
+            showReasons,
+            isReasonVisible,
+            getCommaSeparatedReasons,
+            isHealthy,
+            toggleHealthy,
+            diseases,
+            selectedSubDiseases,
+            getSelectedSubDiseasesString,
         };
     },
 };
@@ -115,5 +244,115 @@ export default {
     background: none;
     border: none;
     cursor: pointer;
+}
+
+.bannerDiv {
+    height: 220px;
+    background-color: #79bbf4;
+    text-align: left;
+    padding: 20px 20px;
+    position: relative; /* 이미지의 위치를 조정하기 위해 추가 */
+}
+.bannerFlexDiv {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 12px;
+    align-items: center;
+}
+.petwoman {
+    display: block;
+    width: 120px;
+    height: 120px;
+    position: absolute; /* 부모 요소 내에서 위치를 조정 */
+    right: 20px; /* 오른쪽으로 이동 */
+    bottom: 30px; /* 하단 여백 설정 */
+}
+.whiteContentDiv {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    background-color: white;
+    padding: 20px;
+    text-align: left;
+    height: 100%;
+    overflow-y: auto;
+}
+
+#disease-reason-health {
+    position: relative; /* 추가: 팝업의 기준점 설정 */
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.reasons-popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1000; /* 수정: z-index 값 증가 */
+    margin-top: 5px;
+    max-width: 100%; /* 추가: 최대 너비 설정 */
+    word-wrap: break-word; /* 추가: 긴 텍스트 줄바꿈 */
+}
+
+#result-container {
+    text-align: left;
+    height: 560px;
+    border-style: double;
+    overflow-y: auto;
+    padding: 10px;
+    position: relative; /* 추가: 내부 요소들의 기준점 설정 */
+}
+.disease-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.toggle-button {
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.toggle-button img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.reasons-container {
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 3px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.health-status {
+    border-style: double;
+    border-radius: 20px;
+    width: max-content;
+    padding: 3px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>
