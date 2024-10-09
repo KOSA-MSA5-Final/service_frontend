@@ -19,6 +19,7 @@ export const useSubdiseasesStore = defineStore('subdiseases', {
             }
 
             try {
+                console.log('대분류 전송 내용 : ', diseaseNames);
                 const response = await axios.post('https://localhost:8081/api/fetch_subdiseases', diseaseNames, {
                     headers: {
                         'Content-Type': 'application/json',

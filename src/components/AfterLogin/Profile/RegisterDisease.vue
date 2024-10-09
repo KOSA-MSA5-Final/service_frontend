@@ -49,27 +49,33 @@
                                     <img src="@/assets/icon-question.svg" />
                                 </div>
                             </div>
-                            <div
-                                class="diseaseCheckDiv"
-                                :style="{ color: isHealthy(index) ? 'black' : 'lightgray' }"
-                                @click="toggleHealthy(index)"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    fill="currentColor"
-                                    class="bi bi-check-circle-fill"
-                                    viewBox="0 0 16 16"
+                            <div class="healCheck-subDisease">
+                                <div
+                                    class="diseaseCheckDiv"
+                                    :style="{ color: isHealthy(disease.diseaseTitle) ? 'black' : 'lightgray' }"
+                                    @click="toggleHealthy(disease.diseaseTitle)"
                                 >
-                                    <path
-                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
-                                    />
-                                </svg>
-                                건강해요
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        fill="currentColor"
+                                        class="bi bi-check-circle-fill"
+                                        viewBox="0 0 16 16"
+                                    >
+                                        <path
+                                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                                        />
+                                    </svg>
+                                    건강해요
+                                </div>
+                                <div class="showSubDiseaseList" @click="handleshowSubDiseaseList(disease.diseaseTitle)">
+                                    <img v-if="isSubVisible(disease.diseaseTitle)" src="@/assets/icon-down.svg" />
+                                    <img v-else src="@/assets/icon-up.svg" />
+                                </div>
                             </div>
-                            <div id="selected-subDiseaseNames"></div>
-                            <div id="select-subDiseaseNames">
+
+                            <div id="select-subDiseaseNames" v-if="isSubVisible(disease.diseaseTitle)">
                                 <ul>
                                     <li
                                         v-for="subDisease in subDiseaseStore.getSubdiseasesByDiseaseName(
@@ -81,7 +87,8 @@
                                             <input
                                                 type="checkbox"
                                                 :value="subDisease"
-                                                v-model="selectedSubDiseases[disease.diseaseTitle]"
+                                                :checked="isSubDiseaseSelected(disease.diseaseTitle, subDisease)"
+                                                @change="toggleSubDisease(disease.diseaseTitle, subDisease)"
                                             />
                                             {{ subDisease }}
                                         </label>
@@ -129,6 +136,15 @@ export default {
         const healthStatus = ref({});
         const diseases = ref([]);
         const selectedSubDiseases = reactive({});
+        const showsub = reactive({});
+
+        const handleshowSubDiseaseList = (diseaseTitle) => {
+            showsub[diseaseTitle] = !showsub[diseaseTitle];
+        };
+
+        const isSubVisible = (diseaseTitle) => {
+            return showsub[diseaseTitle] || false;
+        };
 
         const showReasons = (index) => {
             visibleReasons.value[index] = true;
@@ -148,22 +164,59 @@ export default {
             return reasons.join(', ');
         };
 
-        const isHealthy = (index) => {
-            return healthStatus.value[index] || false;
+        const isHealthy = (diseaseTitle) => {
+            return healthStatus.value[diseaseTitle] || false;
         };
 
-        const toggleHealthy = (index) => {
-            healthStatus.value[index] = !healthStatus.value[index];
+        const toggleHealthy = (diseaseTitle) => {
+            healthStatus.value[diseaseTitle] = !healthStatus.value[diseaseTitle];
+
+            if (healthStatus.value[diseaseTitle]) {
+                // "건강해요" 상태가 되면 선택된 하위 질병 초기화
+                selectedSubDiseases[diseaseTitle] = [];
+            }
+        };
+
+        const toggleSubDisease = (diseaseTitle, subDisease) => {
+            if (!selectedSubDiseases[diseaseTitle]) {
+                selectedSubDiseases[diseaseTitle] = [];
+            }
+            const index = selectedSubDiseases[diseaseTitle].indexOf(subDisease);
+            if (index === -1) {
+                selectedSubDiseases[diseaseTitle].push(subDisease);
+                // 하위 질병이 선택되면 "건강해요" 상태 해제
+                healthStatus.value[diseaseTitle] = false;
+            } else {
+                selectedSubDiseases[diseaseTitle].splice(index, 1);
+            }
+        };
+
+        const isSubDiseaseSelected = (diseaseTitle, subDisease) => {
+            return selectedSubDiseases[diseaseTitle] && selectedSubDiseases[diseaseTitle].includes(subDisease);
         };
 
         const fetchDiseaseAnalysis = async () => {
             try {
+                // healthStatus.value가 빈 객체로 초기화되어 있는지 확인
+                if (!healthStatus.value || !showsub.value) {
+                    healthStatus.value = {};
+                    showsub.value = {};
+                }
+
                 await diseaseStore.fetchContents();
-                diseaseStore.contents.forEach((content, index) => {
-                    healthStatus.value[index] = false;
-                    diseases.value.push(content.diseaseTitle);
-                    selectedSubDiseases[content.diseaseTitle] = [];
-                });
+
+                for (const content of diseaseStore.contents) {
+                    // diseaseTitle이 정상적으로 존재하는지 확인
+                    if (content.diseaseTitle) {
+                        // healthStatus 객체에 diseaseTitle을 키로 추가
+                        healthStatus.value[content.diseaseTitle] = false;
+                        diseases.value.push(content.diseaseTitle);
+                        selectedSubDiseases[content.diseaseTitle] = [];
+                        showsub.value[content.diseaseTitle] = true;
+                    } else {
+                        console.warn('Missing diseaseTitle in content:', content);
+                    }
+                }
             } catch (error) {
                 console.error('Failed to fetch disease analysis:', error);
             }
@@ -172,6 +225,7 @@ export default {
         const fetchSubDisease = async () => {
             try {
                 if (diseases.value.length > 0) {
+                    console.log('fetchSubDisease: ', diseases);
                     await subDiseaseStore.fetchSubdiseases(diseases.value);
                 }
             } catch (error) {
@@ -180,7 +234,7 @@ export default {
         };
 
         const getSelectedSubDiseasesString = (diseaseTitle) => {
-            return selectedSubDiseases[diseaseTitle].join(', ');
+            return selectedSubDiseases[diseaseTitle] ? selectedSubDiseases[diseaseTitle].join(', ') : '';
         };
 
         const goBack = () => {
@@ -204,6 +258,11 @@ export default {
             diseases,
             selectedSubDiseases,
             getSelectedSubDiseasesString,
+            toggleSubDisease,
+            isSubDiseaseSelected,
+            handleshowSubDiseaseList,
+            showsub,
+            isSubVisible,
         };
     },
 };
@@ -314,7 +373,6 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
 }
 
 .toggle-button {
@@ -354,5 +412,16 @@ export default {
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
+}
+.diseaseCheckDiv {
+    color: black;
+    border-style: groove;
+    border-radius: 20px;
+    width: max-content;
+    padding: 3px;
+}
+.showSubDiseaseList img {
+    width: 20px;
+    height: 20px;
 }
 </style>
