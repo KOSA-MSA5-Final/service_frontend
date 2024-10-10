@@ -132,6 +132,9 @@ import { useFetchReceiptDiseaseStore } from '@/fetch_datas/receiptDiseaseStore';
 import { useSubdiseasesStore } from '@/fetch_datas/receiptSubDiseaseStore';
 import { onMounted, ref, reactive } from 'vue';
 import { useUnfoundDiseaseStore } from '@/fetch_datas/unfoundMedicalStore';
+import { useSelectedDiseaseStore } from '@/stores/selectedDiseaseStore';
+
+import { useSelectedSubDiseaseStore } from '@/stores/selectedSubDiseaseStore';
 
 export default {
     name: 'RegisterDiseasePage',
@@ -140,12 +143,14 @@ export default {
         const diseaseStore = useFetchReceiptDiseaseStore();
         const subDiseaseStore = useSubdiseasesStore();
         const unfoundDiseaseStore = useUnfoundDiseaseStore();
+        const selectedDiseaseStore = useSelectedDiseaseStore();
         const visibleReasons = ref({});
         const timeouts = ref({});
         const healthStatus = ref({});
         const diseases = ref([]);
         const selectedSubDiseases = reactive({});
         const showsub = reactive({});
+        const selectedSubDiseaseStore = useSelectedSubDiseaseStore();
 
         const handleshowSubDiseaseList = (diseaseTitle) => {
             showsub[diseaseTitle] = !showsub[diseaseTitle];
@@ -234,7 +239,8 @@ export default {
         const fetchSubDisease = async () => {
             try {
                 if (diseases.value.length > 0) {
-                    console.log('fetchSubDisease: ', diseases);
+                    selectedDiseaseStore.setDiseaseInfo(diseases);
+                    console.log('fetchSubDisease: ', selectedDiseaseStore.diseaseInfo);
                     await subDiseaseStore.fetchSubdiseases(diseases.value);
                 }
             } catch (error) {
@@ -251,6 +257,8 @@ export default {
         };
 
         const goExtraMedical = () => {
+            console.log('selectedSubDiseases', selectedSubDiseases);
+            selectedSubDiseaseStore.setsubDiseaseInfo(selectedSubDiseases);
             router.push('/main/upload_receipt/disease/extra');
         };
 

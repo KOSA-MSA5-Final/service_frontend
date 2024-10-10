@@ -45,13 +45,4 @@ export const useUnfoundDiseaseStore = defineStore('unfoundDisease', {
             this.analysedDiseases = [];
         },
     },
-
-    getters: {
-        getSubdiseasesByDiseaseName: (state) => (diseaseName) => {
-            const disease = state.analysedDiseases.find((d) => d.diseaseName === diseaseName);
-            return disease ? disease.subDiseases : [];
-        },
-
-        hasSubdiseases: (state) => state.analysedDiseases.length > 0,
-    },
 });
