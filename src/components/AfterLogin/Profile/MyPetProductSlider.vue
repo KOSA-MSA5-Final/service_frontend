@@ -2,15 +2,21 @@
     <div class="product-slider">
         <button @click="scrollLeft" class="scroll-button left" :disabled="isAtStart">&#8249;</button>
         <div class="products-container" ref="container">
-            <div v-for="{ id, name, price, img } in products" :key="id" class="product-item">
+            <div v-for="product in products" :key="product.id" class="product-item">
                 <div class="relative">
                     <a href="#" class="block">
-                        <img :src="img.src" :alt="img.alt" class="product-image" width="146" height="146" />
+                        <img
+                            :src="product.imageUrls ? product.imageUrls[0] : defaultImage"
+                            :alt="product.imageUrls"
+                            class="product-image"
+                            width="146"
+                            height="146"
+                        />
                     </a>
                 </div>
                 <div class="product-info">
-                    <a href="#" class="product-name">{{ name }}</a>
-                    <span class="product-price">{{ price }}</span>
+                    <a href="#" class="product-name">{{ product.name }}</a>
+                    <!-- <span class="product-price">{{ product.price }}</span> -->
                 </div>
             </div>
         </div>
@@ -115,7 +121,9 @@ watch(
     margin-bottom: 5px;
     color: #333;
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 0.8em;
+    height: 50px;
+    align-content: center;
 }
 
 .product-price {

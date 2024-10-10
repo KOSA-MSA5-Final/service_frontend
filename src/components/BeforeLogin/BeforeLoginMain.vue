@@ -40,9 +40,9 @@
                             placeholder="비밀번호 입력"
                         />
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="submit-btn">Submit</button>
                 </form>
-                <button id="signup" @click="goToSignup">SignUp</button>
+                <button id="signup" class="siginup-btn" @click="goToSignup">SignUp</button>
             </div>
         </div>
     </div>
@@ -102,23 +102,21 @@ button {
     margin-top: 0px;
 }
 
-.mgng-gif {
-    width: 100%;
-    height: 311px;
-    overflow: hidden;
-}
-
 .image-cropper {
-    height: 311px; /* 371px - 30px top - 30px bottom */
+    /* height: 100%; */
+    height: 430px; /* 371px - 30px top - 30px bottom */
     overflow: hidden;
     position: relative;
     /* margin-top: 20px; */
 }
 
 .image-cropper img {
-    position: relative;
-    top: -150px;
+    object-fit: contain;
+    object-position: center;
+    /* position: relative; */
+    /* top: -150px; */
     width: 100%;
+    height: 100%;
 }
 
 .content-wrapper {
@@ -129,25 +127,14 @@ button {
 
 .mgng-gif {
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
+    /* height: 311px; */
     overflow: hidden;
-}
-
-.image-cropper {
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-}
-
-.image-cropper img {
-    position: relative;
-    top: -150px;
-    width: 100%;
 }
 
 #info-text-container {
     position: absolute;
-    top: 50%;
+    top: 53%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
@@ -157,7 +144,7 @@ button {
 }
 .login-box {
     position: absolute;
-    top: 80%;
+    top: 77%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
@@ -177,5 +164,28 @@ button {
 
 .form-control::placeholder {
     color: #aaa;
+}
+
+.submit-btn {
+    margin-top: 10px;
+    background-color: #008cff;
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 102px;
+    height: 45px;
+}
+
+.siginup-btn {
+    background-color: #008cff;
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 102px;
+    height: 45px;
 }
 </style>
