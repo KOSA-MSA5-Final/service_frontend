@@ -142,7 +142,7 @@ export default {
         const filteredResult = computed(() => {
             if (!result.value) return {};
             return Object.keys(result.value)
-                .filter((key) => key !== 'medicalDTOs' && key !== 'reg_num')
+                .filter((key) => key !== 'medicalDTOs' && key !== 'reg_num' && key !== 'receipt_url')
                 .reduce((obj, key) => {
                     obj[key] = result.value[key];
                     return obj;

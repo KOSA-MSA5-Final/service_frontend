@@ -286,6 +286,7 @@ export default {
                 console.log(selectedAllergies); // ["우유", "보리", "메밀"]
 
                 //페이지1스토어에서 필요한 데이터 가져오기
+                const petImg = petStore.petImg;
                 const petName = petStore.petName;
                 const petType = petStore.selectedAnimalType;
                 const petGender = petStore.maleselected;
@@ -303,6 +304,7 @@ export default {
 
                 //백엔드로 보내기 위한 데이터 준비
                 const profileData = {
+                    petImg,
                     petName,
                     petType,
                     petGender,
