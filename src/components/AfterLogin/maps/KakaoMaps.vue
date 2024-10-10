@@ -64,7 +64,26 @@
         </div>
         <div class="map-wrapper" :style="{ height: isMapMinimized ? '10vh' : '40vh' }">
             <!-- 지도 컨테이너 -->
-            <div class="map-container" ref="mapContainer"></div>
+            <div class="map-container" ref="mapContainer">
+                <div class="filter-buttons">
+                    <button
+                        class="filter-btn"
+                        :class="{ active: activeFilter === '전체' }"
+                        @click="filterFacilities('전체')"
+                    >
+                        전체
+                    </button>
+                    <button
+                        class="filter-btn"
+                        :class="{ active: activeFilter === '제휴' }"
+                        @click="filterFacilities('제휴')"
+                    >
+                        제휴
+                    </button>
+                </div>
+                <!-- 알림 메시지 표시 영역 -->
+                <div class="alert-message">전화번호가 저장되었습니다.</div>
+            </div>
 
             <!-- 현재 위치 정보 표시 -->
             <div class="current-location-info" @click="toggleMapSize">
@@ -115,7 +134,7 @@
             <div class="facility-list" :style="{ height: isMapMinimized ? '80vh' : '50vh' }">
                 <div
                     class="facility-item"
-                    v-for="(facility, index) in facilityList"
+                    v-for="(facility, index) in filteredFacilityList"
                     :key="index"
                     @click="moveToFacility(facility)"
                 >
@@ -124,11 +143,11 @@
                             {{ facility.name }}
                             <span v-if="isAffiliated(facility)"> (제휴) </span>
                         </div>
+                        <div class="facility-rating">5.0 ★★★★★</div>
                         <div class="facility-address">{{ facility.address }}</div>
                     </div>
                     <div class="facility-action">
-                        <button class="reservation-btn">예약</button>
-                        <button class="consultation-btn">상담</button>
+                        <button class="reservation-btn">예약<br />상담</button>
                     </div>
                 </div>
             </div>
@@ -150,10 +169,13 @@ const isMapMinimized = ref(false);
 const mapWrapperHeight = ref('40vh'); // 초기 높이는 40vh
 const currentAddress = ref('위치 정보를 불러오는 중...'); // 현재 위치 주소를 저장할 상태 변수
 const facilityList = ref([]); // 병원 리스트 데이터를 저장할 변수
+const activeFilter = ref('전체'); // 필터링 상태 관리 ('전체' 또는 '제휴')
+const filteredFacilityList = ref([]); // 필터링된 병원 리스트
 const facilityStore = useFacilityStore(); // Pinia 스토어 인스턴스 사용
 const activeCategory = ref('동물병원'); // 활성화된 카테고리를 저장할 상태 변수
 const markers = ref([]);
 const infoWindow = ref(null); // 인포윈도우 객체를 저장할 변수 선언
+const alertMessage = ref(''); // 알림 메시지 상태 변수
 
 // 병원 리스트 예시 데이터
 // const facilityList = ref([
@@ -317,15 +339,9 @@ const searchfacilitysNearLocation = (lat, lng, category) => {
     // 키워드 검색 메서드 사용
     places.keywordSearch(category, callback, {
         location: new window.kakao.maps.LatLng(lat, lng),
-        radius: 3000, // 반경 3km
+        radius: 2500, // 반경 3km
     });
 };
-
-// // 새로운 함수로 검색 로직 분리
-// const searchByCategory = (lat, lng, category) => {
-//     if (!lat || !lng) return;
-//     searchfacilitysNearLocation(lat, lng, category);
-// };
 
 // 카테고리 버튼 클릭 시 호출되는 함수
 const searchCategory = (category) => {
@@ -347,6 +363,20 @@ const mapKakaoDataToHospitalDTO = (kakaoData) => {
         id: kakaoData.id,
         isOurs: false, // 기본값은 제휴되지 않은 병원으로 설정
     };
+};
+
+// 필터링된 병원 리스트 업데이트 함수
+const filterFacilities = (filterType) => {
+    activeFilter.value = filterType; // 선택된 필터 타입으로 상태 업데이트
+
+    // 전체 버튼 클릭 시 모든 병원 데이터 표시
+    if (filterType === '전체') {
+        filteredFacilityList.value = facilityList.value;
+    }
+    // 제휴 버튼 클릭 시 제휴 병원 데이터만 표시
+    else if (filterType === '제휴') {
+        filteredFacilityList.value = facilityList.value.filter((facility) => facility.isOurs);
+    }
 };
 
 // 병원 리스트와 마커 업데이트 함수
@@ -377,7 +407,7 @@ const updatefacilityListAndMarkers = async (places) => {
     // 기존 마커 모두 제거
     clearMarkers();
 
-    // 제휴 병원이 상단에 오도록 정렬
+    /* // 제휴 병원이 상단에 오도록 정렬
     const sortedFacilities = facilitiesWithLatLng.sort((a, b) => {
         // 제휴 병원이면 상단에 배치
         if (a.isOurs && !b.isOurs) return -1;
@@ -385,10 +415,26 @@ const updatefacilityListAndMarkers = async (places) => {
 
         // 그 외에는 거리 순서대로 정렬
         return a.distance - b.distance;
-    });
+    });*/
+
+    // 제휴 병원과 일반 병원으로 나누기
+    const affiliatedFacilities = facilitiesWithLatLng.filter((facility) => facility.isOurs);
+    const nonAffiliatedFacilities = facilitiesWithLatLng.filter((facility) => !facility.isOurs);
+
+    // 제휴 병원은 거리 순으로 정렬하여 상위 2개만 추출
+    const topAffiliatedFacilities = affiliatedFacilities
+        .sort((a, b) => a.distance - b.distance) // 거리 순으로 정렬
+        .slice(0, 2); // 상위 2개의 제휴 병원만 선택
+
+    // 나머지 병원들을 거리 순으로 정렬
+    const sortedNonAffiliatedFacilities = nonAffiliatedFacilities.sort((a, b) => a.distance - b.distance);
+
+    // 최종 병원 리스트: 상단에 제휴 병원 2개 + 그 외 병원들
+    const sortedFacilities = [...topAffiliatedFacilities, ...sortedNonAffiliatedFacilities];
 
     // 시설 리스트를 업데이트하고 지도에 마커로 표시
     facilityList.value = sortedFacilities;
+    filterFacilities(activeFilter.value); // 필터링된 리스트 업데이트
     addMarkersToMap(facilityList.value);
 };
 
@@ -398,25 +444,14 @@ const addMarkersToMap = (facilities) => {
 
     // 제휴 병원 마커 이미지 설정
     const affiliatedMarkerImageSrc = `data:image/svg+xml;base64,${btoa(`
-<svg height="30px" width="30px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#000000">
-    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-    <g id="SVGRepo_iconCarrier">
-        <path style="fill:#DCE5FA;" d="M465.051,8.862H46.95c-21.035,0-38.089,17.053-38.089,38.089v418.101 c0,21.035,17.053,38.089,38.089,38.089h418.1c21.035,0,38.089-17.053,38.089-38.089V46.949 C503.139,25.914,486.086,8.862,465.051,8.862z"></path> 
-        <path style="opacity:0.1;enable-background:new ;" d="M67.933,465.051V46.949c0-21.036,17.053-38.089,38.089-38.089H46.951 c-21.036,0-38.089,17.053-38.089,38.089v418.1c0,21.036,17.053,38.089,38.089,38.089h59.071 C84.986,503.138,67.933,486.086,67.933,465.051z"></path> 
-        <path style="fill:#FF6465;" d="M394.17,210.114h-92.283v-92.284c0-11.65-9.445-21.095-21.097-21.095h-49.578 c-11.651,0-21.097,9.445-21.097,21.095v92.283h-92.285c-11.65,0-21.095,9.445-21.095,21.097v49.578 c0,11.651,9.445,21.096,21.095,21.096h92.283v92.283c0,11.65,9.445,21.095,21.097,21.095h49.578 c11.651,0,21.097-9.445,21.097-21.095v-92.283h92.283c11.65,0,21.095-9.445,21.095-21.096V231.21 C415.265,219.56,405.82,210.114,394.17,210.114z"></path> 
-        <path d="M280.79,424.125h-49.578c-16.519,0-29.957-13.439-29.957-29.956v-83.422h-83.423c-16.517,0-29.956-13.439-29.956-29.957 v-49.578c0-16.519,13.439-29.957,29.956-29.957h83.422v-83.424c0-16.517,13.439-29.956,29.957-29.956h49.578 c16.519,0,29.957,13.439,29.957,29.956v83.422h83.422c16.517,0,29.956,13.439,29.956,29.957v49.578 c0,16.519-13.439,29.957-29.956,29.957h-83.422v83.422C310.747,410.687,297.308,424.125,280.79,424.125z M117.831,218.975 c-6.746,0-12.235,5.489-12.235,12.236v49.578c0,6.747,5.489,12.236,12.235,12.236h92.283c4.893,0,8.861,3.966,8.861,8.861v92.283 c0,6.747,5.489,12.235,12.236,12.235h49.578c6.747,0,12.236-5.489,12.236-12.235v-92.283c0-4.895,3.967-8.861,8.861-8.861h92.283 c6.746,0,12.235-5.489,12.235-12.236v-49.578c0-6.747-5.489-12.236-12.235-12.236h-92.283c-4.893,0-8.861-3.966-8.861-8.861v-92.284 c0-6.747-5.489-12.235-12.236-12.235H231.21c-6.747,0-12.236,5.489-12.236,12.235v92.283c0,4.895-3.967,8.861-8.861,8.861h-92.283 V218.975z"></path> 
-        <path d="M360.591,512H46.95c-25.888,0-46.949-21.061-46.949-46.949V46.949C0.002,21.061,21.063,0,46.95,0h44.273 c4.893,0,8.861,3.966,8.861,8.861s-3.967,8.861-8.861,8.861H46.95c-16.117,0-29.228,13.113-29.228,29.228v418.1 c0,16.117,13.111,29.228,29.228,29.228h313.641c4.893,0,8.861,3.966,8.861,8.861C369.451,508.033,365.484,512,360.591,512z"></path> 
-        <path d="M465.05,512h-69.017c-4.893,0-8.861-3.966-8.861-8.861c0-4.895,3.967-8.861,8.861-8.861h69.017 c16.117,0,29.228-13.113,29.228-29.228V46.949c0-16.117-13.111-29.228-29.228-29.228H126.666c-4.893,0-8.861-3.966-8.861-8.861 S121.772,0,126.666,0H465.05c25.888,0,46.949,21.061,46.949,46.949v418.1C511.999,490.939,490.938,512,465.05,512z"></path> 
-    </g>
-</svg>
+<svg height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 432" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#F69494;" d="M216,16c88,0,160,72,160,160c0,79.2-131.2,209.6-160,236.8C187.2,385.6,56,255.2,56,176 C56,88,128,16,216,16z M336,168c0-66.4-53.6-120-120-120S96,101.6,96,168s53.6,120,120,120S336,234.4,336,168z"></path> <g> <path style="fill:#42210B;" d="M216,0c96.8,0,176,79.2,176,176c0,95.2-164,247.2-170.4,253.6c-1.6,1.6-4,2.4-5.6,2.4 s-4-0.8-5.6-2.4C204,423.2,40,271.2,40,176C40,79.2,119.2,0,216,0z M376,176c0-88-72-160-160-160S56,88,56,176 c0,79.2,131.2,209.6,160,236.8C244.8,385.6,376,255.2,376,176z"></path> <path style="fill:#42210B;" d="M216,48c66.4,0,120,53.6,120,120s-53.6,120-120,120S96,234.4,96,168S149.6,48,216,48z M320,168 c0-57.6-46.4-104-104-104s-104,46.4-104,104s46.4,104,104,104S320,225.6,320,168z"></path> </g> <path style="fill:#E94545;" d="M216,64c57.6,0,104,46.4,104,104s-46.4,104-104,104s-104-46.4-104-104S158.4,64,216,64z"></path> <path style="fill:#EE5656;" d="M216,80c48.8,0,88,39.2,88,88s-39.2,88-88,88s-88-39.2-88-88S167.2,80,216,80z"></path> <path style="fill:#42210B;" d="M288,136v48c0,4-4,8-8,8h-32v32c0,4-4,8-8,8h-48c-4,0-8-4-8-8v-32h-32c-4,0-8-4-8-8v-48c0-4,4-8,8-8 h32V96c0-4,4-8,8-8h48c4,0,8,4,8,8v32h32C284,128,288,132,288,136z M272,176v-32h-32c-4,0-8-4-8-8v-32h-32v32c0,4-4,8-8,8h-32v32h32 c4,0,8,4,8,8v32h32v-32c0-4,4-8,8-8H272z"></path> <path style="fill:#FFF8EF;" d="M272,144v32h-32c-4,0-8,4-8,8v32h-32v-32c0-4-4-8-8-8h-32v-32h32c4,0,8-4,8-8v-32h32v32c0,4,4,8,8,8 H272z"></path> </g></svg>
 `)}`;
 
     // 제휴 병원 마커 이미지 객체
     const affiliatedMarkerImage = new window.kakao.maps.MarkerImage(
         affiliatedMarkerImageSrc,
         new window.kakao.maps.Size(30, 30), // 마커 이미지 크기 설정
-        { offset: new window.kakao.maps.Point(15, 30) }, // 마커 위치 오프셋 설정
+        { offset: new window.kakao.maps.Point(10, 32) }, // 마커 위치 오프셋 설정
     );
 
     facilities.forEach((facility) => {
@@ -452,11 +487,16 @@ const createInfoWindow = (marker, facility) => {
         console.error('Kakao Maps SDK가 로드되지 않았습니다.');
         return;
     }
+
+    // HTML 콘텐츠 작성
     const content = `
-        <div style="padding:10px; width:200px; height:80px; display:flex; flex-direction: column; align-items: center; justify-content: center; text-align:center;">
-            <p style="margin:0; font-size:14px;">${facility.name}</p>
-            <p style="margin:5px 0; font-size:12px;">${facility.address}</p>
-            <p style="margin:5px 0; font-size:12px;">${facility.phoneNumber}</p>
+        <div id="info-window-content" style="padding:10px; width:200px; height:120px; display:flex; flex-direction: column; align-items: center; justify-content: center; text-align:center; position: relative;">
+            <p style="margin:0px; font-size:14px;">${facility.name}</p>
+            <p style="margin:2px 0; font-size:12px;">${facility.address}</p>
+            <p style="margin:2px 0; font-size:11px">5.0 ★★★★★</p>
+            <p id="phone-number" style="margin:2px 0; font-size:12px; cursor: pointer;">
+                ${facility.phoneNumber}
+            </p>
         </div>
     `;
 
@@ -470,6 +510,42 @@ const createInfoWindow = (marker, facility) => {
     }
 
     infoWindow.value.open(mapInstance.value, marker);
+
+    // 이벤트 리스너 바인딩
+    const phoneNumberElement = document.getElementById('phone-number');
+    if (phoneNumberElement) {
+        phoneNumberElement.addEventListener('click', () => {
+            copyToClipboard(facility.phoneNumber);
+            showCopyMessage();
+        });
+    }
+};
+
+// 전화번호 복사 함수
+const copyToClipboard = (text) => {
+    const tempInput = document.createElement('input');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+};
+
+const showCopyMessage = () => {
+    const alertMessageElement = document.querySelector('.alert-message');
+    alertMessage.value = '전화번호가 저장되었습니다.';
+
+    // 'show' 클래스를 추가하여 메시지 표시
+    if (alertMessageElement) {
+        alertMessageElement.classList.add('show');
+    }
+
+    // 일정 시간이 지난 후 메시지 숨기기
+    setTimeout(() => {
+        if (alertMessageElement) {
+            alertMessageElement.classList.remove('show'); // show 클래스를 제거하여 메시지 숨김
+        }
+    }, 1500); // 1.5초 후 메시지 사라지기 시작
 };
 
 // 지도 클릭 시 인포윈도우 닫기
@@ -700,9 +776,64 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .map-container {
+    position: relative;
     background-color: #cee2f5;
     width: 100%;
     height: 100%;
+}
+
+.alert-message {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0s linear 1s;
+    z-index: 100;
+}
+
+.alert-message.show {
+    opacity: 0.9;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* 필터 버튼 스타일 */
+.filter-buttons {
+    position: absolute;
+    /* top: 2px;
+    left: 2px; */
+    display: flex;
+    z-index: 100;
+}
+
+.filter-btn {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #ffffff; /* 필터 버튼의 배경색을 흰색으로 변경 */
+    border: 1px solid #539ee0; /* 테두리를 카테고리와 동일하게 */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-btn.active {
+    background-color: #ffffff; /* 활성화된 상태에서도 흰색 유지 */
+    color: black; /* 글자 색상을 카테고리 색상과 동일하게 */
+    border: 2px solid #539ee0; /* 활성화된 필터 버튼 테두리 강조 */
+}
+
+.filter-btn:hover {
+    background-color: #ffffff; /* 활성화된 상태에서도 흰색 유지 */
+    color: black; /* 글자 색상을 카테고리 색상과 동일하게 */
 }
 
 .map-wrapper {
@@ -712,19 +843,6 @@ onBeforeUnmount(() => {
     height: 40vh;
     transition: height 0.3s ease;
 }
-
-/* .refresh-location-btn {
-    position: absolute;
-    top: 200px;
-    right: 3px;
-    z-index: 10;
-    padding: 5px;
-    font-size: 16px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
-} */
 
 .refresh-location-btn:hover {
     background-color: #f1f1f1;
@@ -759,6 +877,7 @@ onBeforeUnmount(() => {
 /* 시설 리스트 스타일 */
 .facility-list {
     overflow-y: auto;
+    scrollbar-width: none;
     width: 100%;
     height: 100%;
     margin-top: 10px;
@@ -779,17 +898,25 @@ onBeforeUnmount(() => {
 
 .facility-info {
     display: flex;
-    margin: 10px;
+    margin: 5px 10px;
     flex-direction: column;
     align-items: flex-start;
 }
 
 .facility-name {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
 }
 
+.facility-rating {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    color: #ff6347; /* 0.0 숫자를 빨간색으로 */
+}
+
 .facility-address {
+    font-size: 14px;
     color: #666;
     align-items: flex-start;
 }
@@ -807,27 +934,15 @@ onBeforeUnmount(() => {
 .facility-action button {
     padding: 5px 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
 }
 
-.reservation-btn,
-.consultation-btn {
-    font-size: 15px;
-    display: inline-block; /* 텍스트가 한 줄에 보이도록 설정 */
-    text-align: center; /* 텍스트 가운데 정렬 */
-    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-    border-radius: 5px; /* 버튼 테두리 둥글게 */
-}
-
 .reservation-btn {
-    font-size: 15px;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 14px;
     background-color: #539ee0;
-    color: #fff;
-}
-
-.consultation-btn {
-    background-color: #ff6f61;
     color: #fff;
 }
 

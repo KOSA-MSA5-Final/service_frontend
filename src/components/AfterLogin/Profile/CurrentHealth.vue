@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <div class="main-content">
+            <div class="main-content" id="main-content">
                 <!-- 상단 프로필 정보 섹션 -->
                 <div class="header">
                     <div class="profile-card">
@@ -45,7 +45,7 @@
                             <p>만 {{ currentProfile.age }}세</p>
                             <p>생일: {{ formatBirthday(currentProfile.birthday) }}</p>
                             <p>
-                                {{ currentProfile.animalType }} {{ currentProfile.gender }} ({{
+                                {{ currentProfile.animalType }} / {{ currentProfile.gender }} ({{
                                     currentProfile.animalName
                                 }})
                             </p>
@@ -142,12 +142,14 @@
                         전체 기록<br />
                         내보내기
                     </button>
-                    <button class="action-button">
-                        병원 기록만<br />
+                    <button class="action-button" @click="exportCurrentRecords">
+                        현재 기록<br />
                         내보내기
                     </button>
                 </div>
             </div>
+            <!-- 메시지 알림 표시 -->
+            <div class="export-message">{{ currentProfile.name }} PDF가 성공적으로 저장되었습니다.</div>
         </div>
         <!-- 프로필 데이터가 없는 경우를 처리하는 메시지 -->
         <div v-else>
@@ -157,14 +159,18 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useUserInfoStore } from '@/fetch_datas/userInfo'; // Pinia Store import
 import { storeToRefs } from 'pinia'; // storeToRefs 추가
 import defaultProfileImage from '@/assets/jangoon.gif'; // 기본 프로필 이미지 경로 설정
+import html2canvas from 'html2canvas'; // html2canvas import
+import jsPDF from 'jspdf'; // jsPDF import
 
 // Pinia Store 인스턴스 가져오기
 const userInfoStore = useUserInfoStore();
 const { profiles, loading } = storeToRefs(userInfoStore); // profiles와 loading 상태 가져오기
+
+const exportMessage = ref(''); // PDF 저장 메시지 내용
 
 // 컴포넌트가 마운트될 때 서버에서 프로필 데이터를 가져옴
 onMounted(async () => {
@@ -210,6 +216,61 @@ const formatBirthday = (date) => {
     return `${formattedDate.getFullYear()}년 ${formattedDate.getMonth() + 1}월 ${formattedDate.getDate()}일`;
 };
 
+// PDF 내보내기 함수
+const exportCurrentRecords = () => {
+    const captureElement = document.getElementById('main-content'); // 캡처할 영역의 ID 설정
+
+    if (captureElement) {
+        html2canvas(captureElement, {
+            scale: 2, // 스케일 조정으로 해상도 높이기
+            ignoreElements: (element) => element.classList.contains('recent-visit-section'), // 제외할 섹션
+            useCORS: true, // CORS 이슈 방지
+            windowWidth: 412, // 모바일 환경의 가로 크기 (예시)
+            windowHeight: captureElement.clientHeight, // 캡처할 전체 높이 설정
+        }).then((canvas) => {
+            const imageData = canvas.toDataURL('image/png');
+
+            // PDF 크기를 HTML 요소의 비율과 맞추기
+            const canvasWidth = canvas.width * 0.3; // HTML 요소의 너비
+            const canvasHeight = canvas.height * 0.3; // HTML 요소의 높이
+
+            // PDF 설정 - 단위를 px로 설정하여 HTML 요소 비율에 맞추기
+            const pdf = new jsPDF('p', 'px', [canvas.width * 0.32, canvas.height * 0.32]);
+
+            // PDF에 이미지 추가
+            pdf.addImage(imageData, 'PNG', 8, 10, canvasWidth, canvasHeight);
+
+            // PDF 파일로 저장
+            pdf.save(`${currentProfile.value.name}_기록.pdf`);
+
+            // PDF 저장 후 메시지 표시
+            showExportMessage();
+
+            // 3초 후 메시지 자동 삭제
+            // setTimeout(() => {
+            //     exportMessage.value = '';
+            // }, 3000);
+        });
+    } else {
+        console.error('캡처할 요소를 찾을 수 없습니다.');
+    }
+};
+
+// PDF 저장 메시지 표시 함수
+const showExportMessage = () => {
+    const alertMessageElement = document.querySelector('.export-message');
+    exportMessage.value = '{{ currentProfile.name }} PDF가 성공적으로 저장되었습니다.';
+
+    if (alertMessageElement) {
+        alertMessageElement.classList.add('show');
+    }
+    setTimeout(() => {
+        if (alertMessageElement) {
+            alertMessageElement.classList.remove('show'); // show 클래스를 제거하여 메시지 숨김}
+        }
+    }, 1500); // 1.5초 후 메시지가 사라지도록 설정
+};
+
 // 뒤로가기 버튼 클릭 함수
 const goBack = () => {
     window.history.back();
@@ -221,7 +282,7 @@ const goBack = () => {
     display: flex;
     flex-direction: column;
     height: 100%; /* 전체 화면 높이 */
-    background-color: #f0f8ff;
+    background-color: #cee2f5;
     width: 100%;
     margin: 0 auto;
 }
@@ -234,7 +295,9 @@ const goBack = () => {
     padding: 10px 5px;
     margin-bottom: 60px; /* bottom-bar와 겹치지 않도록 여백 추가 */
     overflow-y: auto;
-    height: calc(100vh - 60px - 50px);
+    scrollbar-width: none;
+    height: calc(100vh - 60px - 70px);
+    border-radius: 10px;
 }
 
 .setting-topbar {
@@ -429,13 +492,58 @@ const goBack = () => {
 .bottom-bar {
     position: fixed; /* 하단 고정 */
     bottom: 0;
-    left: 0px;
+    /* left: 0px; */
     width: 100%;
+    max-width: 1320px; /* 화면 너비를 초과하지 않도록 설정 */
     background-color: #cee2f5;
     box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
     display: flex; /* 자식 요소 정렬 */
     justify-content: center; /* 자식 요소들을 가운데 정렬 */
     z-index: 100;
+    box-sizing: border-box;
+    overflow: hidden; /* 요소가 넘칠 경우 숨김 */
+}
+
+@media (max-width: 1400px) {
+    .bottom-bar {
+        width: 1140px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .bottom-bar {
+        max-width: 960px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .bottom-bar {
+        max-width: 960px;
+    }
+}
+
+@media (max-width: 992px) {
+    .bottom-bar {
+        max-width: 720px;
+    }
+}
+
+@media (max-width: 768px) {
+    .bottom-bar {
+        max-width: 540px;
+    }
+}
+
+@media (max-width: 576px) {
+    .bottom-bar {
+        max-width: 540px;
+    }
+}
+
+@media (max-width: 574px) {
+    .bottom-bar {
+        max-width: 100%;
+    }
 }
 
 .actions-section {
@@ -458,5 +566,30 @@ const goBack = () => {
 
 .action-button:hover {
     background-color: rgb(180, 180, 180);
+}
+
+.export-message {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 999;
+    font-size: 14px;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0s linear 1s;
+}
+
+/* 메시지가 보일 때 적용할 클래스 */
+.export-message.show {
+    opacity: 0.9;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out;
 }
 </style>
