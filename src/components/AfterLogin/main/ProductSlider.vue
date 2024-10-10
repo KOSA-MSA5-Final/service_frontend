@@ -2,15 +2,23 @@
     <div class="product-slider">
         <button @click="scrollLeft" class="scroll-button left" :disabled="isAtStart">&#8249;</button>
         <div class="products-container" ref="container">
-            <div v-for="{ id, name, price, img } in products" :key="id" class="product-item">
+            <!-- products 리스트를 v-for로 출력하여 각 상품을 표시 -->
+            <div v-for="product in products" :key="product.id" class="product-item">
                 <div class="relative">
                     <a href="#" class="block">
-                        <img :src="img.src" :alt="img.alt" class="product-image" width="146" height="146" />
+                        <!-- imageUrls의 첫 번째 이미지를 사용하여 이미지 출력 -->
+                        <img
+                            :src="product.imageUrls ? product.imageUrls[0] : defaultImage"
+                            :alt="product.imageUrls"
+                            class="product-image"
+                            width="146"
+                            height="146"
+                        />
                     </a>
                 </div>
                 <div class="product-info">
-                    <a href="#" class="product-name">{{ name }}</a>
-                    <span class="product-price">{{ price }}</span>
+                    <a href="#" class="product-name">{{ product.name }}</a>
+                    <span class="product-price">₩{{ product.price }}</span>
                 </div>
             </div>
         </div>
@@ -19,23 +27,34 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 
-const products = ref(
-    Array.from(Array(10), (_, i) => ({
-        id: i.toString(),
-        name: 'Athletic mens walking sneakers',
-        price: '$2,345.99',
-        img: {
-            src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-            alt: 'White sneaker shoe',
-        },
-    })),
-);
+// eslint-disable-next-line no-undef
+const props = defineProps({
+    products: {
+        type: Array,
+        required: true,
+        default: () => [],
+    },
+});
 
 const container = ref(null);
 const isAtStart = ref(true);
 const isAtEnd = ref(false);
+
+const defaultImage = 'https://via.placeholder.com/150';
+
+onMounted(() => {
+    updateScrollState();
+    if (container.value) {
+        container.value.addEventListener('scroll', updateScrollState);
+    }
+});
+
+// watch로 props 변경 시 scroll 상태를 업데이트
+watch(props.products, () => {
+    updateScrollState();
+});
 
 const scrollLeft = () => {
     if (container.value) {
@@ -57,13 +76,6 @@ const updateScrollState = () => {
         isAtEnd.value = container.value.scrollLeft + container.value.clientWidth >= container.value.scrollWidth;
     }
 };
-
-onMounted(() => {
-    updateScrollState();
-    if (container.value) {
-        container.value.addEventListener('scroll', updateScrollState);
-    }
-});
 </script>
 
 <style scoped>
@@ -112,6 +124,8 @@ onMounted(() => {
     color: #333;
     text-decoration: none;
     font-size: 0.8em;
+    height: 58px;
+    align-content: center;
 }
 
 .product-price {

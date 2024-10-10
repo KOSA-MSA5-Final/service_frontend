@@ -20,6 +20,7 @@ import AddressSearchPage from '@/components/AfterLogin/Account/AddressSearchPage
 
 import SettingTemplate from '@/components/AfterLogin/Account/SettingTemplate.vue';
 import CurrentHealth from '@/components/AfterLogin/Profile/CurrentHealth.vue';
+import ProdutsMain from '@/components/AfterLogin/Products/ProdutsMain.vue';
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
@@ -124,6 +125,11 @@ const routes = [
         path: '/main/profile/current-health', // 'profile'의 하위 경로로 추가
         name: 'CurrentHealthPage',
         component: CurrentHealth,
+    },
+    {
+        path: '/products/:type',
+        name: 'ProductPage',
+        component: ProdutsMain,
     },
 ];
 

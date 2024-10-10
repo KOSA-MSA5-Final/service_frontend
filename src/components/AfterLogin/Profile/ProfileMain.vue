@@ -74,7 +74,7 @@
             </div>
             <div id="categories-section">
                 <div id="categories-container">
-                    <div id="feedstuff" @click="selectCategory('feedstuff')">
+                    <div id="feed" @click="selectCategory('feed')">
                         <p>사료</p>
                     </div>
                     <div id="snack" @click="selectCategory('snack')">
@@ -96,6 +96,7 @@
 <script>
 import { useRouter } from 'vue-router';
 import { useCurrentProfileStore } from '@/fetch_datas/currentProfileStore';
+import { useProductStore } from '@/stores/productStore';
 import { ref, computed, watch, onMounted } from 'vue';
 import MyPetProductSlider from './MyPetProductSlider.vue';
 import { storeToRefs } from 'pinia';
@@ -107,130 +108,59 @@ export default {
     },
     setup() {
         const router = useRouter();
+        const profileStore = useCurrentProfileStore();
+        const productStore = useProductStore();
+        const { contents } = storeToRefs(profileStore);
+        const { products } = storeToRefs(productStore);
 
-        const store = useCurrentProfileStore();
-        const { contents } = storeToRefs(store);
-
-        const selectedCategory = ref('feedstuffs'); // 초기값을 '사료'로 설정
+        const selectedCategory = ref(''); // 초기값을 '사료'로 설정
         onMounted(async () => {
-            await store.fetchContents();
+            await profileStore.fetchContents();
+            await productStore.fetchAllProducts();
+
+            // onMounted에서 기본 카테고리 (feed) 스타일 설정
+            const defaultElement = document.getElementById('feed');
+            if (defaultElement) {
+                defaultElement.style.backgroundColor = '#71a9db';
+                defaultElement.style.color = 'white';
+            }
+            // console.log('Fetched Products:', products.value);
         });
 
-        const feedstuffs = ref([
-            {
-                id: 1,
-                name: '사료1',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 2,
-                name: '사료2',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 3,
-                name: '사료3',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 4,
-                name: '사료4',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-        ]);
+        // 프로필의 동물 타입을 확인하기 위해 animalType을 추출
+        const profileAnimalType = computed(() => {
+            // contents가 존재하고, animalDetailDTO 및 animalDTO가 존재할 경우 animalDTO의 name을 반환
+            return contents.value?.animalDetailDTO?.animalDTO?.name;
+        });
 
-        const snacks = ref([
-            {
-                id: 5,
-                name: '간식1',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 6,
-                name: '간식2',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 7,
-                name: '간식3',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 8,
-                name: '간식4',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-        ]);
+        const feedProducts = computed(() =>
+            products.value.filter(
+                (product) => product.type === 'feed' && product.animalName === profileAnimalType.value,
+            ),
+        );
 
-        const supplements = ref([
-            {
-                id: 9,
-                name: '영양제1',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 10,
-                name: '영양제2',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 11,
-                name: '영양제3',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-            {
-                id: 12,
-                name: '영양제4',
-                img: {
-                    src: 'https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/sneakers.png',
-                    alt: 'White sneaker shoe',
-                },
-            },
-        ]);
+        const snackProducts = computed(() =>
+            products.value.filter(
+                (product) => product.type === 'snack' && product.animalName === profileAnimalType.value,
+            ),
+        );
+
+        const supplementProducts = computed(() =>
+            products.value.filter(
+                (product) => product.type === 'supplement' && product.animalName === profileAnimalType.value,
+            ),
+        );
 
         const displayedProducts = computed(() => {
             switch (selectedCategory.value) {
-                case 'feedstuff':
-                    return feedstuffs.value;
+                case 'feed':
+                    return feedProducts.value;
                 case 'snack':
-                    return snacks.value;
+                    return snackProducts.value;
                 case 'supplement':
-                    return supplements.value;
+                    return supplementProducts.value;
                 default:
-                    return feedstuffs.value;
+                    return feedProducts.value;
             }
         });
 
@@ -254,7 +184,7 @@ export default {
         watch(
             selectedCategory,
             (newCategory) => {
-                const categories = ['feedstuff', 'snack', 'supplement'];
+                const categories = ['feed', 'snack', 'supplement'];
                 categories.forEach((category) => {
                     const element = document.getElementById(category);
                     if (element) {
@@ -264,7 +194,7 @@ export default {
                 });
             },
             { immediate: true },
-        ); // immediate: true를 사용하여 초기 렌더링 시에도 실행되도록 함
+        );
 
         return {
             selectedCategory,
@@ -501,7 +431,7 @@ p {
     width: 80%;
 }
 
-#feedstuff,
+#feed,
 #snack,
 #supplement {
     border-radius: 20px;
@@ -509,8 +439,8 @@ p {
     background-color: white;
     width: -moz-fit-content;
     width: 100%;
-    padding: 5px;
-    font-size: 12px;
+    padding: 2px;
+    font-size: 14px;
     margin-right: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
