@@ -25,11 +25,17 @@
             </div>
         </div>
         <div id="content">
-            <div v-if="diseaseStore.loading">Loading...</div>
+            <div v-if="diseaseStore.loading" class="loading-content">
+                <img src="@/assets/mgng.gif" />
+                <div id="loading">
+                    멍지냥지가 영수증 내역을 토대로 <br />
+                    진단 병명의 대분류들을 분석하고 있어요.<br />잠시만 기다려 주세요
+                </div>
+            </div>
             <div v-else-if="diseaseStore.error">
                 아이가 건강한 것 같아요. 혹시 아니라면, 직접 진료된 병명들을 기입해 주세요.
             </div>
-            <div v-if="diseaseStore.contents">
+            <div v-else-if="diseaseStore.contents">
                 <div class="bannerDiv">
                     <div class="bannerFlexDiv">
                         <div style="color: gray">진단명 입력하기</div>
@@ -113,6 +119,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="goExtraMedicalBtn" @click="goExtraMedical">다음</div>
             </div>
             <div v-else>No data available</div>
         </div>
@@ -124,6 +131,7 @@ import { useRouter } from 'vue-router';
 import { useFetchReceiptDiseaseStore } from '@/fetch_datas/receiptDiseaseStore';
 import { useSubdiseasesStore } from '@/fetch_datas/receiptSubDiseaseStore';
 import { onMounted, ref, reactive } from 'vue';
+import { useUnfoundDiseaseStore } from '@/fetch_datas/unfoundMedicalStore';
 
 export default {
     name: 'RegisterDiseasePage',
@@ -131,6 +139,7 @@ export default {
         const router = useRouter();
         const diseaseStore = useFetchReceiptDiseaseStore();
         const subDiseaseStore = useSubdiseasesStore();
+        const unfoundDiseaseStore = useUnfoundDiseaseStore();
         const visibleReasons = ref({});
         const timeouts = ref({});
         const healthStatus = ref({});
@@ -241,9 +250,22 @@ export default {
             router.go(-1);
         };
 
+        const goExtraMedical = () => {
+            router.push('/main/upload_receipt/disease/extra');
+        };
+
+        const fetchUnfoundDiseases = async () => {
+            try {
+                await unfoundDiseaseStore.fetchUnfoundDisease(diseases.value);
+            } catch (error) {
+                console.error('Failed to fetch unfound diseases: ', error);
+            }
+        };
+
         onMounted(async () => {
             await fetchDiseaseAnalysis();
             await fetchSubDisease();
+            await fetchUnfoundDiseases();
         });
 
         return {
@@ -263,6 +285,10 @@ export default {
             handleshowSubDiseaseList,
             showsub,
             isSubVisible,
+
+            // 여기부터 기타질병
+            fetchUnfoundDiseases,
+            goExtraMedical,
         };
     },
 };
@@ -272,7 +298,7 @@ export default {
 #main-content {
     width: 100%;
     height: 100%;
-    background-color: #f9f9f9;
+    background-color: white;
     overflow-y: auto;
 }
 
@@ -326,16 +352,6 @@ export default {
     position: absolute; /* 부모 요소 내에서 위치를 조정 */
     right: 20px; /* 오른쪽으로 이동 */
     bottom: 30px; /* 하단 여백 설정 */
-}
-.whiteContentDiv {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-    background-color: white;
-    padding: 20px;
-    text-align: left;
-    height: 100%;
-    overflow-y: auto;
 }
 
 #disease-reason-health {
@@ -423,5 +439,13 @@ export default {
 .showSubDiseaseList img {
     width: 20px;
     height: 20px;
+}
+#next-Btn {
+    background-color: #71a9db;
+    width: 100%;
+    height: 100%;
+    border-style: groove;
+    position: fixed;
+    text-align: center;
 }
 </style>

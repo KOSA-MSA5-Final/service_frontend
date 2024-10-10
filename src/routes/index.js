@@ -21,6 +21,7 @@ import AddressSearchPage from '@/components/AfterLogin/Account/AddressSearchPage
 import SettingTemplate from '@/components/AfterLogin/Account/SettingTemplate.vue';
 import CurrentHealth from '@/components/AfterLogin/Profile/CurrentHealth.vue';
 import RegisterDisease from '@/components/AfterLogin/Profile/RegisterDisease.vue';
+import ExtraMedical from '@/components/AfterLogin/Profile/ExtraMedical.vue';
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
@@ -130,6 +131,11 @@ const routes = [
         path: '/main/upload_receipt/disease',
         name: 'RegisterDiseasePage',
         component: RegisterDisease,
+    },
+    {
+        path: '/main/upload_receipt/disease/extra',
+        name: 'ExtraMedicalPage',
+        component: ExtraMedical,
     },
 ];
 
