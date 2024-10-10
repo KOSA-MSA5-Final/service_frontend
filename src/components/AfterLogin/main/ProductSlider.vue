@@ -5,7 +5,7 @@
             <!-- products 리스트를 v-for로 출력하여 각 상품을 표시 -->
             <div v-for="product in products" :key="product.id" class="product-item">
                 <div class="relative">
-                    <a href="#" class="block">
+                    <a @click.prevent="goToProductDetails(product.id)" class="block">
                         <!-- imageUrls의 첫 번째 이미지를 사용하여 이미지 출력 -->
                         <img
                             :src="product.imageUrls ? product.imageUrls[0] : defaultImage"
@@ -28,6 +28,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router'; // useRouter 임포트
 
 // eslint-disable-next-line no-undef
 const props = defineProps({
@@ -44,12 +45,19 @@ const isAtEnd = ref(false);
 
 const defaultImage = 'https://via.placeholder.com/150';
 
+const router = useRouter(); // router 정의
+
 onMounted(() => {
     updateScrollState();
     if (container.value) {
         container.value.addEventListener('scroll', updateScrollState);
     }
 });
+
+// 상품 클릭 시 해당 상품의 ID로 라우팅
+const goToProductDetails = (productId) => {
+    router.push({ name: 'ProductDetails', params: { id: productId } });
+};
 
 // watch로 props 변경 시 scroll 상태를 업데이트
 watch(props.products, () => {

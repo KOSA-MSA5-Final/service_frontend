@@ -79,10 +79,11 @@
 
             <div class="main-content">
                 <!-- 상품 목록을 Grid 형태로 렌더링 -->
+                <!-- @click="goToProductDetails(product.id)" -->
                 <div class="product-grid">
                     <div v-for="product in FilteredProducts" :key="product.id" class="product-card">
                         <img
-                            :src="product.img ? product.img : defaultImage"
+                            :src="product.imageUrls ? product.imageUrls[0] : defaultImage"
                             :alt="product.name"
                             class="product-image"
                         />
@@ -237,6 +238,11 @@ const searchCategory = (category) => {
 const goBack = () => {
     window.history.back();
 };
+
+// // 상품 클릭 시 해당 상품의 ID로 라우팅
+// const goToProductDetails = (productId) => {
+//     route.push({ name: 'ProductDetails', params: { id: productId } });
+// };
 </script>
 
 <style scoped>
