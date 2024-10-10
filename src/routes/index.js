@@ -22,6 +22,8 @@ import SettingTemplate from '@/components/AfterLogin/Account/SettingTemplate.vue
 import CurrentHealth from '@/components/AfterLogin/Profile/CurrentHealth.vue';
 import ProdutsMain from '@/components/AfterLogin/Products/ProdutsMain.vue';
 
+import ProductDetails from '@/components/AfterLogin/Products/ProductDetails.vue';
+
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
 };
@@ -130,6 +132,12 @@ const routes = [
         path: '/products/:type',
         name: 'ProductPage',
         component: ProdutsMain,
+    },
+    {
+        path: '/product/:id',
+        name: 'ProductDetails',
+        component: ProductDetails,
+        props: true, // 경로 파라미터를 props로 전달
     },
 ];
 
