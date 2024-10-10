@@ -147,7 +147,9 @@
                         <div class="facility-address">{{ facility.address }}</div>
                     </div>
                     <div class="facility-action">
-                        <button class="reservation-btn">예약<br />상담</button>
+                        <button class="reservation-btn" @click="makePhoneCall(facility.phoneNumber)">
+                            예약<br />상담
+                        </button>
                     </div>
                 </div>
             </div>
@@ -158,7 +160,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useFacilityStore } from '@/fetch_datas/facilityStore'; // Pinia 스토어 가져오기
-// import axios from 'axios';
 
 const mapContainer = ref(null);
 const mapInstance = ref(null);
@@ -741,6 +742,15 @@ const isAffiliated = (facility) => {
     return facilityStore.affiliatedFacilities.some(
         (affiliated) => affiliated.name === facility.name && affiliated.address === facility.address,
     );
+};
+
+// 전화 걸기
+const makePhoneCall = (phoneNumber) => {
+    if (phoneNumber) {
+        window.location.href = `tel:${phoneNumber}`;
+    } else {
+        alert('전화번호가 없습니다.');
+    }
 };
 
 // 지도 초기화 및 이벤트 등록
