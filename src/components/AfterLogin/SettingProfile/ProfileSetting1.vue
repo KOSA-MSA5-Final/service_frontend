@@ -329,6 +329,7 @@
 <script>
 import NextButton from './NextButton.vue';
 import { usePetStore } from '@/stores/profilePage1Store';
+import { uploadProfileImage } from '@/post_datas/profileImg';
 
 import axios from 'axios';
 
@@ -435,23 +436,11 @@ export default {
 
             try {
                 const formData = new FormData();
-                formData.append('qimage', this.selectedFile.value);
-                const token = localStorage.getItem('token');
-                // 백엔드로 이미지 업로드 요청 보내기
-                const response = await axios.post('https://localhost:8081/api/uploadProfileImage', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${token}`,
-                    },
-                    withCredentials: true,
-                });
-
-                console.log('이미지 업로드 성공:', response.data);
-                this.profileImg = response.data;
-
-                // 업로드 후 미리보기 및 선택 초기화
-                this.imagePreview = null;
-                this.selectedFile = null;
+                formData.append('file', this.selectedFile); // 'qimage' 대신 'file'로 변경
+                const store = uploadProfileImage();
+                const response = await store.uploadFile(formData);
+                console.log('이미지 업로드 성공:', response);
+                this.profileImg = response;
             } catch (error) {
                 console.error('이미지 업로드 실패:', error);
             }
@@ -474,22 +463,36 @@ export default {
         },
         async handleNextButton() {
             const petStore = usePetStore();
-            petStore.setPetProfile({
-                petImg: this.profileImg,
-                petName: this.petName,
-                maleselected: this.maleselected,
-                selectedAnimalType: this.inputValue,
-                birthDate: this.birthDate,
-                neuteredselected: this.neuteredselected,
-                willneutered: this.willneutered,
-            });
-            console.log('안녕하세요' + petStore.petName);
 
-            if (this.neuteredselected && this.petName && this.birthDate && this.inputValue && this.maleselected) {
-                this.uploadImage();
-                this.$router.push('/setProfile/2');
-            } else {
+            if (!(this.neuteredselected && this.petName && this.birthDate && this.inputValue && this.maleselected)) {
                 alert('값을 다 입력해주세요');
+                return;
+            }
+
+            try {
+                // 이미지 업로드 시도
+                if (this.selectedFile) {
+                    await this.uploadImage();
+                }
+
+                // 스토어에 데이터 저장
+                petStore.setPetProfile({
+                    petImg: this.profileImg,
+                    petName: this.petName,
+                    maleselected: this.maleselected,
+                    selectedAnimalType: this.inputValue,
+                    birthDate: this.birthDate,
+                    neuteredselected: this.neuteredselected,
+                    willneutered: this.willneutered,
+                });
+
+                console.log('안녕하세요' + petStore.petName);
+
+                // 다음 페이지로 이동
+                this.$router.push('/setProfile/2');
+            } catch (error) {
+                console.error('프로필 설정 중 오류 발생:', error);
+                alert('프로필 설정 중 문제가 발생했습니다. 다시 시도해 주세요.');
             }
         },
     },
