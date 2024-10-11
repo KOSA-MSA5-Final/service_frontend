@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <div class="main-content" id="main-content">
+            <div class="main-content" id="capture-content">
                 <!-- 상단 프로필 정보 섹션 -->
                 <div class="header">
                     <div class="profile-card">
@@ -218,7 +218,7 @@ const formatBirthday = (date) => {
 
 // PDF 내보내기 함수
 const exportCurrentRecords = () => {
-    const captureElement = document.getElementById('main-content'); // 캡처할 영역의 ID 설정
+    const captureElement = document.getElementById('capture-content'); // 캡처할 영역의 ID 설정
 
     if (captureElement) {
         html2canvas(captureElement, {
@@ -319,6 +319,7 @@ const goBack = () => {
     font-weight: bold;
     border-bottom: 1px solid #ddd;
     box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+    border-bottom: 1.5px solid #71a9db;
 }
 /* 뒤로가기 버튼 스타일 */
 .back-button {

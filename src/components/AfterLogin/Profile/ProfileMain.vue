@@ -18,8 +18,17 @@
             <div id="edit-button">
                 <img src="@/assets/icon-edit.svg" alt="Edit Icon" />
             </div>
-            <div id="custom-info-reg-button">
-                <p>맞춤 정보 등록</p>
+            <div id="custom-info-reg-button" @click="goToSettings">
+                <span
+                    style="
+                        display: inline-block;
+                        text-align: center;
+                        vertical-align: middle;
+                        line-height: 30px;
+                        height: 30px;
+                    "
+                    >프로필 변경</span
+                >
             </div>
         </div>
         <div id="services">
@@ -89,7 +98,7 @@
                 <MyPetProductSlider :products="displayedProducts" />
             </div>
         </div>
-        <div id="latest-bought-items"></div>
+        <!-- <div id="latest-bought-items"></div> -->
     </div>
 </template>
 
@@ -118,10 +127,10 @@ export default {
             await profileStore.fetchContents();
             await productStore.fetchAllProducts();
 
-            // onMounted에서 기본 카테고리 (feed) 스타일 설정
+            // onMounted에서 기본 카테고리 (feed) 스타일 설정 #71a9db
             const defaultElement = document.getElementById('feed');
             if (defaultElement) {
-                defaultElement.style.backgroundColor = '#71a9db';
+                defaultElement.style.backgroundColor = '#2376e9';
                 defaultElement.style.color = 'white';
             }
             // console.log('Fetched Products:', products.value);
@@ -180,6 +189,9 @@ export default {
             router.push('/main/profile/current-health');
         };
 
+        const goToSettings = () => {
+            router.push('/main/settings');
+        };
         // selectedCategory가 변경될 때마다 실행되는 watch 함수
         watch(
             selectedCategory,
@@ -188,7 +200,7 @@ export default {
                 categories.forEach((category) => {
                     const element = document.getElementById(category);
                     if (element) {
-                        element.style.backgroundColor = category === newCategory ? '#71a9db' : 'white';
+                        element.style.backgroundColor = category === newCategory ? '#2376e9' : 'white';
                         element.style.color = category === newCategory ? 'white' : 'black';
                     }
                 });
@@ -204,6 +216,7 @@ export default {
             goToUploadReceipt,
             goToMaps,
             goToCurrentHealth,
+            goToSettings,
         };
     },
 };
@@ -264,8 +277,10 @@ export default {
 #custom-info-reg-button {
     border-radius: 10px;
     border: 1px solid white;
-    background-color: #539ee0;
-    padding: 5px 10px;
+    /* background-color: #539ee0; */
+    /* background-color: #1860c3; */
+    background-color: #2376e9;
+    padding: 2px 10px;
     color: white;
     white-space: nowrap;
 }
@@ -381,8 +396,9 @@ p {
     margin-right: 10px;
 }
 
+/* invert(77%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%)*/
 .icon {
-    filter: invert(77%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%);
+    filter: invert(42%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(105%) contrast(90%);
 }
 #supplying-products {
     border-radius: 10px;

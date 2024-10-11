@@ -18,8 +18,10 @@
         </div>
 
         <div id="right-button">
-            <img src="@/assets/icon-my-page.svg" @click="goToSettings" />
-            <p>환경설정</p>
+            <!-- <img src="@/assets/icon-my-page.svg" @click="goToSettings" />
+            <p>환경설정</p> -->
+            <img class="icon" src="@/assets/icon-building.svg" alt="Facilities Icon" @click="goToMaps" />
+            <p class="title">시설찾기</p>
         </div>
     </div>
 </template>
@@ -50,7 +52,7 @@ export default defineComponent({
         const goToMain = () => router.push('/main');
         const goToSettings = () => router.push('/main/settings');
         const goToCreateProfile = () => router.push('/setProfile/1');
-
+        const goToMaps = () => router.push('/main/maps');
         // Fetch profile data when component is mounted
         onMounted(async () => {
             await store.fetchContents();
@@ -62,6 +64,7 @@ export default defineComponent({
             goToMain,
             goToSettings,
             goToCreateProfile,
+            goToMaps,
         };
     },
 });
@@ -77,6 +80,8 @@ export default defineComponent({
     height: 80px;
     margin-bottom: 5px;
     border-top: 1px solid #bbb;
+    z-index: 100;
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
 }
 
 #buttomBar div {
@@ -105,18 +110,18 @@ export default defineComponent({
 }
 
 #right-button img {
-    max-width: 40px;
+    max-width: 35px;
 }
 #left-button img {
     max-width: 30px;
 }
 #left-button p {
     margin-top: 10px;
-    font-size: 10px;
+    font-size: 12px;
 }
 
 #right-button p {
     margin-top: 5px;
-    font-size: 10px;
+    font-size: 12px;
 }
 </style>

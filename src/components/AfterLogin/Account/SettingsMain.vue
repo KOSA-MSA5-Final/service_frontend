@@ -153,6 +153,7 @@ export default defineComponent({
     background-color: white;
     margin-left: 10px;
     margin-right: 10px;
+    margin-bottom: 10px;
     width: 95%;
     padding: 10px;
 }
@@ -167,7 +168,7 @@ export default defineComponent({
     width: 100%;
 }
 #separating-line {
-    border-top: 1px solid #71a9db;
+    border-top: 1.5px solid #2376e9;
     margin: 10px 0;
 }
 
@@ -209,7 +210,7 @@ p {
     color: #555;
 }
 .subtitle {
-    font-size: 11px;
+    font-size: 12px;
     color: #555;
 }
 
@@ -237,7 +238,7 @@ p {
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #71a9db;
+    border: 3px solid #2376e9;
 }
 
 #profiles {
@@ -258,6 +259,7 @@ p {
 } */
 
 .icon {
-    filter: invert(77%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%);
+    /* filter: invert(77%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%); */
+    filter: invert(50%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%);
 }
 </style>
