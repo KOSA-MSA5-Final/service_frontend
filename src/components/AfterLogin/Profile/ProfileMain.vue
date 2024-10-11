@@ -34,7 +34,7 @@
         <div id="services">
             <div id="main-services">
                 <div id="check-delivery">
-                    <router-link to="/order" class="no-underline">
+                    <router-link to="/product/order" class="no-underline">
                         <img class="icon" src="@/assets/icon-delivery.svg" alt="Delivery Icon" />
                         <p class="title">주문배송</p>
                         <p class="subtitle">확인하기</p>
