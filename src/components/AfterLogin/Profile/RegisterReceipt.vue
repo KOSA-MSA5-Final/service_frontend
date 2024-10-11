@@ -25,36 +25,53 @@
             </div>
         </div>
 
-        <div id="photo-upload-camera" v-if="uploadStep">
+        <div id="photo-upload-camera" v-if="uploadStep && !isLoading">
             <div id="upload-receipt-title">영수증 업로드</div>
-            <input type="file" accept="image/*" @change="onFileChange" style="background-color: white" />
+            <div id="upload-info">
+                병원 영수증을 모두 입력하면<br />
+                리워드 포인트가 <span class="highlight-points">+500P</span> !
+            </div>
+            <div id="upload-btns">
+                <div class="file-input-wrapper btn-wrapper">
+                    <input type="file" accept="image/*" @change="onFileChange" class="file-input" />
+                    <span class="file-input-text">파일 선택</span>
+                </div>
+
+                <button class="button btn-wrapper" @click="toggleCamera">
+                    {{ isCameraActive ? '카메라 끄기' : '카메라 켜기' }}
+                </button>
+            </div>
 
             <div v-if="isCameraActive">
                 <video ref="video" autoplay playsinline></video>
                 <button class="button" @click="capturePhoto">사진 촬영</button>
             </div>
-
-            <button class="button" @click="toggleCamera">
-                {{ isCameraActive ? '카메라 끄기' : '카메라 켜기' }}
-            </button>
-
             <div class="image-preview-container">
                 <div class="image-preview">
                     <img v-if="photo" :src="photo" alt="Captured Photo" class="preview-image" />
                 </div>
             </div>
             <div id="submit-receipt-btn">
-                <button class="button" @click="submitReceipt">영수증 접수</button>
+                <button id="submit-button" @click="submitReceipt">영수증 접수</button>
+            </div>
+        </div>
+
+        <div v-if="isLoading && uploadStep" class="loading-content">
+            <img src="@/assets/mgng.gif" />
+            <div id="loading">
+                멍지냥지가 영수증 사진을 <br />
+                텍스트로 추출하고 있어요.<br />잠시만 기다려 주세요
             </div>
         </div>
 
         <div id="show-ocr-gpt-result" v-if="showStep">
             <div v-if="result" class="receipt-form">
                 <div id="hospital-infos">
+                    <h3>병원 정보</h3>
                     <div v-for="(value, key) in filteredResult" :key="key" class="form-group">
                         <div class="edit-row">
                             <label
-                                ><strong>{{ getFieldLabel(key) }}:</strong></label
+                                ><strong>{{ getFieldLabel(key) }}</strong></label
                             >
                             <div class="value-container">
                                 <input
@@ -73,7 +90,7 @@
                 </div>
 
                 <div id="medical-list">
-                    <h3>진료 내역:</h3>
+                    <h3>진료 내역</h3>
                     <ul>
                         <li v-for="(medicalDTO, index) in result.medicalDTOs" :key="index">
                             <div class="medical-item">
@@ -81,14 +98,16 @@
                                     <input
                                         v-model="editedResult.medicalDTOs[index].medical_name"
                                         :disabled="!editMode['medical_' + index]"
-                                        class="edit-input"
+                                        class="edit-input medical-name"
                                         placeholder="진료 항목"
+                                        style="flex: 3.5"
                                     />
                                     <input
                                         type="number"
                                         v-model.number="editedResult.medicalDTOs[index].medical_price"
                                         :disabled="!editMode['medical_' + index]"
-                                        class="edit-input"
+                                        class="edit-input medical-price"
+                                        style="flex: 1.5"
                                         placeholder="가격"
                                     />
                                     <button class="edit-button" @click="toggleEdit('medical_' + index)">
@@ -99,14 +118,19 @@
                             </div>
                         </li>
                     </ul>
-                    <button class="add-button" @click="addMedicalItem">진료 내역 추가</button>
+                    <div id="add-info">
+                        <button class="add-button" @click="addMedicalItem">진료 내역 추가</button>
+                        <p id="info-msg">
+                            추가를 한 뒤에는<br />꼭! <span class="highlight-save">저장</span> 버튼을 눌러주세요!
+                        </p>
+                    </div>
                 </div>
             </div>
             <div v-else>
                 <p>결과를 불러오는 중에 문제가 발생했습니다. 다시 시도해 주세요.</p>
             </div>
-            <div id="buttons">
-                <button id="againBtn" @click="resetForm">영수증 다시 등록</button>
+            <div id="buttons-container">
+                <button id="againBtn" @click="resetForm">영수증<br />재등록</button>
                 <button id="nextBtn" @click="detectDisease">다음</button>
             </div>
         </div>
@@ -234,6 +258,7 @@ export default {
                 const response = await fileUploadStore.uploadFile(formData);
                 result.value = response;
                 uploadStep.value = false;
+                isLoading.value = false;
                 showStep.value = true;
             } catch (err) {
                 console.error('Error submitting receipt:', err);
@@ -408,10 +433,73 @@ export default {
 </script>
 
 <style scoped>
-#main-content {
+#photo-upload-camera {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 내용을 위아래로 분산 */
+    align-items: center;
+    background-color: #cee2f5;
+    padding: 10px 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: calc(100vh - 60px); /* 상단 바의 높이를 뺀 전체 높이 */
+    box-sizing: border-box; /* padding을 높이에 포함 */
+}
+
+#upload-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 10px;
+    max-width: 600px;
+}
+
+.btn-wrapper {
+    flex: 1; /* 균등한 너비 분배 */
+    max-width: calc(50% - 10px); /* 50%에서 간격의 절반을 뺌 */
+}
+
+.file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    border-radius: 10px;
+    padding: 0; /* 패딩 제거 */
+}
+
+.file-input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
     width: 100%;
     height: 100%;
-    background-color: #f9f9f9;
+}
+
+.file-input-text {
+    background-color: #71a9db;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.button {
+    background-color: #71a9db;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #upload-receipt-title {
@@ -421,14 +509,10 @@ export default {
     margin-bottom: 20px;
 }
 
-#photo-upload-camera {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #cee2f5;
-    padding: 10px 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+#main-content {
+    width: 100%;
+    height: 100%;
+    background-color: white;
 }
 
 .setting-topbar {
@@ -486,24 +570,25 @@ video {
 }
 
 .image-preview-container {
-    display: flex; /* 부모 컨테이너를 flex로 설정 */
-    justify-content: center; /* 가로 가운데 정렬 */
-    align-items: center; /* 세로 가운데 정렬 */
+    flex-grow: 1; /* 남은 공간을 모두 차지하도록 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: white;
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤 */
+    margin-top: 20px;
 }
 
 /* 이미지 미리보기 영역 스타일 */
 .image-preview {
-    width: 98%;
-    height: 540px;
-    border: 2px dashed #ddd; /* 이미지 업로드 전 영역 표시를 위해 점선 추가 */
+    width: 100%;
+    height: 100%;
+    border: 2px dashed #ddd;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     margin-bottom: 10px;
     background-color: #f7f7f7;
     border-radius: 10px;
@@ -511,16 +596,8 @@ video {
 
 .image-preview img {
     max-width: 100%;
-    max-height: 100%;
+    height: 100%;
     border-radius: 10px;
-}
-
-.button {
-    padding: 12px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 10px 0;
 }
 
 .action-btn {
@@ -668,6 +745,10 @@ video {
     font-size: 14px;
 }
 
+.edit-input medical-price {
+    flex: 1;
+}
+
 .edit-input:disabled {
     background-color: #f8f9fa;
     border-color: transparent;
@@ -730,25 +811,91 @@ video {
     width: 100%;
 }
 
-#buttons {
-    height: 10%;
+#buttons-container {
+    display: flex;
     width: 100%;
+    height: 75px; /* 고정된 높이 설정 */
 }
-#againBtn {
+
+#againBtn,
+#nextBtn {
     border: none;
-    /* border-radius: 5px; */
     cursor: pointer;
-    margin: 10px 0;
-    width: 40%;
-    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    padding: 15px;
+}
+
+#againBtn {
+    width: 30%;
+    background-color: #f0f0f0;
+    color: #333;
 }
 
 #nextBtn {
+    width: 70%;
+    background-color: #2376e9;
+    color: white;
+}
+
+#againBtn:hover {
+    background-color: #e0e0e0;
+}
+
+#nextBtn:hover {
+    background-color: #5b8fc1;
+}
+
+#submit-receipt-btn {
+    width: 100%;
+    margin-top: auto; /* 상단 여백을 자동으로 설정하여 하단에 고정 */
+    padding: 10px;
+}
+
+#submit-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #2376e9;
+    color: white;
     border: none;
-    /* border-radius: 5px; */
+    border-radius: 10px;
+    font-size: 18px;
     cursor: pointer;
-    margin: 10px 0;
-    width: 60%;
-    height: 100%;
+}
+
+.add-button {
+    border-radius: 10px;
+    border-color: white;
+    background-color: #71a9db;
+    color: white;
+    margin: 10px;
+    padding: 10px 15px;
+    border-style: hidden;
+}
+
+#upload-info {
+    margin-top: -10px;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+}
+
+.highlight-points {
+    color: red;
+    font-weight: bold;
+}
+#info-msg {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.highlight-save {
+    color: red;
+    font-weight: bold;
 }
 </style>

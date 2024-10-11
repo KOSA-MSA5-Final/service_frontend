@@ -35,7 +35,7 @@
                 멍지냥지의 예측 외의 병명이 있다면, <br />아래에서 대분류를 선택해 주세요 <br />
                 <img class="petwoman" :src="require('@/assets/medicine.png')" alt="" />
             </div>
-            <div v-if="analysedDiseases.length > 0">
+            <div v-if="analysedDiseases.length > 0" id="extra-container">
                 <div
                     v-for="(disease, index) in analysedDiseases"
                     :key="index"
@@ -49,7 +49,7 @@
                     <div v-if="disease.selected" class="check-mark">&#10003;</div>
                 </div>
             </div>
-            <button @click="submitSelections">선택 완료</button>
+            <button @click="submitSelections" id="finalBtn">선택 완료</button>
         </div>
     </div>
 </template>
@@ -196,8 +196,49 @@ export default {
     opacity: 0;
 }
 
-#disease-container {
-    border-style: double;
+.disease-container {
+    border-style: hidden;
     border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    background-color: #79bbf4;
+}
+
+.disease-container:hover {
+    background-color: #2376e9;
+}
+
+#extra-container {
+    text-align: left;
+    height: 560px;
+    /* border-style: double; */
+    overflow-y: auto;
+    padding: 10px;
+    position: relative; /* 추가: 내부 요소들의 기준점 설정 */
+}
+
+#finalBtn {
+    border-style: hidden;
+    padding: 27px;
+    background-color: #2376e9;
+    color: white;
+    width: 100%;
+}
+
+.disease-header {
+    flex: 9;
+    color: white;
+    margin-left: 3px;
+}
+
+.check-mark {
+    font-weight: bold;
+    color: white;
+    flex: 1;
+}
+
+.disease-container.selected {
+    background-color: #2376e9;
 }
 </style>
