@@ -3,24 +3,27 @@
         <!-- 중간 이미지 섹션 (4분할) -->
         <div class="middle-section" v-if="profileName">
             <!-- 첫 번째 섹션 -->
-            <div class="section-item">
-                <div id="title-container">
+            <div class="section-item" @click.stop="navigateToPage('MapsPage', 'facility')">
+                <!-- <div id="title-container">
                     <div id="title-p-container">{{ profileName }}의 맞춤 시설 찾기</div>
                     <div id="title-img-container">
-                        <img
-                            class="icon"
-                            src="@/assets/icon-right-arrow.svg"
-                            alt="Right Arrow Icon"
-                            @click.stop="navigateToPage('MapsPage', 'facility')"
-                        />
+                        <img class="icon" src="@/assets/icon-right-arrow.svg" alt="Right Arrow Icon" />
                     </div>
-                </div>
+                </div> -->
                 <img src="@/assets/animal_hospital.jpg" alt="Animal Hospital" />
             </div>
             <!-- 두 번째 섹션 -->
             <div class="section-item">
                 <div id="title-container">
-                    <div id="title-p-container">{{ profileName }} 건강 맞춤 사료</div>
+                    <div id="title-p-container">
+                        <span style="font-size: 17px; font-weight: bold">{{ profileName }} </span> 건강 맞춤 사료
+                        <img
+                            style="margin-left: 5px; height: 25px; width: 25px"
+                            class="icon"
+                            src="@/assets/icon-feed.svg"
+                            alt="snack"
+                        />
+                    </div>
                     <div id="title-img-container">
                         <img
                             class="icon"
@@ -37,7 +40,15 @@
             <!-- 세 번째 섹션 -->
             <div class="section-item">
                 <div id="title-container">
-                    <div id="title-p-container">{{ profileName }}가 좋아할 간식</div>
+                    <div id="title-p-container">
+                        <span style="font-size: 17px; font-weight: bold">{{ profileName }}</span> 맞춤 간식
+                        <img
+                            style="margin-left: 5px; height: 25px; width: 25px"
+                            class="icon"
+                            src="@/assets/icon-snack.svg"
+                            alt="snack"
+                        />
+                    </div>
                     <div id="title-img-container">
                         <img
                             class="icon"
@@ -54,7 +65,15 @@
             <!-- 네 번째 섹션 -->
             <div class="section-item">
                 <div id="title-container">
-                    <div id="title-p-container">{{ profileName }}가 좋아할 영양제</div>
+                    <div id="title-p-container">
+                        <span style="font-size: 17px; font-weight: bold">{{ profileName }}</span> 맞춤 영양제
+                        <img
+                            style="margin-left: 5px; height: 25px; width: 25px"
+                            class="icon"
+                            src="@/assets/icon-supplement.svg"
+                            alt="snack"
+                        />
+                    </div>
                     <div id="title-img-container">
                         <img
                             class="icon"
@@ -152,7 +171,8 @@ const navigateToPage = (pageName, type) => {
     justify-content: space-between; /* 요소들을 양쪽 끝에 배치 */
     align-items: center; /* 수직 가운데 정렬 */
     padding: 10px 10px;
-    background-color: #539ee0;
+    /* background-color: #539ee0; */
+    background-color: #2376e9;
     color: #fff;
     margin: 0;
     font-size: 14px;

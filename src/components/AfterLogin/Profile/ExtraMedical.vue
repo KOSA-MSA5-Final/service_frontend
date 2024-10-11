@@ -31,49 +31,34 @@
                     <div style="color: gray">진단명 입력하기</div>
                 </div>
                 멍지냥지는 아직 개발중이라 예측이 틀릴수 있어요<br />
+                <br />
+                멍지냥지의 예측 외의 병명이 있다면, <br />아래에서 대분류를 선택해 주세요 <br />
                 <img class="petwoman" :src="require('@/assets/medicine.png')" alt="" />
             </div>
-            <div id="diseases-container">
-                <div id="disease-container" v-for="(disease, index) in analysedDiseases" :key="index">
+            <div v-if="analysedDiseases.length > 0">
+                <div
+                    v-for="(disease, index) in analysedDiseases"
+                    :key="index"
+                    class="disease-container"
+                    :class="{ selected: disease.selected }"
+                    @click="toggleSelection(index)"
+                >
                     <div class="disease-header">
-                        <h3>{{ disease.diseaseName }}</h3>
-                        <div class="showSubDiseaseList" @click="toggleSubDiseaseList(index)">
-                            <img v-if="visibleSubDiseases[index]" src="@/assets/icon-up.svg" alt="Hide" />
-                            <img v-else src="@/assets/icon-down.svg" alt="Show" />
-                        </div>
+                        {{ disease.diseaseName }}
                     </div>
-                    <div v-show="visibleSubDiseases[index]" class="subdisease-list">
-                        <div
-                            v-for="(subdisease, subIndex) in disease.subDiseases"
-                            :key="subIndex"
-                            class="subdisease-item"
-                        >
-                            <input
-                                type="checkbox"
-                                :id="'subdisease-' + index + '-' + subIndex"
-                                :value="subdisease"
-                                v-model="selectedSubDiseases[index]"
-                            />
-                            <label :for="'subdisease-' + index + '-' + subIndex">{{ subdisease }}</label>
-                        </div>
-                    </div>
-                    <p v-if="selectedSubDiseases[index] && selectedSubDiseases[index].length > 0">
-                        선택된 하위 질병: {{ selectedSubDiseases[index].join(', ') }}
-                    </p>
+                    <div v-if="disease.selected" class="check-mark">&#10003;</div>
                 </div>
             </div>
-
-            <button @click="submitSelections" :disabled="!hasSelections">선택 완료</button>
+            <button @click="submitSelections">선택 완료</button>
         </div>
-        <!-- <div v-else>No data available</div> -->
     </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useUnfoundDiseaseStore } from '@/fetch_datas/unfoundMedicalStore';
+import { saveReceipt } from '@/post_datas/post_medical';
 
 export default {
     name: 'ExtraMedicalPage',
@@ -82,21 +67,31 @@ export default {
         const unfoundDiseaseStore = useUnfoundDiseaseStore();
         const { analysedDiseases } = storeToRefs(unfoundDiseaseStore);
 
-        const selectedSubDiseases = ref(analysedDiseases.value.map(() => []));
-        const visibleSubDiseases = ref(analysedDiseases.value.map(() => false));
-
-        const toggleSubDiseaseList = (index) => {
-            visibleSubDiseases.value[index] = !visibleSubDiseases.value[index];
+        const toggleSelection = (index) => {
+            analysedDiseases.value[index].selected = !analysedDiseases.value[index].selected;
         };
 
-        const hasSelections = computed(() => {
-            return selectedSubDiseases.value.some((selections) => selections.length > 0);
-        });
+        const submitSelections = async () => {
+            try {
+                const extraMedicals = analysedDiseases.value.map((disease) => ({
+                    diseaseName: disease.diseaseName,
+                    selected: disease.selected,
+                }));
 
-        const submitSelections = () => {
-            console.log('Selected sub-diseases:', selectedSubDiseases.value);
-            // 여기에 선택된 하위 질병을 처리하는 로직을 추가할 수 있습니다.
-            // 예: API로 데이터 전송, 다음 페이지로 이동 등
+                console.log('Extra Medicals:', extraMedicals);
+
+                // saveReceipt 함수 호출
+                const response = await saveReceipt(extraMedicals);
+
+                console.log('Receipt saved successfully:', response);
+
+                router.push('/main');
+            } catch (error) {
+                console.error('Failed to save receipt:', error);
+
+                // 에러 메시지를 사용자에게 표시
+                // 예: alert('영수증 저장에 실패했습니다. 다시 시도해 주세요.');
+            }
         };
 
         const goBack = () => {
@@ -105,10 +100,7 @@ export default {
 
         return {
             analysedDiseases,
-            selectedSubDiseases,
-            visibleSubDiseases,
-            toggleSubDiseaseList,
-            hasSelections,
+            toggleSelection,
             submitSelections,
             goBack,
         };
@@ -121,7 +113,6 @@ export default {
     width: 100%;
     height: 100%;
     background-color: white;
-    overflow-y: auto;
 }
 
 .setting-topbar {

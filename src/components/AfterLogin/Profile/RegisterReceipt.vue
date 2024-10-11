@@ -142,7 +142,7 @@ export default {
         const filteredResult = computed(() => {
             if (!result.value) return {};
             return Object.keys(result.value)
-                .filter((key) => key !== 'medicalDTOs' && key !== 'reg_num')
+                .filter((key) => key !== 'medicalDTOs' && key !== 'reg_num' && key !== 'receipt_url')
                 .reduce((obj, key) => {
                     obj[key] = result.value[key];
                     return obj;
@@ -412,7 +412,6 @@ export default {
     width: 100%;
     height: 100%;
     background-color: #f9f9f9;
-    overflow-y: auto;
 }
 
 #upload-receipt-title {
@@ -450,6 +449,7 @@ export default {
     font-size: 18px;
     font-weight: bold;
     border-bottom: 1px solid #ddd;
+    border-bottom: 1.5px solid #71a9db;
 }
 
 /* 뒤로가기 버튼 스타일 */
