@@ -24,11 +24,12 @@ const navigateToMain = () => {
 <style scoped>
 #topBar {
     display: flex;
+    border-bottom: 1.5px solid #71a9db;
     justify-content: space-between;
     align-items: center;
     background-color: white;
     height: 80px;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
     padding: 0 15px;
 }
 
@@ -49,14 +50,14 @@ const navigateToMain = () => {
 
 .image-container {
     width: 115px;
-    height: 90px;
+    height: 75px;
     overflow: hidden;
     position: relative;
 }
 
 .image-container img {
     position: absolute;
-    top: -15px;
+    top: -25px;
     left: 0;
     width: 115px;
     height: 120px;
