@@ -20,10 +20,15 @@ import AddressSearchPage from '@/components/AfterLogin/Account/AddressSearchPage
 
 import SettingTemplate from '@/components/AfterLogin/Account/SettingTemplate.vue';
 import CurrentHealth from '@/components/AfterLogin/Profile/CurrentHealth.vue';
+
+import RegisterDisease from '@/components/AfterLogin/Profile/RegisterDisease.vue';
+import ExtraMedical from '@/components/AfterLogin/Profile/ExtraMedical.vue';
+
 import ProdutsMain from '@/components/AfterLogin/Products/ProdutsMain.vue';
 
 import ProductDetails from '@/components/AfterLogin/Products/ProductDetails.vue';
 import ShoppingOrder from '@/components/AfterLogin/Products/ShoppingOrder.vue';
+
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
@@ -130,6 +135,17 @@ const routes = [
         component: CurrentHealth,
     },
     {
+
+        path: '/main/upload_receipt/disease',
+        name: 'RegisterDiseasePage',
+        component: RegisterDisease,
+    },
+    {
+        path: '/main/upload_receipt/disease/extra',
+        name: 'ExtraMedicalPage',
+        component: ExtraMedical,
+    },
+  {
         path: '/products/:type',
         name: 'ProductPage',
         component: ProdutsMain,

@@ -68,7 +68,7 @@ export default {
     padding: 15px 10px;
     font-size: 18px;
     font-weight: bold;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1.5px solid #71a9db;
 }
 #mgng-title {
     font-size: 20px;

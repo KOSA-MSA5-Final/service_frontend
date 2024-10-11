@@ -360,6 +360,7 @@ export default {
             showError: false, // 에러 메시지 표시 여부
             approximateAge: '', // 대략적인 나이를 입력하는 필드
             birthType: '', // 생일을 아는지 모르는지 상태값
+            profileImg: '',
         };
     },
     computed: {
@@ -433,18 +434,20 @@ export default {
             }
 
             try {
-                // FormData를 사용하여 이미지 파일 추가
                 const formData = new FormData();
-                formData.append('image', this.selectedFile);
-
+                formData.append('qimage', this.selectedFile.value);
+                const token = localStorage.getItem('token');
                 // 백엔드로 이미지 업로드 요청 보내기
-                const response = await axios.post('http://localhost:8081/api/uploadProfileImage', formData, {
+                const response = await axios.post('https://localhost:8081/api/uploadProfileImage', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
                     },
+                    withCredentials: true,
                 });
 
                 console.log('이미지 업로드 성공:', response.data);
+                this.profileImg = response.data;
 
                 // 업로드 후 미리보기 및 선택 초기화
                 this.imagePreview = null;
@@ -472,6 +475,7 @@ export default {
         async handleNextButton() {
             const petStore = usePetStore();
             petStore.setPetProfile({
+                petImg: this.profileImg,
                 petName: this.petName,
                 maleselected: this.maleselected,
                 selectedAnimalType: this.inputValue,
@@ -482,6 +486,7 @@ export default {
             console.log('안녕하세요' + petStore.petName);
 
             if (this.neuteredselected && this.petName && this.birthDate && this.inputValue && this.maleselected) {
+                this.uploadImage();
                 this.$router.push('/setProfile/2');
             } else {
                 alert('값을 다 입력해주세요');

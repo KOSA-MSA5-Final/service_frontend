@@ -3,18 +3,22 @@
         <div id="addresses" v-for="address in addresses" :key="address.id">
             <div id="contents">
                 <div id="infos">
-                    <div id="address">주소 : {{ address.address }}</div>
-                    <div id="receiptant_name">수령자 이름 : {{ address.receipientName }}</div>
-                    <div id="receiptant_telNum">수령자 연락처 : {{ address.receipientTellNum }}</div>
+                    <div style="margin-bottom: 5px" id="address">주소 : {{ address.address }}</div>
+                    <div style="margin-bottom: 5px" id="receiptant_name">
+                        수령자 이름 : {{ address.receipientName }}
+                    </div>
+                    <div style="margin-bottom: 5px" id="receiptant_telNum">
+                        수령자 연락처 : {{ address.receipientTellNum }}
+                    </div>
                 </div>
                 <div id="buttonsAndTag">
-                    <div id="primary-tag" v-if="address.isPrimary === 'T'">대표 배송지</div>
+                    <div style="width: 126.68px" id="primary-tag" v-if="address.isPrimary === 'T'">대표 배송지</div>
                     <div
                         id="change-to-primary-btn"
                         v-if="address.isPrimary === 'F'"
                         @click="changePrimaryAddress(address.id)"
                     >
-                        대표 배송지 <br />설정
+                        대표 배송지 설정
                     </div>
                     <div id="delete-btn" v-if="address.isPrimary === 'F'">삭제</div>
                 </div>
@@ -95,7 +99,7 @@ export default {
     text-align: left;
     border-style: solid;
     border-radius: 10px;
-    padding: 10px;
+    padding: 5px;
     margin-bottom: 10px;
     background-color: white;
     font-size: 14px;
@@ -104,11 +108,12 @@ export default {
 #primary-tag {
     border-style: double;
     border-radius: 10px;
-    border-color: #71a9db;
+    /* border-color: #71a9db; */
+    border-color: #2c8ce0;
     text-align: center;
     position: unset;
-    padding: 5px;
-    background-color: #71a9db;
+    padding: 5px 10px;
+    background-color: #2c8ce0;
     color: white;
 }
 #change-to-primary-btn,
@@ -116,21 +121,22 @@ export default {
     display: flex;
     border-style: double;
     border-radius: 10px;
-    border-color: #71a9db;
+    border-color: #2c8ce0;
     text-align: center;
     position: unset;
-    padding: 5px;
-    background-color: #71a9db;
+    padding: 5px 10px;
+    background-color: #2c8ce0;
     color: white;
+    margin-bottom: 10px;
 }
 #contents {
     display: flex;
     justify-content: space-between; /* 좌우로 배치 */
     align-items: flex-start; /* 위쪽에 정렬 */
-    padding: 10px; /* 여백 추가 */
+    padding: 10px 5px; /* 여백 추가 */
 }
 #infos {
-    flex: 1; /* 왼쪽이 더 넓어지게 설정 (필요시) */
+    flex: 0.9; /* 왼쪽이 더 넓어지게 설정 (필요시) */
     text-align: left; /* 왼쪽 정렬 */
 }
 

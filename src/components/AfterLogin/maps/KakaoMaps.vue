@@ -147,7 +147,9 @@
                         <div class="facility-address">{{ facility.address }}</div>
                     </div>
                     <div class="facility-action">
-                        <button class="reservation-btn">예약<br />상담</button>
+                        <button class="reservation-btn" @click="makePhoneCall(facility.phoneNumber)">
+                            예약<br />상담
+                        </button>
                     </div>
                 </div>
             </div>
@@ -158,7 +160,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useFacilityStore } from '@/fetch_datas/facilityStore'; // Pinia 스토어 가져오기
-// import axios from 'axios';
 
 const mapContainer = ref(null);
 const mapInstance = ref(null);
@@ -176,13 +177,6 @@ const activeCategory = ref('동물병원'); // 활성화된 카테고리를 저�
 const markers = ref([]);
 const infoWindow = ref(null); // 인포윈도우 객체를 저장할 변수 선언
 const alertMessage = ref(''); // 알림 메시지 상태 변수
-
-// 병원 리스트 예시 데이터
-// const facilityList = ref([
-//     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
-//     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
-//     { name: '우리 동물 병원', address: '서울시 종로구 혜화동 516번길' },
-// ]);
 
 // 공공데이터 API 정보
 // const API_KEY = '8Opb1NFLhzfnHXfd28uPabBZIljNXbqLRy+s8CO3I4744jA/Lzy9vOt/N5ZnnsxnQKcqX8F6IeFpdJ37ggPSSA=='; // Decoding 인증키
@@ -339,7 +333,7 @@ const searchfacilitysNearLocation = (lat, lng, category) => {
     // 키워드 검색 메서드 사용
     places.keywordSearch(category, callback, {
         location: new window.kakao.maps.LatLng(lat, lng),
-        radius: 2500, // 반경 3km
+        radius: 4000, // 반경 3km
     });
 };
 
@@ -424,7 +418,7 @@ const updatefacilityListAndMarkers = async (places) => {
     // 제휴 병원은 거리 순으로 정렬하여 상위 2개만 추출
     const topAffiliatedFacilities = affiliatedFacilities
         .sort((a, b) => a.distance - b.distance) // 거리 순으로 정렬
-        .slice(0, 2); // 상위 2개의 제휴 병원만 선택
+        .slice(0, 4); // 상위 4개의 제휴 병원만 선택
 
     // 나머지 병원들을 거리 순으로 정렬
     const sortedNonAffiliatedFacilities = nonAffiliatedFacilities.sort((a, b) => a.distance - b.distance);
@@ -495,7 +489,7 @@ const createInfoWindow = (marker, facility) => {
             <p style="margin:2px 0; font-size:12px;">${facility.address}</p>
             <p style="margin:2px 0; font-size:11px">5.0 ★★★★★</p>
             <p id="phone-number" style="margin:2px 0; font-size:12px; cursor: pointer;">
-                ${facility.phoneNumber}
+                ${facility.phoneNumber} 복사하기
             </p>
         </div>
     `;
@@ -741,6 +735,15 @@ const isAffiliated = (facility) => {
     return facilityStore.affiliatedFacilities.some(
         (affiliated) => affiliated.name === facility.name && affiliated.address === facility.address,
     );
+};
+
+// 전화 걸기
+const makePhoneCall = (phoneNumber) => {
+    if (phoneNumber) {
+        window.location.href = `tel:${phoneNumber}`;
+    } else {
+        alert('전화번호가 없습니다.');
+    }
 };
 
 // 지도 초기화 및 이벤트 등록
