@@ -25,9 +25,11 @@
         <div id="services">
             <div id="main-services">
                 <div id="check-delivery">
-                    <img class="icon" src="@/assets/icon-delivery.svg" alt="Delivery Icon" />
-                    <p class="title">주문배송</p>
-                    <p class="subtitle">확인하기</p>
+                    <router-link to="/order" class="no-underline">
+                        <img class="icon" src="@/assets/icon-delivery.svg" alt="Delivery Icon" />
+                        <p class="title">주문배송</p>
+                        <p class="subtitle">확인하기</p>
+                    </router-link>
                 </div>
                 <div id="reg-receipt">
                     <img
@@ -449,5 +451,9 @@ p {
 #section-item {
     position: relative;
     width: 100%;
+}
+
+.no-underline {
+    text-decoration: none;
 }
 </style>
