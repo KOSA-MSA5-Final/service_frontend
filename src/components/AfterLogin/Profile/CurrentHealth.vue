@@ -57,14 +57,14 @@
                 <div class="recent-visit-section">
                     <h3>최근 병원 방문</h3>
                     <div class="visit-details-wrapper">
-                        <div class="visit-details">
-                            <p><strong>방문 일자:</strong> 2022년 03월 02일</p>
-                            <p><strong>병원 이름:</strong> 무슨동아지진료병원</p>
-                            <p><strong>병원 위치:</strong> 서울시 강남구 샘플로</p>
-                            <p><strong>방문 사유:</strong> 건강검진 및 중성화</p>
-                            <p><strong>결제 금액:</strong> 200,000원</p>
+                        <div class="visit-details" v-if="recentVisit">
+                            <p><strong>병원 이름:</strong> {{ recentVisit.hospitalName }}</p>
+                            <p><strong>방문 일자:</strong> {{ formatVisitDate(recentVisit.visitDate) }}</p>
+                            <p><strong>병원 위치:</strong> {{ recentVisit.hospitalAddress }}</p>
+                            <p><strong>방문 사유:</strong> {{ recentVisit.object }}</p>
+                            <p><strong>결제 금액:</strong> {{ recentVisit.totalCost }}원</p>
                         </div>
-                        <button class="receipt-button">
+                        <button class="receipt-button" @click="showLatestReceiptDetails">
                             <svg
                                 height="25px"
                                 width="25px"
@@ -92,14 +92,11 @@
                 <!-- 현재 앓고 있는 질환 정보 -->
                 <div class="disease-section">
                     <h3>현재 앓고 있는 질환</h3>
-                    <!-- currentProfile.diseases가 정의되어 있고, 길이가 0 이상인 경우에만 렌더링 -->
-                    <div v-if="currentProfile.diseases && currentProfile.diseases.length > 0">
-                        <!-- 각 질병을 감싸는 컨테이너 -->
-                        <div v-for="(disease, index) in currentProfile.diseases" :key="index">
-                            <!-- 질병 이름과 소분류를 나타내는 태그 -->
+                    <!-- 질병 정보가 존재할 경우 -->
+                    <div v-if="hasDiseases">
+                        <!-- 필터링된 질환 정보 렌더링 -->
+                        <div v-for="(disease, index) in filteredDiseases" :key="'disease-' + index">
                             <div class="disease-tag">{{ disease.diseaseName }} - {{ disease.diseaseSubCategory }}</div>
-
-                            <!-- 진단 날짜 및 진행 상태 -->
                             <div class="disease-info">
                                 <div class="diagnosis-date">
                                     진단 날짜: {{ formatDiagnosisDate(disease.diagnosisDate) }}
@@ -110,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- 질환 정보가 없을 경우 안내 메시지 표시 -->
+                    <!-- 질병 정보가 없을 경우 안내 메시지 표시 -->
                     <div v-else>
                         <p>현재 등록된 질환 정보가 없습니다.</p>
                     </div>
@@ -151,6 +148,14 @@
             <!-- 메시지 알림 표시 -->
             <div class="export-message">{{ currentProfile.name }} PDF가 성공적으로 저장되었습니다.</div>
         </div>
+
+        <!-- 모달 창 -->
+        <div v-if="showReceiptModal" class="modal-overlay" @click.self="closeModal">
+            <div class="modal-content">
+                <button class="modal-close-button" @click="closeModal">&times;</button>
+                <img :src="receiptImgUrl" alt="영수증 이미지" class="receipt-image" />
+            </div>
+        </div>
         <!-- 프로필 데이터가 없는 경우를 처리하는 메시지 -->
         <div v-else>
             <p>프로필 데이터가 없습니다.</p>
@@ -161,6 +166,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useUserInfoStore } from '@/fetch_datas/userInfo'; // Pinia Store import
+import { useMedicalStore } from '@/stores/medicalStore'; // MedicalStore import
 import { storeToRefs } from 'pinia'; // storeToRefs 추가
 import defaultProfileImage from '@/assets/jangoon.gif'; // 기본 프로필 이미지 경로 설정
 import html2canvas from 'html2canvas'; // html2canvas import
@@ -170,13 +176,88 @@ import jsPDF from 'jspdf'; // jsPDF import
 const userInfoStore = useUserInfoStore();
 const { profiles, loading } = storeToRefs(userInfoStore); // profiles와 loading 상태 가져오기
 
+const medicalStore = useMedicalStore(); // MedicalStore 인스턴스 가져오기
+const { medicalRecords } = storeToRefs(medicalStore);
+
+const { receiptImgUrl } = storeToRefs(medicalStore);
+const showReceiptModal = ref(false); // 모달 창 표시 여부를 제어하는 변수
+
 const exportMessage = ref(''); // PDF 저장 메시지 내용
+const currentProfileId = ref(null); // 현재 프로필 ID를 저장할 변수
+const recentVisit = ref(null); // 최근 방문 기록을 저장
 
 // 컴포넌트가 마운트될 때 서버에서 프로필 데이터를 가져옴
 onMounted(async () => {
     const memberId = 1; // 특정 회원 ID (로그인한 사용자 ID)
     await userInfoStore.fetchProfiles(memberId);
+
+    // 프로필 데이터가 로드되면 currentProfile의 ID 가져오기
+    const profile = profiles.value.find((profile) => profile.isCurrent === 'T');
+    if (profile) {
+        currentProfileId.value = profile.id;
+        // 현재 프로필 ID에 해당하는 메디컬 기록 가져오기
+        await medicalStore.fetchMedicalRecordsByProfileId(currentProfileId.value);
+        await fetchLatestMedicalRecord(currentProfileId.value);
+    }
 });
+
+// 날짜 포맷팅 함수
+const formatVisitDate = (dateString) => {
+    if (!dateString) return '알 수 없음';
+
+    // ISO 8601 형식의 문자열을 JavaScript의 Date 객체로 변환
+    const date = new Date(dateString);
+
+    // 연, 월, 일 추출
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
+    const day = date.getDate();
+
+    // 원하는 형식으로 리턴
+    return `${year}년 ${month}월 ${day}일`;
+};
+
+// 최신 메디컬 기록을 가져오는 함수
+const fetchLatestMedicalRecord = async (profileId) => {
+    try {
+        recentVisit.value = await medicalStore.fetchLatestMedicalRecordByProfileId(profileId);
+        // MedicalDisease 데이터를 로그로 확인
+        console.log('Filtered Diseases:', filteredDiseases.value);
+        console.log('Has Diseases:', hasDiseases.value);
+    } catch (error) {
+        console.error('최신 메디컬 기록을 가져오는 데 실패했습니다:', error);
+    }
+};
+
+// 영수증 확인 버튼 클릭 시 특정 메디컬 기록을 가져오는 함수 및 이미지 다운로드
+const showLatestReceiptDetails = async () => {
+    if (!recentVisit.value) {
+        alert('최신 병원 방문 기록이 없습니다.');
+        return;
+    }
+
+    await medicalStore.fetchMedicalRecordById(recentVisit.value.id);
+    if (receiptImgUrl.value) {
+        showReceiptModal.value = true; // 모달 창을 표시하도록 설정
+    } else {
+        alert('영수증 이미지를 가져올 수 없습니다.');
+    }
+};
+
+// // 이미지 다운로드 함수
+// const downloadImage = (url, filename) => {
+//     const link = document.createElement('a');
+//     link.href = url;
+//     link.download = filename;
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+// };
+
+// 모달 창 닫기 함수
+const closeModal = () => {
+    showReceiptModal.value = false;
+};
 
 // 성별 변환 함수
 const mapGender = (gender) => {
@@ -199,6 +280,14 @@ const currentProfile = computed(() => {
     const allProfiles = Array.isArray(profiles.value) ? profiles.value : [];
     const profile = allProfiles.find((profile) => profile.isCurrent === 'T') || {};
 
+    // medicalRecords에서 모든 medicalDiseases 추출
+    const allMedicalDiseases = medicalRecords.value.reduce((accumulator, medical) => {
+        if (medical.medicalDiseases && medical.medicalDiseases.length > 0) {
+            accumulator.push(...medical.medicalDiseases); // 모든 medicalDiseases 리스트를 누적
+        }
+        return accumulator;
+    }, []); // 빈 배열로 초기화
+
     // gender 변환 및 기본 이미지 설정, allergies 필드 추가
     return {
         ...profile,
@@ -206,7 +295,34 @@ const currentProfile = computed(() => {
         pictureUrl: profile.pictureUrl || defaultProfileImage, // 기본 이미지 설정
         allergies: profile.allergies || [], // allergies가 없을 경우 빈 배열 설정
         disease: profile.diseases || [],
+        medicalDiseases: allMedicalDiseases, // MedicalDisease 리스트를 currentProfile에 추가
     };
+});
+
+// 중복 여부를 확인하고 진료 기록 데이터를 우선적으로 표시하는 computed 속성
+const filteredDiseases = computed(() => {
+    // medicalDiseases 리스트가 존재하지 않으면 빈 배열 반환
+    const medicalDiseases = currentProfile.value.medicalDiseases || [];
+    const profileDiseases = currentProfile.value.diseases || [];
+
+    // medicalDiseases에서 질환 정보를 추출하여 키 값으로 저장 (예: 병명-소분류)
+    const medicalDiseaseKeys = new Set(
+        medicalDiseases.map((medicalDisease) => `${medicalDisease.diseaseName}-${medicalDisease.diseaseSubCategory}`),
+    );
+
+    // 프로필 질환 목록에서 진료 기록에 없는 항목만 필터링
+    const uniqueProfileDiseases = profileDiseases.filter((disease) => {
+        const diseaseKey = `${disease.diseaseName}-${disease.diseaseSubCategory}`;
+        return !medicalDiseaseKeys.has(diseaseKey); // 진료 기록에 없는 병만 반환
+    });
+
+    // 진료 기록의 질환 정보와 기존 프로필의 중복되지 않는 질환 정보 결합
+    return [...medicalDiseases, ...uniqueProfileDiseases];
+});
+
+// 질병 정보가 존재하는지 확인하는 computed 속성
+const hasDiseases = computed(() => {
+    return filteredDiseases.value && filteredDiseases.value.length > 0;
 });
 
 // 생일을 포맷팅하는 함수
@@ -592,5 +708,50 @@ const goBack = () => {
     opacity: 0.9;
     visibility: visible;
     transition: opacity 0.5s ease-in-out;
+}
+
+/* 모달 오버레이 스타일 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); /* 반투명한 검은색 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* 모달 콘텐츠 스타일 */
+.modal-content {
+    position: relative;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 90%; /* 최대 너비 */
+    max-height: 90%; /* 최대 높이 */
+    overflow: auto; /* 이미지가 크면 스크롤 가능 */
+}
+
+/* 영수증 이미지 스타일 */
+.receipt-image {
+    max-width: 100%; /* 모달의 너비에 맞춤 */
+    max-height: 100%; /* 모달의 높이에 맞춤 */
+}
+
+/* 모달 닫기 버튼 스타일 */
+.modal-close-button {
+    position: absolute;
+    top: 0px;
+    right: 8px; /* 왼쪽 상단에 배치 */
+    background: none; /* 배경 제거 */
+    border: none; /* 테두리 제거 */
+    font-size: 35px; /* 아이콘 크기 조절 */
+    font-weight: bold; /* 두꺼운 폰트 */
+    color: #d92334; /* 텍스트 색상 */
+    cursor: pointer; /* 커서를 포인터로 */
 }
 </style>
