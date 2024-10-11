@@ -27,7 +27,7 @@ import ExtraMedical from '@/components/AfterLogin/Profile/ExtraMedical.vue';
 import ProdutsMain from '@/components/AfterLogin/Products/ProdutsMain.vue';
 
 import ProductDetails from '@/components/AfterLogin/Products/ProductDetails.vue';
-
+import ShoppingOrder from '@/components/AfterLogin/Products/ShoppingOrder.vue';
 
 const isLoggedIn = () => {
     return !!localStorage.getItem('token');
@@ -134,7 +134,6 @@ const routes = [
         component: CurrentHealth,
     },
     {
-
         path: '/main/upload_receipt/disease',
         name: 'RegisterDiseasePage',
         component: RegisterDisease,
@@ -144,7 +143,7 @@ const routes = [
         name: 'ExtraMedicalPage',
         component: ExtraMedical,
     },
-  {
+    {
         path: '/products/:type',
         name: 'ProductPage',
         component: ProdutsMain,
@@ -154,6 +153,11 @@ const routes = [
         name: 'ProductDetails',
         component: ProductDetails,
         props: true, // 경로 파라미터를 props로 전달
+    },
+    {
+        path: '/product/order',
+        name: 'ShoppingOrder',
+        component: ShoppingOrder,
     },
 ];
 
