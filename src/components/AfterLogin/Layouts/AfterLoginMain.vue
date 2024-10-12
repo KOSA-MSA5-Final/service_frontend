@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import { usePostStore } from '@/fetch_datas/fetch_example';
+// import { usePostStore } from '@/fetch_datas/fetch_example';
 import { onMounted } from 'vue'; // Vue Composition API 사용
-import { storeToRefs } from 'pinia'; // Pinia 상태를 반응형으로 가져오기 위해 사용
+// import { storeToRefs } from 'pinia'; // Pinia 상태를 반응형으로 가져오기 위해 사용
 import ButtomBar from './ButtomBar.vue';
 import TopBar from './TopBar.vue';
 
@@ -36,16 +36,16 @@ export default {
         },
     },
     setup() {
-        const postStore = usePostStore(); // Pinia store 호출
-        const { contents } = storeToRefs(postStore); // storeToRefs를 사용하여 반응형 상태로 만듦
+        // const postStore = usePostStore(); // Pinia store 호출
+        // const { contents } = storeToRefs(postStore); // storeToRefs를 사용하여 반응형 상태로 만듦
 
         // 컴포넌트 마운트 시 데이터 가져오기
         onMounted(() => {
-            postStore.fetchContents();
+            // postStore.fetchContents();
         });
 
         return {
-            contents, // 상태를 템플릿에서 사용할 수 있도록 리턴
+            // contents, // 상태를 템플릿에서 사용할 수 있도록 리턴
         };
     },
 };

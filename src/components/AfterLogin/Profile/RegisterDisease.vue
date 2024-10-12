@@ -56,28 +56,33 @@
                                 </div>
                             </div>
                             <div class="healCheck-subDisease">
-                                <div
-                                    class="diseaseCheckDiv"
-                                    :style="{ color: isHealthy(disease.diseaseTitle) ? 'black' : 'lightgray' }"
-                                    @click="toggleHealthy(disease.diseaseTitle)"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        fill="currentColor"
-                                        class="bi bi-check-circle-fill"
-                                        viewBox="0 0 16 16"
+                                <div id="healthBtns">
+                                    <div
+                                        class="diseaseCheckDiv"
+                                        :class="{ healthy: isHealthy(disease.diseaseTitle) }"
+                                        @click="toggleHealthy(disease.diseaseTitle)"
                                     >
-                                        <path
-                                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
-                                        />
-                                    </svg>
-                                    건강해요
-                                </div>
-                                <div class="showSubDiseaseList" @click="handleshowSubDiseaseList(disease.diseaseTitle)">
-                                    <img v-if="isSubVisible(disease.diseaseTitle)" src="@/assets/icon-down.svg" />
-                                    <img v-else src="@/assets/icon-up.svg" />
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle-fill"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                                            />
+                                        </svg>
+                                        건강해요
+                                    </div>
+                                    <div
+                                        class="showSubDiseaseList"
+                                        @click="handleshowSubDiseaseList(disease.diseaseTitle)"
+                                    >
+                                        <img v-if="isSubVisible(disease.diseaseTitle)" src="@/assets/icon-down.svg" />
+                                        <img v-else src="@/assets/icon-up.svg" />
+                                    </div>
                                 </div>
                             </div>
 
@@ -387,7 +392,7 @@ export default {
 #result-container {
     text-align: left;
     height: 560px;
-    border-style: double;
+    /* border-style: double; */
     overflow-y: auto;
     padding: 10px;
     position: relative; /* 추가: 내부 요소들의 기준점 설정 */
@@ -407,6 +412,7 @@ export default {
     width: 20px;
     height: 20px;
     vertical-align: middle;
+    filter: invert(42%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(105%) contrast(90%);
 }
 
 .reasons-container {
@@ -437,15 +443,40 @@ export default {
     opacity: 0;
 }
 .diseaseCheckDiv {
-    color: black;
-    border-style: groove;
-    border-radius: 20px;
-    width: max-content;
-    padding: 3px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.diseaseCheckDiv svg {
+    margin-right: 5px;
+    color: #2376e9;
+}
+
+.diseaseCheckDiv.healthy svg {
+    margin-right: 5px;
+    color: white;
+}
+
+.diseaseCheckDiv.healthy {
+    background-color: #2376e9;
+    border-style: solid;
+    color: white;
+    border-color: #2376e9;
+}
+
+.diseaseCheckDiv:not(.healthy) {
+    color: #2376e9;
+    border-style: solid;
+    border-color: #2376e9;
 }
 .showSubDiseaseList img {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
+    margin-top: 10px;
 }
 #next-Btn {
     background-color: #71a9db;
@@ -454,5 +485,33 @@ export default {
     border-style: groove;
     position: fixed;
     text-align: center;
+}
+#goExtraMedicalBtn {
+    border-style: hidden;
+    padding: 27px;
+    background-color: #2376e9;
+    color: white;
+}
+#healthBtns {
+    display: flex;
+    gap: 50%;
+}
+
+.ol,
+ul,
+dl {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    list-style: none;
+    font-size: 20px;
+}
+
+#select-subDiseaseNames {
+    margin-top: 10px;
+    margin-left: -20px;
+}
+
+.selected-diseases {
+    margin-top: 10px;
 }
 </style>
