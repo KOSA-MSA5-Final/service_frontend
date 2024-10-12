@@ -456,9 +456,16 @@ export default {
     color: #2376e9;
 }
 
+.diseaseCheckDiv.healthy svg {
+    margin-right: 5px;
+    color: white;
+}
+
 .diseaseCheckDiv.healthy {
     background-color: #2376e9;
+    border-style: solid;
     color: white;
+    border-color: #2376e9;
 }
 
 .diseaseCheckDiv:not(.healthy) {
@@ -469,6 +476,7 @@ export default {
 .showSubDiseaseList img {
     width: 30px;
     height: 30px;
+    margin-top: 10px;
 }
 #next-Btn {
     background-color: #71a9db;
