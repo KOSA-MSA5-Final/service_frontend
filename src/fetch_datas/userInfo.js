@@ -10,18 +10,15 @@ export const useUserInfoStore = defineStore('userInfoStore', {
     }),
     actions: {
         // 모든 프로필 정보를 서버에서 가져오는 메서드
-        async fetchProfiles(memberId) {
+        async fetchProfiles() {
             this.loading = true;
             try {
                 const token = localStorage.getItem('token'); // 로컬스토리지에서 토큰 가져오기
-                const response = await axios.get(
-                    `https://localhost:8081/auth/profile/userinfo-all?memberId=${memberId}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                const response = await axios.get(`https://localhost:8081/auth/profile/userinfo-all`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     },
-                );
+                });
                 this.profiles = response.data; // 응답 데이터를 상태에 저장
                 // 현재 프로필 정보를 설정
                 this.currentProfile = this.profiles.find((profile) => profile.isCurrent === 'T') || null;

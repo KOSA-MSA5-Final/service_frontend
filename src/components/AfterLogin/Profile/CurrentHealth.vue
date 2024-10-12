@@ -177,82 +177,60 @@ const userInfoStore = useUserInfoStore();
 const { profiles, loading } = storeToRefs(userInfoStore); // profiles와 loading 상태 가져오기
 
 const medicalStore = useMedicalStore(); // MedicalStore 인스턴스 가져오기
-const { medicalRecords } = storeToRefs(medicalStore);
+const { medicalRecords, receiptImgUrl } = storeToRefs(medicalStore);
 
-const { receiptImgUrl } = storeToRefs(medicalStore);
 const showReceiptModal = ref(false); // 모달 창 표시 여부를 제어하는 변수
-
 const exportMessage = ref(''); // PDF 저장 메시지 내용
 const currentProfileId = ref(null); // 현재 프로필 ID를 저장할 변수
 const recentVisit = ref(null); // 최근 방문 기록을 저장
 
 // 컴포넌트가 마운트될 때 서버에서 프로필 데이터를 가져옴
 onMounted(async () => {
-    const memberId = 1; // 특정 회원 ID (로그인한 사용자 ID)
-    await userInfoStore.fetchProfiles(memberId);
-
-    // 프로필 데이터가 로드되면 currentProfile의 ID 가져오기
-    const profile = profiles.value.find((profile) => profile.isCurrent === 'T');
+    await fetchUserProfiles();
+    const profile = profiles.value.find((p) => p.isCurrent === 'T');
     if (profile) {
         currentProfileId.value = profile.id;
-        // 현재 프로필 ID에 해당하는 메디컬 기록 가져오기
-        await medicalStore.fetchMedicalRecordsByProfileId(currentProfileId.value);
-        await fetchLatestMedicalRecord(currentProfileId.value);
+        await fetchMedicalRecords(profile.id);
     }
 });
 
-// 날짜 포맷팅 함수
-const formatVisitDate = (dateString) => {
-    if (!dateString) return '알 수 없음';
+// 프로필 정보를 가져오는 함수
+const fetchUserProfiles = async () => {
+    try {
+        await userInfoStore.fetchProfiles(); // 수정된 fetchProfiles 호출
+    } catch (error) {
+        console.error('프로필 정보를 가져오는 데 실패했습니다:', error);
+    }
+};
 
-    // ISO 8601 형식의 문자열을 JavaScript의 Date 객체로 변환
-    const date = new Date(dateString);
-
-    // 연, 월, 일 추출
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
-    const day = date.getDate();
-
-    // 원하는 형식으로 리턴
-    return `${year}년 ${month}월 ${day}일`;
+// 메디컬 기록을 가져오는 함수
+const fetchMedicalRecords = async (profileId) => {
+    try {
+        await medicalStore.fetchMedicalRecordsByProfileId(profileId);
+        await fetchLatestMedicalRecord(profileId);
+    } catch (error) {
+        console.error('메디컬 기록을 가져오는 데 실패했습니다:', error);
+    }
 };
 
 // 최신 메디컬 기록을 가져오는 함수
 const fetchLatestMedicalRecord = async (profileId) => {
     try {
         recentVisit.value = await medicalStore.fetchLatestMedicalRecordByProfileId(profileId);
-        // MedicalDisease 데이터를 로그로 확인
-        console.log('Filtered Diseases:', filteredDiseases.value);
-        console.log('Has Diseases:', hasDiseases.value);
     } catch (error) {
         console.error('최신 메디컬 기록을 가져오는 데 실패했습니다:', error);
     }
 };
 
-// 영수증 확인 버튼 클릭 시 특정 메디컬 기록을 가져오는 함수 및 이미지 다운로드
+// 영수증 확인 버튼 클릭 시 영수증 이미지 표시
 const showLatestReceiptDetails = async () => {
     if (!recentVisit.value) {
         alert('최신 병원 방문 기록이 없습니다.');
         return;
     }
-
     await medicalStore.fetchMedicalRecordById(recentVisit.value.id);
-    if (receiptImgUrl.value) {
-        showReceiptModal.value = true; // 모달 창을 표시하도록 설정
-    } else {
-        alert('영수증 이미지를 가져올 수 없습니다.');
-    }
+    showReceiptModal.value = !!receiptImgUrl.value;
 };
-
-// // 이미지 다운로드 함수
-// const downloadImage = (url, filename) => {
-//     const link = document.createElement('a');
-//     link.href = url;
-//     link.download = filename;
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
-// };
 
 // 모달 창 닫기 함수
 const closeModal = () => {
@@ -260,134 +238,84 @@ const closeModal = () => {
 };
 
 // 성별 변환 함수
-const mapGender = (gender) => {
-    const genderMapping = {
+const mapGender = (gender) =>
+    ({
         female: '여아',
         male: '남아',
-    };
-    return genderMapping[gender] || '알 수 없음';
+    }[gender] || '알 수 없음');
+
+// 날짜 포맷팅 함수
+const formatBirthday = (date) => {
+    if (!date) return '알 수 없음';
+    const d = new Date(date);
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
 };
 
-// 진단 날짜 포맷팅 함수
+// 진단 날짜 포맷팅 함수 (setup 안에서 정의)
 const formatDiagnosisDate = (date) => {
     if (!date) return '알 수 없음';
     const formattedDate = new Date(date);
     return `${formattedDate.getFullYear()}년 ${formattedDate.getMonth() + 1}월 ${formattedDate.getDate()}일`;
 };
 
-// 현재 프로필 데이터를 찾는 computed
+// 현재 프로필을 찾는 computed
 const currentProfile = computed(() => {
-    const allProfiles = Array.isArray(profiles.value) ? profiles.value : [];
-    const profile = allProfiles.find((profile) => profile.isCurrent === 'T') || {};
-
-    // medicalRecords에서 모든 medicalDiseases 추출
-    const allMedicalDiseases = medicalRecords.value.reduce((accumulator, medical) => {
-        if (medical.medicalDiseases && medical.medicalDiseases.length > 0) {
-            accumulator.push(...medical.medicalDiseases); // 모든 medicalDiseases 리스트를 누적
-        }
-        return accumulator;
-    }, []); // 빈 배열로 초기화
-
-    // gender 변환 및 기본 이미지 설정, allergies 필드 추가
+    const profile = profiles.value.find((p) => p.isCurrent === 'T') || {};
+    const medicalDiseases = medicalRecords.value.flatMap((m) => m.medicalDiseases || []);
     return {
         ...profile,
         gender: mapGender(profile.gender),
-        pictureUrl: profile.pictureUrl || defaultProfileImage, // 기본 이미지 설정
-        allergies: profile.allergies || [], // allergies가 없을 경우 빈 배열 설정
+        pictureUrl: profile.pictureUrl || defaultProfileImage,
+        allergies: profile.allergies || [],
         disease: profile.diseases || [],
-        medicalDiseases: allMedicalDiseases, // MedicalDisease 리스트를 currentProfile에 추가
+        medicalDiseases,
     };
 });
 
-// 중복 여부를 확인하고 진료 기록 데이터를 우선적으로 표시하는 computed 속성
+// 중복 여부를 확인하고 진료 기록을 우선하는 computed
 const filteredDiseases = computed(() => {
-    // medicalDiseases 리스트가 존재하지 않으면 빈 배열 반환
     const medicalDiseases = currentProfile.value.medicalDiseases || [];
     const profileDiseases = currentProfile.value.diseases || [];
-
-    // medicalDiseases에서 질환 정보를 추출하여 키 값으로 저장 (예: 병명-소분류)
-    const medicalDiseaseKeys = new Set(
-        medicalDiseases.map((medicalDisease) => `${medicalDisease.diseaseName}-${medicalDisease.diseaseSubCategory}`),
+    const medicalDiseaseKeys = new Set(medicalDiseases.map((d) => `${d.diseaseName}-${d.diseaseSubCategory}`));
+    const uniqueProfileDiseases = profileDiseases.filter(
+        (d) => !medicalDiseaseKeys.has(`${d.diseaseName}-${d.diseaseSubCategory}`),
     );
-
-    // 프로필 질환 목록에서 진료 기록에 없는 항목만 필터링
-    const uniqueProfileDiseases = profileDiseases.filter((disease) => {
-        const diseaseKey = `${disease.diseaseName}-${disease.diseaseSubCategory}`;
-        return !medicalDiseaseKeys.has(diseaseKey); // 진료 기록에 없는 병만 반환
-    });
-
-    // 진료 기록의 질환 정보와 기존 프로필의 중복되지 않는 질환 정보 결합
     return [...medicalDiseases, ...uniqueProfileDiseases];
 });
 
-// 질병 정보가 존재하는지 확인하는 computed 속성
-const hasDiseases = computed(() => {
-    return filteredDiseases.value && filteredDiseases.value.length > 0;
-});
-
-// 생일을 포맷팅하는 함수
-const formatBirthday = (date) => {
-    if (!date) return '알 수 없음';
-    const formattedDate = new Date(date);
-    return `${formattedDate.getFullYear()}년 ${formattedDate.getMonth() + 1}월 ${formattedDate.getDate()}일`;
-};
+// 질병 정보 유무 확인
+const hasDiseases = computed(() => filteredDiseases.value.length > 0);
 
 // PDF 내보내기 함수
 const exportCurrentRecords = () => {
-    const captureElement = document.getElementById('capture-content'); // 캡처할 영역의 ID 설정
-
-    if (captureElement) {
-        html2canvas(captureElement, {
-            scale: 2, // 스케일 조정으로 해상도 높이기
-            ignoreElements: (element) => element.classList.contains('recent-visit-section'), // 제외할 섹션
-            useCORS: true, // CORS 이슈 방지
-            windowWidth: 412, // 모바일 환경의 가로 크기 (예시)
-            windowHeight: captureElement.clientHeight, // 캡처할 전체 높이 설정
-        }).then((canvas) => {
-            const imageData = canvas.toDataURL('image/png');
-
-            // PDF 크기를 HTML 요소의 비율과 맞추기
-            const canvasWidth = canvas.width * 0.3; // HTML 요소의 너비
-            const canvasHeight = canvas.height * 0.3; // HTML 요소의 높이
-
-            // PDF 설정 - 단위를 px로 설정하여 HTML 요소 비율에 맞추기
-            const pdf = new jsPDF('p', 'px', [canvas.width * 0.32, canvas.height * 0.32]);
-
-            // PDF에 이미지 추가
-            pdf.addImage(imageData, 'PNG', 8, 10, canvasWidth, canvasHeight);
-
-            // PDF 파일로 저장
-            pdf.save(`${currentProfile.value.name}_기록.pdf`);
-
-            // PDF 저장 후 메시지 표시
-            showExportMessage();
-
-            // 3초 후 메시지 자동 삭제
-            // setTimeout(() => {
-            //     exportMessage.value = '';
-            // }, 3000);
-        });
-    } else {
+    const captureElement = document.getElementById('capture-content');
+    if (!captureElement) {
         console.error('캡처할 요소를 찾을 수 없습니다.');
+        return;
     }
+    html2canvas(captureElement, {
+        scale: 2,
+        ignoreElements: (e) => e.classList.contains('recent-visit-section'),
+        useCORS: true,
+    }).then((canvas) => {
+        const pdf = new jsPDF('p', 'px', [canvas.width * 0.32, canvas.height * 0.32]);
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 8, 10, canvas.width * 0.3, canvas.height * 0.3);
+        pdf.save(`${currentProfile.value.name}_기록.pdf`);
+        showExportMessage();
+    });
 };
 
-// PDF 저장 메시지 표시 함수
+// PDF 저장 메시지 표시
 const showExportMessage = () => {
-    const alertMessageElement = document.querySelector('.export-message');
-    exportMessage.value = '{{ currentProfile.name }} PDF가 성공적으로 저장되었습니다.';
-
-    if (alertMessageElement) {
-        alertMessageElement.classList.add('show');
+    exportMessage.value = `${currentProfile.value.name} PDF가 성공적으로 저장되었습니다.`;
+    const alertElement = document.querySelector('.export-message');
+    if (alertElement) {
+        alertElement.classList.add('show');
+        setTimeout(() => alertElement.classList.remove('show'), 1500);
     }
-    setTimeout(() => {
-        if (alertMessageElement) {
-            alertMessageElement.classList.remove('show'); // show 클래스를 제거하여 메시지 숨김}
-        }
-    }, 1500); // 1.5초 후 메시지가 사라지도록 설정
 };
 
-// 뒤로가기 버튼 클릭 함수
+// 뒤로가기 버튼 클릭
 const goBack = () => {
     window.history.back();
 };
