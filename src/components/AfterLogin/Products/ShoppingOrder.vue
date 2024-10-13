@@ -133,7 +133,7 @@ export default {
                         <!-- 누구한테 보내지는지 + 상세보기버튼 -->
                         <div class="itemTopBar">
                             <!-- 배송현황으로 바꿔도 무방 -->
-                            <div class="itemTopBarDiv"><b>to.</b>{{ order.receipient_name }}</div>
+                            <div class="itemTopBarDiv"><b>to.</b>{{ order.receipientName }}</div>
                         </div>
                         <hr style="margin: 0px !important" />
                         <!-- 제품 요약 -->
@@ -149,7 +149,7 @@ export default {
                                 <!-- 제품에 대한 설명 -->
                                 <div class="titleDiv">
                                     <div class="brandName">
-                                        <div>풀무원</div>
+                                        <div>{{ product.brandName }}</div>
                                     </div>
                                     <div class="itemName">
                                         <div
@@ -182,7 +182,10 @@ export default {
                                         <b>{{ order.totalPrice }}</b
                                         >원
                                     </div>
-                                    <div class="itemCount">수량 <span>1</span>개</div>
+                                    <div class="itemCount">
+                                        수량 <span>{{ product.quantity }}</span
+                                        >개
+                                    </div>
                                 </div>
                             </div>
                             <!-- 주문번호 및 상세 -->
@@ -217,7 +220,7 @@ export default {
                                     <div style="border: 1px solid lightgray"></div>
                                     <div class="detailContainer">
                                         <div style="flex: 3">배송지</div>
-                                        <div style="flex: 7">서울시 동래구 온천동 럭키아파트 12동 1303호</div>
+                                        <div style="flex: 7">{{ order.location }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -237,6 +240,8 @@ export default {
 
 <script>
 import ButtomBar from '../Layouts/ButtomBar.vue';
+import axios from 'axios';
+
 export default {
     components: {
         ButtomBar,
@@ -244,54 +249,26 @@ export default {
     data() {
         return {
             showDetailsMap: new Map(), // 각 주문의 상세 상태를 관리하는 Map
-            orders: [
-                {
-                    id: 101,
-                    totalPrice: 45000,
-                    buyingDate: '2024-10-01T15:00:00Z',
-                    receipient_name: '홍길동',
-                    receipient_telNum: '010-1234-5678',
-                    isAllShipping: '배송 완료',
-                    orderProductList: [
-                        {
-                            id: 1,
-                            productName: 'ANF 전연령 독 식스프리',
-                            shippingStatus: '배송 중',
-                            productMainImageUrl:
-                                'https://thumbnail7.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2024/05/21/17/7/a88a31df-6c64-40e9-919a-678a7b3db597.jpg',
-                        },
-                        {
-                            id: 2,
-                            productName: '리브펫 반려동물 유산균',
-                            shippingStatus: '배송 완료',
-                            productMainImageUrl:
-                                'https://thumbnail7.coupangcdn.com/thumbnails/remote/230x230ex/image/vendor_inventory/d499/6f33af5ed20d4ebaf93756ef3170f21086156fba07fdea05f31af1869d7f.png',
-                        },
-                    ],
-                    memo: '문 앞에 두세요.',
-                },
-                {
-                    id: 102,
-                    totalPrice: 20000,
-                    buyingDate: '2024-09-29T12:30:00Z',
-                    receipient_name: '김철수',
-                    receipient_telNum: '010-9876-5432',
-                    isAllShipping: '배송 중',
-                    orderProductList: [
-                        {
-                            id: 3,
-                            productName: '탐사 전연령용 고양이 사료, 20kg, 닭, 1개',
-                            shippingStatus: '배송 준비 중',
-                            productMainImageUrl:
-                                'https://thumbnail10.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1244572466192737-bcd4cc5a-95a8-4135-8700-6089c262ca2b.jpg',
-                        },
-                    ],
-                    memo: '경비실에 맡겨주세요.',
-                },
-            ],
+            orders: [],
         };
     },
+    mounted() {
+        this.fetchOrders();
+    },
     methods: {
+        async fetchOrders() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://localhost:8081/api/products/order`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                this.orders = response.data;
+            } catch (error) {
+                console.error('주문 내역을 가져오는 중 오류가 발생했습니다.', error);
+            }
+        },
         goBack() {
             window.history.back(); // 이전 페이지로 이동
         },
