@@ -30,63 +30,111 @@
 
         <!-- 컨텐츠 영역 -->
         <div id="router-pages">
-            <div class="pageContainer">
+            <div class="pageContainer" v-if="orders.length > 0">
                 <!-- 각각의 주문내역 -->
                 <!-- 데이터 처리할 부분 : //이라는 표시를 해둠  -->
-                <div class="itemContainer">
-                    <div class="orderDate">주문일: <b>//2024.10.08 07:52:31//</b></div>
+                <div class="itemContainer" v-for="order in orders" :key="order.id">
+                    <div class="orderDate">
+                        주문일: <b>{{ formatDate(order.buyingDate) }}</b>
+                    </div>
                     <div class="whiteContentDiv">
                         <!-- 누구한테 보내지는지 + 상세보기버튼 -->
                         <div class="itemTopBar">
                             <!-- 배송현황으로 바꿔도 무방 -->
-                            <div class="itemTopBarDiv"><b>to.</b>//사람이름//</div>
-                            <!-- 상세보기 버튼 -->
-                            <div class="toggleBtn" @click="toggleDetails">
-                                <button style="border: none; background-color: transparent; margin-right: 5px">
-                                    <span v-if="showDetails">▲</span>
-                                    <span v-else>▼</span>
-                                </button>
-                            </div>
+                            <div class="itemTopBarDiv"><b>to.</b>{{ order.receipient_name }}</div>
                         </div>
                         <hr style="margin: 0px !important" />
                         <!-- 제품 요약 -->
-                        <div class="titleNimgDiv">
+                        <div class="titleNimgDiv" v-for="product in order.orderProductList" :key="product.id">
                             <div style="display: flex">
                                 <!-- 이미지div -->
                                 <div class="imgDiv">
                                     <img
-                                        src="https://picsum.photos/200"
+                                        :src="product.productMainImageUrl"
                                         style="width: inherit; height: inherit; border-radius: 10px"
                                     />
                                 </div>
                                 <!-- 제품에 대한 설명 -->
                                 <div class="titleDiv">
-                                    <div class="brandName">//상품 브랜드이름//</div>
-                                    <div class="itemName">//상품이름 //</div>
-                                    <div class="itemPrice"><b>//31,900//</b>원</div>
-                                    <div class="itemCount">수량 <span>//1//</span>개</div>
+                                    <div class="brandName">
+                                        <div>풀무원</div>
+                                    </div>
+                                    <div class="itemName">
+                                        <div
+                                            style="
+                                                overflow: hidden; /* 넘치는 부분을 숨김 */
+                                                text-overflow: ellipsis; /* 말줄임(...) 처리 */
+                                                white-space: nowrap; /* 줄 바꿈을 하지 않음 */
+                                                width: 200px;
+                                            "
+                                        >
+                                            {{ product.productName }}
+                                        </div>
+                                        <div>
+                                            <!-- 상세보기 버튼 -->
+                                            <div class="toggleBtn" @click="toggleDetails(order.id, product.id)">
+                                                <button
+                                                    style="
+                                                        border: none;
+                                                        background-color: transparent;
+                                                        margin-right: 5px;
+                                                    "
+                                                >
+                                                    <span v-if="isDetailsVisible(order.id, product.id)">▲</span>
+                                                    <span v-else>▼</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="itemPrice">
+                                        <b>{{ order.totalPrice }}</b
+                                        >원
+                                    </div>
+                                    <div class="itemCount">수량 <span>1</span>개</div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- 주문번호 및 상세 -->
-                        <div v-if="showDetails" class="titleNimgDiv" style="border-top: 1px solid lightgray">
+                            <!-- 주문번호 및 상세 -->
                             <div
-                                style="
-                                    background-color: #f9f9f9;
-                                    padding: 10px;
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-content: center;
-                                "
+                                v-if="isDetailsVisible(order.id, product.id)"
+                                class="titleNimgDiv"
+                                style="border-top: 1px solid lightgray; margin-top: 10px"
                             >
-                                <span style="font-size: 14px; padding: 10px">주문번호 &nbsp;&nbsp; 2638852300</span>
-                                <div style="border: 1px solid lightgray"></div>
-                                <div style="font-size: 14px; padding: 10px">배송완료</div>
-                                <div style="border: 1px solid lightgray"></div>
+                                <div
+                                    style="
+                                        background-color: #f9f9f9;
+                                        padding: 10px;
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-content: center;
+                                    "
+                                >
+                                    <div class="detailContainer">
+                                        <div style="flex: 3">주문번호</div>
+                                        <div style="flex: 7">{{ order.id }}</div>
+                                    </div>
+                                    <div style="border: 1px solid lightgray"></div>
+                                    <div class="detailContainer">
+                                        <div style="flex: 3">배송상태</div>
+                                        <div style="flex: 7">{{ product.shippingStatus }}</div>
+                                    </div>
+                                    <div style="border: 1px solid lightgray"></div>
+                                    <div class="detailContainer">
+                                        <div style="flex: 3">메모</div>
+                                        <div style="flex: 7">{{ order.memo }}</div>
+                                    </div>
+                                    <div style="border: 1px solid lightgray"></div>
+                                    <div class="detailContainer">
+                                        <div style="flex: 3">배송지</div>
+                                        <div style="flex: 7">서울시 동래구 온천동 럭키아파트 12동 1303호</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div v-else>
+                <p>주문 내역이 없습니다.</p>
             </div>
         </div>
 
@@ -97,22 +145,77 @@
 
 <script>
 import ButtomBar from '../Layouts/ButtomBar.vue';
-
 export default {
     components: {
         ButtomBar,
     },
     data() {
         return {
-            showDetails: false, // 세부 정보 표시 여부
+            showDetailsMap: new Map(), // 각 주문의 상세 상태를 관리하는 Map
+            orders: [
+                {
+                    id: 101,
+                    totalPrice: 45000,
+                    buyingDate: '2024-10-01T15:00:00Z',
+                    receipient_name: '홍길동',
+                    receipient_telNum: '010-1234-5678',
+                    isAllShipping: '배송 완료',
+                    orderProductList: [
+                        {
+                            id: 1,
+                            productName: 'ANF 전연령 독 식스프리',
+                            shippingStatus: '배송 중',
+                            productMainImageUrl:
+                                'https://thumbnail7.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2024/05/21/17/7/a88a31df-6c64-40e9-919a-678a7b3db597.jpg',
+                        },
+                        {
+                            id: 2,
+                            productName: '리브펫 반려동물 유산균',
+                            shippingStatus: '배송 완료',
+                            productMainImageUrl:
+                                'https://thumbnail7.coupangcdn.com/thumbnails/remote/230x230ex/image/vendor_inventory/d499/6f33af5ed20d4ebaf93756ef3170f21086156fba07fdea05f31af1869d7f.png',
+                        },
+                    ],
+                    memo: '문 앞에 두세요.',
+                },
+                {
+                    id: 102,
+                    totalPrice: 20000,
+                    buyingDate: '2024-09-29T12:30:00Z',
+                    receipient_name: '김철수',
+                    receipient_telNum: '010-9876-5432',
+                    isAllShipping: '배송 중',
+                    orderProductList: [
+                        {
+                            id: 3,
+                            productName: '탐사 전연령용 고양이 사료, 20kg, 닭, 1개',
+                            shippingStatus: '배송 준비 중',
+                            productMainImageUrl:
+                                'https://thumbnail10.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1244572466192737-bcd4cc5a-95a8-4135-8700-6089c262ca2b.jpg',
+                        },
+                    ],
+                    memo: '경비실에 맡겨주세요.',
+                },
+            ],
         };
     },
     methods: {
         goBack() {
             window.history.back(); // 이전 페이지로 이동
         },
-        toggleDetails() {
-            this.showDetails = !this.showDetails;
+        toggleDetails(orderId, productId) {
+            const key = `${orderId}-${productId}`; // 주문 ID와 상품 ID 조합
+            const currentStatus = this.showDetailsMap.get(key) || false;
+            this.showDetailsMap.set(key, !currentStatus);
+            this.$forceUpdate(); // 상태 변경 강제 반영
+        },
+        isDetailsVisible(orderId, productId) {
+            const key = `${orderId}-${productId}`; // 주문 ID와 상품 ID 조합
+            return this.showDetailsMap.get(key) || false;
+        },
+        formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
         },
     },
 };
@@ -136,7 +239,7 @@ export default {
 .pageContainer {
     flex-grow: 1;
     overflow-y: auto;
-    height: 90%; /* 스크롤바 숨기기 */
+    height: 100%; /* 스크롤바 숨기기 */
     scrollbar-width: none;
 }
 .whiteContentDiv {
@@ -221,6 +324,8 @@ export default {
 .itemName {
     font-size: 18px;
     flex: 2;
+    display: flex;
+    justify-content: space-between;
 }
 .itemPrice {
     flex: 1;
@@ -229,5 +334,13 @@ export default {
     color: lightgray;
     font-size: 12px;
     flex: 1;
+}
+.detailContainer {
+    font-size: 14px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
 }
 </style>
