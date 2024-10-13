@@ -1,10 +1,12 @@
 // import AfterLoginMain from '@/components/AfterLogin/Layouts/AfterLoginMain.vue';
 
+import OrderList from '@/components/AfterLogin/SettingProfile/OrderList.vue';
 import setProfile1 from '@/components/AfterLogin/SettingProfile/ProfileSetting1.vue';
 import setProfile2 from '@/components/AfterLogin/SettingProfile/ProfileSetting2.vue';
 import setProfile3 from '@/components/AfterLogin/SettingProfile/ProfileSetting3.vue';
 import setProfile4 from '@/components/AfterLogin/SettingProfile/ProfileSetting4.vue';
 import ProtoType from '@/components/AfterLogin/SettingProfile/ProtoType.vue';
+import orderListDetail from '@/components/AfterLogin/SettingProfile/OrderListDetail.vue';
 
 import UserInfoPage from '@/components/AfterLogin/SettingProfile/UserInfoPage.vue';
 
@@ -65,6 +67,16 @@ const pageroutes = [
                 },
             },
         ],
+    },
+    {
+        path: '/orderList', // 사용자 정보 페이지 경로
+        name: 'orderList',
+        component: OrderList, // 사용자 정보 페이지 컴포넌트
+    },
+    {
+        path: '/orderDetail',
+        name: 'orderListDetail',
+        component: orderListDetail,
     },
 ];
 
