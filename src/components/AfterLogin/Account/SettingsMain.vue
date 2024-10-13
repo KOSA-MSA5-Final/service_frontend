@@ -1,6 +1,42 @@
 <template>
     <div id="settings-title">계정 관리</div>
     <div id="setting-container">
+        <div class="member-info" v-if="memberInfo">
+            <p class="info-text">
+                <span>{{ memberInfo.name }} 님, 안녕하세요!</span>
+                <span class="points-box">
+                    포인트 : 500
+                    <svg
+                        version="1.1"
+                        id="_x32_"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 512 512"
+                        xml:space="preserve"
+                        fill="#ffcc00"
+                        width="20"
+                        height="20"
+                        class="svg-icon"
+                    >
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <g>
+                                <path
+                                    class="st0"
+                                    d="M256,64c105.875,0,192,86.125,192,192s-86.125,192-192,192c-105.859,0-192-86.125-192-192S150.141,64,256,64 M256,0C114.625,0,0,114.625,0,256c0,141.391,114.625,256,256,256s256-114.609,256-256C512,114.625,397.375,0,256,0z"
+                                ></path>
+                                <path
+                                    class="st0"
+                                    d="M264.375,170.594h-54.5c-8.703,0-15.75,7.031-15.75,15.719V347c0,8.688,7.047,15.719,15.75,15.719h7.906 c8.688,0,15.734-7.031,15.734-15.719v-45.25h30.859c41.266,0,74.844-29.406,74.844-65.594 C339.219,200,305.641,170.594,264.375,170.594z M264.375,267.219h-30.859v-62.125h30.859c19.547,0,35.438,13.938,35.438,31.063 S283.922,267.219,264.375,267.219z"
+                                ></path>
+                            </g>
+                        </g>
+                    </svg>
+                </span>
+            </p>
+        </div>
+
         <div id="settings-container">
             <div id="delivery-info-setting" @click="addressSettingsPage">
                 <img class="icon" src="@/assets/icon-home2.svg" alt="Address Icon" />
@@ -85,6 +121,7 @@ export default defineComponent({
                 await userAllInfoStore.fetchUserAllInfo();
             } catch (error) {
                 console.error('Failed to fetch user info:', error);
+                console.log(userAllInfoStore.getMemberInfo);
                 // 에러 처리 로직 추가 가능
             }
         });
@@ -261,5 +298,29 @@ p {
 .icon {
     /* filter: invert(77%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%); */
     filter: invert(50%) sepia(8%) saturate(5399%) hue-rotate(179deg) brightness(90%) contrast(90%);
+}
+
+.info-text {
+    display: flex;
+    justify-content: space-between; /* 양쪽 끝에 배치 */
+    align-items: center; /* 세로 가운데 정렬 */
+    margin: 0; /* 기본 p 태그 여백 제거 */
+    padding: 5px;
+}
+
+.points-box {
+    display: flex; /* 인라인 요소처럼 동작하면서 Flexbox 사용 */
+    align-items: center; /* 세로 중앙 정렬 */
+    padding: 5px 10px;
+    background-color: #f2f2f2;
+    color: black;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 2; /* 줄 높이를 1로 설정 */
+    height: 35px; /* 높이를 명확히 지정 */
+}
+
+.points-box svg {
+    margin-left: 5px;
 }
 </style>

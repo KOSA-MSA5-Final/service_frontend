@@ -5,7 +5,6 @@
             <div id="profile-img">
                 <div id="profile-img-container">
                     <img v-if="contents && contents.pictureUrl" :src="contents.pictureUrl" :alt="contents.name" />
-
                     <img v-else src="@/assets/jangoon.gif" />
                 </div>
             </div>
@@ -27,8 +26,8 @@
                         line-height: 30px;
                         height: 30px;
                     "
-                    >프로필 변경</span
-                >
+                    >프로필 변경 <img src="@/assets/icon-setting.svg" alt="Setting Icon"
+                /></span>
             </div>
         </div>
         <div id="services">
@@ -276,13 +275,18 @@ export default {
     height: 20px;
 }
 
+#custom-info-reg-button img {
+    width: 25px;
+    height: 25px;
+}
+
 #custom-info-reg-button {
     border-radius: 10px;
     border: 1px solid white;
     /* background-color: #539ee0; */
     /* background-color: #1860c3; */
     background-color: #2376e9;
-    padding: 2px 10px;
+    padding: 2px 6px 2px 10px;
     color: white;
     white-space: nowrap;
 }
