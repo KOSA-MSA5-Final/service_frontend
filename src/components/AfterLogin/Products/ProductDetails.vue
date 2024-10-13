@@ -12,7 +12,7 @@
             <div class="main-title">상품 상세 정보</div>
         </div>
 
-        <div v-if="product" class="main-content">
+        <div v-if="product != null" class="main-content">
             <!-- Vue Swiper 이미지 슬라이더 -->
             <Swiper :slides-per-view="1" navigation pagination>
                 <!-- 첫 번째 슬라이드에 mainimageurl 사용 -->
@@ -70,6 +70,20 @@
             <p>Loading...</p>
         </div>
 
+        슬라이딩 결제 박스
+        <div class="sliding-payment-box" :class="{ show: isPaymentBoxVisible }" v-if="product">
+            <div class="payment-content">
+                <p>1개당 가격: {{ product.price }}원</p>
+                <div class="quantity-input">
+                    <label for="quantity">구매 수량:</label>
+                    <input type="number" id="quantity" v-model.number="quantity" min="1" @input="updateTotalPrice" />
+                </div>
+                <p>총 결제 금액: {{ totalPrice }}원</p>
+
+                <button @click="requestPayment" class="final-purchase-button">결제하기</button>
+            </div>
+        </div>
+
         <!-- 하단의 구매하기 버튼과 장바구니 버튼 -->
         <div class="button-container">
             <!-- 장바구니 넣기 버튼 -->
@@ -101,7 +115,7 @@
                     />
                 </svg>
             </button>
-            <button class="purchase-button" @click="purchaseProduct">구매하기</button>
+            <button class="purchase-button" @click="showPaymentBox">구매하기</button>
         </div>
     </div>
 </template>
@@ -119,9 +133,15 @@ export default {
     data() {
         return {
             product: null,
+            unitPrice: 0,
             productId: this.$route.params.id,
             defaultImage: 'https://via.placeholder.com/300',
             isHeartFilled: false, // 하트가 채워져 있는지 여부를 추적
+            isPaymentBoxVisible: false,
+            quantity: 1,
+            totalPrice: 0,
+            impLoadingStatus: 'idle', // 'idle', 'loading', 'loaded', 'error'
+            isLoading: true,
         };
     },
     async created() {
@@ -129,6 +149,7 @@ export default {
     },
     methods: {
         async fetchProductDetails(productId) {
+            this.isLoading = true;
             try {
                 const token = localStorage.getItem('token');
                 const response = await axios.get(`https://localhost:8081/api/products/get/${productId}`, {
@@ -138,8 +159,13 @@ export default {
                 });
 
                 this.product = response.data;
+                console.log(this.product);
+                this.unitPrice = response.data.price;
+                console.log(this.product.id);
             } catch (error) {
                 console.error('Fetch ERROR!', error);
+            } finally {
+                this.isLoading = false;
             }
         },
         goBack() {
@@ -151,6 +177,96 @@ export default {
         toggleHeart() {
             this.isHeartFilled = !this.isHeartFilled;
             alert(this.isHeartFilled ? '장바구니에 추가되었습니다!' : '장바구니에서 제거되었습니다!');
+        },
+        showPaymentBox() {
+            if (this.isPaymentBoxVisible === false) {
+                this.isPaymentBoxVisible = true;
+            } else {
+                this.isPaymentBoxVisible = false;
+            }
+
+            this.updateTotalPrice();
+        },
+        updateTotalPrice() {
+            this.totalPrice = this.product.price * this.quantity;
+        },
+
+        async loadImpScript() {
+            this.impLoadingStatus = 'loading';
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.iamport.kr/v1/iamport.js';
+                script.async = true;
+                script.onload = () => {
+                    if (window.IMP) {
+                        window.IMP.init('imp05475712'); // 실제 상점식별코드로 변경 필요
+                        this.impLoadingStatus = 'loaded';
+                        resolve();
+                    } else {
+                        this.impLoadingStatus = 'error';
+                        reject(new Error('IMP object not found'));
+                    }
+                };
+                script.onerror = () => {
+                    this.impLoadingStatus = 'error';
+                    reject(new Error('Failed to load IMP script'));
+                };
+                document.head.appendChild(script);
+            });
+        },
+
+        async requestPayment() {
+            try {
+                // 결제 모듈이 로드될 때까지 기다림
+                await this.loadImpScript();
+
+                // 모듈이 로드되지 않았을 경우 경고창 표시
+                if (this.impLoadingStatus !== 'loaded') {
+                    alert('결제 모듈이 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.');
+                    return;
+                }
+
+                // 결제 요청 진행
+                const response = await new Promise((resolve, reject) => {
+                    window.IMP.request_pay(
+                        {
+                            pg: 'html5_inicis',
+                            pay_method: 'card',
+                            merchant_uid: `${this.product.id}_${Date.now()}`,
+                            name: this.product.name,
+                            amount: this.totalPrice,
+                            // buyer_email: 'buyer@example.com',
+                            // buyer_name: '구매자이름',
+                            // buyer_tel: '010-1234-5678',
+                            // buyer_addr: '서울특별시 강남구 삼성동',
+                            // buyer_postcode: '123-456',
+                        },
+                        (rsp) => {
+                            if (rsp.success) {
+                                resolve(rsp);
+                            } else {
+                                reject(new Error(rsp.error_msg));
+                            }
+                        },
+                    );
+                });
+
+                // 결제가 성공했을 때
+                const token = localStorage.getItem('token');
+                const res = await axios.post(`https://localhost:8081/api/pay/${response.imp_uid}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                console.log('Payment successful', res);
+
+                alert('결제가 완료되었습니다!');
+                this.isPaymentBoxVisible = false;
+            } catch (error) {
+                // 결제 실패 시
+                console.error('Payment failed', error);
+                alert(`결제에 실패했습니다: ${error.message}`);
+            }
         },
     },
 };
@@ -230,16 +346,16 @@ export default {
     padding: 10px 20px;
 }
 
-.button-container {
+/* .button-container {
     display: flex;
-    justify-content: space-between; /* 버튼 사이에 공간을 고르게 배치 */
-    position: fixed; /* 화면에 고정 */
-    bottom: 0; /* 화면 하단에 위치 */
-    left: 0; /* 왼쪽에 위치 */
-    width: 100%; /* 전체 너비 사용 */
-    background-color: white; /* 배경색 추가 (필요시) */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* 상단 그림자 추가 (선택사항) */
-}
+    justify-content: space-between; 
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    background-color: white; 
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); 
+} */
 
 .add-to-cart-button {
     flex: 2;
@@ -302,5 +418,61 @@ export default {
     align-items: center;
     color: #ff6347; /* 0.0 숫자를 빨간색으로 */
     margin-bottom: 10px;
+}
+
+.quantity-input {
+    margin: 10px 0;
+}
+
+.quantity-input input {
+    width: 50px;
+    margin-left: 10px;
+}
+
+.final-purchase-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.sliding-payment-box {
+    position: fixed;
+    bottom: 60px; /* 버튼 컨테이너의 높이만큼 위로 이동 */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    transform: translateY(100%);
+}
+
+.sliding-payment-box.show {
+    transform: translateY(0);
+}
+
+.payment-content {
+    padding: 20px;
+}
+
+.button-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1001; /* 슬라이딩 박스보다 위에 표시 */
 }
 </style>
