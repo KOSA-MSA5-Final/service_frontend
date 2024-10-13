@@ -8,8 +8,8 @@
                     <a @click.prevent="goToProductDetails(product.id)" class="block">
                         <!-- imageUrls의 첫 번째 이미지를 사용하여 이미지 출력 -->
                         <img
-                            :src="product.imageUrls ? product.imageUrls[0] : defaultImage"
-                            :alt="product.imageUrls"
+                            :src="product.mainimageurl ? product.mainimageurl : product.imageUrls[0]"
+                            :alt="product.mainimageurl"
                             class="product-image"
                             width="146"
                             height="146"
@@ -43,7 +43,7 @@ const container = ref(null);
 const isAtStart = ref(true);
 const isAtEnd = ref(false);
 
-const defaultImage = 'https://via.placeholder.com/150';
+// const defaultImage = 'https://via.placeholder.com/150';
 
 const router = useRouter(); // router 정의
 

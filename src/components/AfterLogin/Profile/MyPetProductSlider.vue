@@ -4,10 +4,10 @@
         <div class="products-container" ref="container">
             <div v-for="product in products" :key="product.id" class="product-item">
                 <div class="relative">
-                    <a href="#" class="block">
+                    <a @click.prevent="goToProductDetails(product.id)" class="block">
                         <img
-                            :src="product.imageUrls ? product.imageUrls[0] : defaultImage"
-                            :alt="product.imageUrls"
+                            :src="product.mainimageurl ? product.mainimageurl : product.imageUrls[0]"
+                            :alt="product.mainimageurl"
                             class="product-image"
                             width="146"
                             height="146"
@@ -26,6 +26,7 @@
 
 <script setup>
 import { ref, onMounted, watch, nextTick, defineProps } from 'vue';
+import { useRouter } from 'vue-router'; // useRouter 임포트
 
 const props = defineProps({
     products: {
@@ -65,6 +66,11 @@ onMounted(() => {
         container.value.addEventListener('scroll', updateScrollState);
     }
 });
+const router = useRouter(); // router 정의
+// 상품 클릭 시 해당 상품의 ID로 라우팅
+const goToProductDetails = (productId) => {
+    router.push({ name: 'ProductDetails', params: { id: productId } });
+};
 
 watch(
     () => props.products,

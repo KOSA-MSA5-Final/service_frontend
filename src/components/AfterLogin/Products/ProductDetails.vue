@@ -15,6 +15,12 @@
         <div v-if="product" class="main-content">
             <!-- Vue Swiper 이미지 슬라이더 -->
             <Swiper :slides-per-view="1" navigation pagination>
+                <!-- 첫 번째 슬라이드에 mainimageurl 사용 -->
+                <SwiperSlide v-if="product.mainimageurl">
+                    <img :src="product.mainimageurl" alt="Main Product Image" class="product-image" />
+                </SwiperSlide>
+
+                <!-- 나머지 이미지들 슬라이드로 출력 -->
                 <SwiperSlide v-for="(image, index) in product.imageUrls" :key="index">
                     <img :src="image" :alt="`Product image ${index + 1}`" class="product-image" />
                 </SwiperSlide>

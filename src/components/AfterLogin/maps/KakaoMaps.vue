@@ -131,7 +131,7 @@
             </div>
 
             <!-- 시설 정보 리스트 -->
-            <div class="facility-list" :style="{ height: isMapMinimized ? '80vh' : '50vh' }">
+            <div class="facility-list" :style="{ height: isMapMinimized ? '80vh' : '40vh' }">
                 <div
                     class="facility-item"
                     v-for="(facility, index) in filteredFacilityList"
@@ -363,30 +363,35 @@ const mapKakaoDataToHospitalDTO = (kakaoData) => {
 const filterFacilities = (filterType) => {
     activeFilter.value = filterType; // 선택된 필터 타입으로 상태 업데이트
 
-    // 전체 버튼 클릭 시 모든 병원 데이터 표시
     if (filterType === '전체') {
-        filteredFacilityList.value = facilityList.value;
-    }
-    // 제휴 버튼 클릭 시 제휴 병원 데이터만 표시
-    else if (filterType === '제휴') {
+        // 제휴 병원 중 상위 2개만 선택
+        const topAffiliatedFacilities = facilityList.value.filter((facility) => facility.isOurs).slice(0, 2); // 제휴 병원 상위 2개만 선택
+
+        // 제휴되지 않은 병원 정렬
+        const nonAffiliatedFacilities = facilityList.value.filter((facility) => !facility.isOurs);
+
+        // 상단에 제휴 병원 2개 + 나머지 병원들로 구성된 리스트 생성
+        filteredFacilityList.value = [...topAffiliatedFacilities, ...nonAffiliatedFacilities];
+    } else if (filterType === '제휴') {
+        // 제휴 병원만 필터링
         filteredFacilityList.value = facilityList.value.filter((facility) => facility.isOurs);
     }
 };
 
 // 병원 리스트와 마커 업데이트 함수
 const updatefacilityListAndMarkers = async (places) => {
-    // Kakao API 결과를 DTO 형태로 변환
-    const facilitiesWithLatLng = await Promise.all(
+    // 병원 데이터를 Kakao API DTO 형태로 변환 후 저장
+    facilityList.value = await Promise.all(
         places.map(async (place) => {
             const facilityDTO = mapKakaoDataToHospitalDTO(place);
 
-            // 제휴 병원 데이터와 비교하여 제휴 여부 설정
+            // 제휴 여부 설정
             facilityDTO.isOurs = facilityStore.affiliatedFacilities.some(
                 (affiliated) => affiliated.name === facilityDTO.name && affiliated.address === facilityDTO.address,
             );
 
             try {
-                // 주소를 위도와 경도로 변환하여 추가
+                // 주소를 위도와 경도로 변환
                 const { latitude, longitude } = await convertAddressToLatLng(facilityDTO.address);
                 facilityDTO.lat = latitude;
                 facilityDTO.lng = longitude;
@@ -411,23 +416,7 @@ const updatefacilityListAndMarkers = async (places) => {
         return a.distance - b.distance;
     });*/
 
-    // 제휴 병원과 일반 병원으로 나누기
-    const affiliatedFacilities = facilitiesWithLatLng.filter((facility) => facility.isOurs);
-    const nonAffiliatedFacilities = facilitiesWithLatLng.filter((facility) => !facility.isOurs);
-
-    // 제휴 병원은 거리 순으로 정렬하여 상위 2개만 추출
-    const topAffiliatedFacilities = affiliatedFacilities
-        .sort((a, b) => a.distance - b.distance) // 거리 순으로 정렬
-        .slice(0, 4); // 상위 4개의 제휴 병원만 선택
-
-    // 나머지 병원들을 거리 순으로 정렬
-    const sortedNonAffiliatedFacilities = nonAffiliatedFacilities.sort((a, b) => a.distance - b.distance);
-
-    // 최종 병원 리스트: 상단에 제휴 병원 2개 + 그 외 병원들
-    const sortedFacilities = [...topAffiliatedFacilities, ...sortedNonAffiliatedFacilities];
-
     // 시설 리스트를 업데이트하고 지도에 마커로 표시
-    facilityList.value = sortedFacilities;
     filterFacilities(activeFilter.value); // 필터링된 리스트 업데이트
     addMarkersToMap(facilityList.value);
 };
@@ -880,11 +869,13 @@ onBeforeUnmount(() => {
 /* 시설 리스트 스타일 */
 .facility-list {
     overflow-y: auto;
-    scrollbar-width: none;
+    scrollbar-width: thin;
     width: 100%;
     height: 100%;
     margin-top: 10px;
     transition: height 0.3s ease;
+    flex: 1;
+    max-height: calc(100vh - 250px);
 }
 
 .facility-item {

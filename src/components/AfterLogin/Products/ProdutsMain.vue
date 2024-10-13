@@ -82,11 +82,13 @@
                 <!-- @click="goToProductDetails(product.id)" -->
                 <div class="product-grid">
                     <div v-for="product in FilteredProducts" :key="product.id" class="product-card">
-                        <img
-                            :src="product.imageUrls ? product.imageUrls[0] : defaultImage"
-                            :alt="product.name"
-                            class="product-image"
-                        />
+                        <a @click.prevent="goToProductDetails(product.id)" class="block">
+                            <img
+                                :src="product.mainimageurl ? product.mainimageurl : product.imageUrls[0]"
+                                :alt="product.mainimageurl"
+                                class="product-image"
+                            />
+                        </a>
                         <div class="product-details">
                             <div class="product-name">{{ product.name }}</div>
                             <div class="product-price">₩{{ product.price }}</div>
@@ -104,6 +106,7 @@ import { useRoute } from 'vue-router';
 import { useCurrentProfileStore } from '@/fetch_datas/currentProfileStore';
 import { useProductStore } from '@/stores/productStore';
 import { storeToRefs } from 'pinia';
+import router from '@/routes';
 
 const route = useRoute();
 const productType = route.params.type;
@@ -115,7 +118,7 @@ const { contents } = storeToRefs(profileStore);
 const { products } = storeToRefs(productStore);
 
 const activeCategory = ref('전체'); // 활성화된 카테고리 상태
-const defaultImage = 'https://via.placeholder.com/150'; // 기본 이미지 URL
+// const defaultImage = 'https://via.placeholder.com/150'; // 기본 이미지 URL
 
 // 로컬 상태 변수
 const searchQuery = ref(''); // 검색어
@@ -210,6 +213,11 @@ const toggleFilterMenu = () => {
             }
         });
     }
+};
+
+// 상품 클릭 시 해당 상품의 ID로 라우팅
+const goToProductDetails = (productId) => {
+    router.push({ name: 'ProductDetails', params: { id: productId } });
 };
 
 // 검색어 변경 시 호출되는 함수
