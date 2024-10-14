@@ -74,17 +74,41 @@
             <p>Loading...</p>
         </div>
 
-        슬라이딩 결제 박스
         <div class="sliding-payment-box" :class="{ show: isPaymentBoxVisible }" v-if="product">
             <div class="payment-content">
-                <p>1개당 가격: {{ product.price }}원</p>
-                <div class="quantity-input">
+                <!-- 제품 정보 -->
+                <div class="product-info-box">
+                    <p style="flex: 7">1개당 가격: {{ product.price }}원</p>
+                    <p id="free-delivery" style="flex: 2; color: red">무료 배송!</p>
+                </div>
+
+                <!-- 수량 입력 -->
+                <div class="quantity-input-box">
                     <label for="quantity">구매 수량:</label>
                     <input type="number" id="quantity" v-model.number="quantity" min="1" @input="updateTotalPrice" />
                 </div>
-                <p>총 결제 금액: {{ totalPrice }}원</p>
 
-                <button @click="requestPayment" class="final-purchase-button">결제하기</button>
+                <!-- 배송지 정보 -->
+                배송지 정보
+                <div class="primary-address-box" v-if="primaryAddress">
+                    <div class="address-info">
+                        <div>
+                            <label for="address">{{ primaryAddress.address }}</label>
+                        </div>
+                        <div>
+                            <label for="receiptant-info"
+                                >{{ primaryAddress.receipientName }} ( {{ primaryAddress.receipientTellNum }} )</label
+                            >
+                        </div>
+                    </div>
+                    <button @click="changeAddress" class="change-address-button">주소변경</button>
+                </div>
+
+                <!-- 결제 금액 및 결제 버튼 -->
+                <div class="submit-container">
+                    <p>총 결제 금액: {{ totalPrice }}원</p>
+                    <button @click="requestPayment" class="final-purchase-button">결제하기</button>
+                </div>
             </div>
         </div>
 
@@ -128,6 +152,7 @@
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css'; // CSS 임포트
 import axios from 'axios';
+import { fetchAddressList } from '@/fetch_datas/addressStore';
 
 export default {
     components: {
@@ -146,12 +171,21 @@ export default {
             totalPrice: 0,
             impLoadingStatus: 'idle', // 'idle', 'loading', 'loaded', 'error'
             isLoading: true,
+            primaryAddress: null,
         };
     },
     async created() {
         await this.fetchProductDetails(this.productId);
+        await this.fetchPrimaryAddress();
     },
     methods: {
+        async fetchPrimaryAddress() {
+            const addressStore = fetchAddressList();
+            await addressStore.fetchContents();
+            if (addressStore.contents) {
+                this.primaryAddress = addressStore.contents.find((address) => address.isPrimary === 'T');
+            }
+        },
         async fetchProductDetails(productId) {
             this.isLoading = true;
             try {
@@ -173,7 +207,7 @@ export default {
             }
         },
         goBack() {
-            window.history.back();
+            this.$router.push('/products/feed');
         },
         purchaseProduct() {
             alert('구매 페이지로 이동합니다!');
@@ -424,32 +458,22 @@ export default {
     margin-bottom: 10px;
 }
 
-.quantity-input {
-    margin: 10px 0;
-}
-
-.quantity-input input {
-    width: 50px;
-    margin-left: 10px;
-}
-
-.final-purchase-button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
+.button-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1001; /* 슬라이딩 박스보다 위에 표시 */
 }
 
 .sliding-payment-box {
     position: fixed;
-    bottom: 60px; /* 버튼 컨테이너의 높이만큼 위로 이동 */
+    bottom: 60px;
     left: 0;
     width: 100%;
     background-color: white;
@@ -465,18 +489,71 @@ export default {
 
 .payment-content {
     padding: 20px;
+    text-align: left;
 }
 
-.button-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+/* 제품 정보 박스 */
+.product-info-box {
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: white;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1001; /* 슬라이딩 박스보다 위에 표시 */
+}
+
+/* 수량 입력 박스 */
+.quantity-input-box {
+    margin: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.quantity-input input {
+    width: 50px;
+    margin-left: 10px;
+}
+
+/* 배송지 정보 박스 */
+.primary-address-box {
+    margin: 10px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.change-address-button {
+    background-color: #71a9db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    flex: 2;
+    height: 44px;
+}
+
+.final-purchase-button {
+    background-color: #3596eb;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    flex: 2;
+    height: 44px;
+}
+.primary-address-box {
+    display: flex;
+}
+.submit-container {
+    display: flex;
+    margin-bottom: 15px;
+}
+.submit-container p {
+    flex: 7;
+}
+.address-info {
+    flex: 7;
+}
+#quantity {
+    margin-left: 10px;
 }
 </style>
