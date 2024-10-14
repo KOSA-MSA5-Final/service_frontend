@@ -117,7 +117,7 @@ const productStore = useProductStore();
 const { contents } = storeToRefs(profileStore);
 // const { products, personalizedProducts } = storeToRefs(productStore);
 
-const activeCategory = ref('맞춤형  '); // 활성화된 카테고리 상태
+const activeCategory = ref('맞춤형'); // 활성화된 카테고리 상태
 
 // 로컬 상태 변수
 const searchQuery = ref('');
