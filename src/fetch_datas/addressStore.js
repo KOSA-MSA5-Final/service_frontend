@@ -28,6 +28,7 @@ export const fetchAddressList = defineStore('addressStore', {
 
                 // response.data가 null이거나 undefined이면 this.contents도 null이 됨
                 this.contents = response.data || null;
+
                 return this.contents;
             } catch (error) {
                 this.error = error.message;
