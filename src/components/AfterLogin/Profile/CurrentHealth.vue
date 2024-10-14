@@ -58,11 +58,11 @@
                     <h3>최근 병원 방문</h3>
                     <div class="visit-details-wrapper">
                         <div class="visit-details" v-if="recentVisit">
-                            <p><strong>병원 이름:</strong> {{ recentVisit.hospitalName }}</p>
-                            <p><strong>방문 일자:</strong> {{ formatVisitDate(recentVisit.visitDate) }}</p>
-                            <p><strong>병원 위치:</strong> {{ recentVisit.hospitalAddress }}</p>
-                            <p><strong>방문 사유:</strong> {{ recentVisit.object }}</p>
-                            <p><strong>결제 금액:</strong> {{ recentVisit.totalCost }}원</p>
+                            <p><strong>병원 이름 :</strong> {{ recentVisit.hospitalName }}</p>
+                            <p><strong>방문 일자 :</strong> {{ formatVisitDate(recentVisit.visitDate) }}</p>
+                            <p><strong>병원 위치 :</strong> {{ recentVisit.hospitalAddress }}</p>
+                            <p><strong>방문 사유 :</strong> {{ recentVisit.object }}</p>
+                            <p><strong>결제 금액 :</strong> {{ recentVisit.totalCost }}원</p>
                         </div>
                         <button class="receipt-button" @click="showLatestReceiptDetails">
                             <svg
@@ -168,7 +168,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useUserInfoStore } from '@/fetch_datas/userInfo'; // Pinia Store import
 import { useMedicalStore } from '@/stores/medicalStore'; // MedicalStore import
 import { storeToRefs } from 'pinia'; // storeToRefs 추가
-import defaultProfileImage from '@/assets/jangoon.gif'; // 기본 프로필 이미지 경로 설정
+import defaultProfileImage from '@/assets/profile-default.jpg'; // 기본 프로필 이미지 경로 설정
 import html2canvas from 'html2canvas'; // html2canvas import
 import jsPDF from 'jspdf'; // jsPDF import
 
@@ -193,6 +193,16 @@ onMounted(async () => {
         await fetchMedicalRecords(profile.id);
     }
 });
+
+// 날짜 포맷팅 함수 (복구)
+const formatVisitDate = (dateString) => {
+    if (!dateString) return '알 수 없음';
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
+    const day = date.getDate();
+    return `${year}년 ${month}월 ${day}일`;
+};
 
 // 프로필 정보를 가져오는 함수
 const fetchUserProfiles = async () => {
@@ -296,7 +306,8 @@ const exportCurrentRecords = () => {
     html2canvas(captureElement, {
         scale: 2,
         ignoreElements: (e) => e.classList.contains('recent-visit-section'),
-        useCORS: true,
+        useCORS: true, // CORS 사용 설정
+        allowTaint: true, // 외부 리소스 허용
     }).then((canvas) => {
         const pdf = new jsPDF('p', 'px', [canvas.width * 0.32, canvas.height * 0.32]);
         pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 8, 10, canvas.width * 0.3, canvas.height * 0.3);

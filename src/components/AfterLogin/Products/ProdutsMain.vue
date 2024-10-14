@@ -95,6 +95,7 @@
                         </div>
                     </div>
                 </div>
+                <p v-if="loading" class="loading-message">상품 로딩 중입니다...</p>
             </div>
         </div>
     </div>
@@ -118,6 +119,7 @@ const { contents } = storeToRefs(profileStore);
 // const { products, personalizedProducts } = storeToRefs(productStore);
 
 const activeCategory = ref('맞춤형'); // 활성화된 카테고리 상태
+const loading = ref(true); // 로딩 상태 추가
 
 // 로컬 상태 변수
 const searchQuery = ref('');
@@ -196,6 +198,7 @@ onMounted(async () => {
     } else {
         await productStore.fetchAllProducts();
     }
+    loading.value = false; // 로딩 완료
 
     console.log('Products:', productStore.products);
 });
@@ -213,6 +216,7 @@ const searchCategory = async (category) => {
         router.push({ name: 'ProductPage', params: { type: productType } });
         await productStore.fetchAllProducts();
     }
+    loading.value = false;
 };
 
 // 뒤로가기 버튼

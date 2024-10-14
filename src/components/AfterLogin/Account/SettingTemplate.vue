@@ -5,34 +5,41 @@
         <div id="router-pages">
             <router-view></router-view>
         </div>
-
-        <BottomButton />
     </div>
 </template>
 
 <script>
-import { useRoute } from 'vue-router'; // 현재 경로를 감지하기 위해 사용'
-import { computed } from 'vue'; // computed 함수 import
-import BottomButton from './BottomButton.vue';
-
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
 import SettingTopBar from './SettingTopBar.vue';
 
 export default {
     components: {
         SettingTopBar,
-        BottomButton,
     },
     data() {
         return {};
     },
     setup() {
-        const route = useRoute(); // 현재 라우트를 감지
+        const route = useRoute();
 
-        // 현재 경로가 '/1'인지를 확인
+        // 현재 경로가 특정 경로인지를 확인
         const isPageOne = computed(() => route.path === '/setProfile/1');
+
+        // 가상의 주소 저장 로직 (이 로직을 AddAddressPage에서 전달받아 호출합니다)
+        const saveAddress = async () => {
+            try {
+                // 실제 주소 저장 로직 구현부 (API 호출 등)
+                alert('주소가 성공적으로 저장되었습니다!');
+            } catch (error) {
+                console.error('주소 저장 오류:', error);
+                alert('주소 저장 중 오류가 발생했습니다.');
+            }
+        };
 
         return {
             isPageOne,
+            saveAddress, // 저장 로직을 반환
         };
     },
 };

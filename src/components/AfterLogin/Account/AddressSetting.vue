@@ -28,15 +28,19 @@
     <div id="No address" v-else>
         <p>저장된 배송지 주소가 없습니다. 추가해 주세요!</p>
     </div>
+    <!-- BottomButton에 props로 주소 상태와 저장 로직 전달 -->
+    <BottomButton :hasAddress="addresses.length > 0" :saveAddress="saveAddress" />
 </template>
 
 <script>
 import { useRouter } from 'vue-router';
 import { fetchAddressList } from '@/fetch_datas/addressStore';
 import { changePrimaryAddress } from '@/post_datas/changePrimaryAddress';
+import BottomButton from './BottomButton.vue';
 
 export default {
     name: 'AddressSettingPage',
+    components: { BottomButton },
     setup() {
         const router = useRouter();
         const addressStore = fetchAddressList();
@@ -77,6 +81,14 @@ export default {
                 console.log('대표 배송지가 변경되었습니다.');
             } catch (error) {
                 console.error('Failed to change primary address:', error);
+            }
+        },
+        async saveAddress() {
+            try {
+                alert('주소가 성공적으로 저장되었습니다!');
+            } catch (error) {
+                console.error('주소 저장 오류:', error);
+                alert('주소 저장 중 오류가 발생했습니다.');
             }
         },
     },

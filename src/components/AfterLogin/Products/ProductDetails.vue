@@ -48,11 +48,8 @@
 
                 <hr class="horizontal-line" />
 
-                <p class="small-text">원료: {{ product.allRawMaterial }}</p>
-                <p class="small-text">영양 성분</p>
-                <p class="small-text" v-for="(func, index) in product.ingredient.split(',')" :key="index">
-                    {{ func.trim() }}
-                </p>
+                <p class="small-text" style="margin-bottom: 20px">원료: {{ product.allRawMaterial }}</p>
+                <p class="small-text">영양 성분: {{ product.ingredient }}</p>
                 <hr class="horizontal-line" />
                 <p class="small-text">칼로리: {{ product.calories }}</p>
                 <p class="small-text">총 무게: {{ product.weight }}</p>

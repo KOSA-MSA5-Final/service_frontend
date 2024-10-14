@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isAddAddressPage" @click="goToSave" class="saveAddressBtn">
+    <div v-if="isAddAddressPage" @click="saveAddress" class="saveAddressBtn">
         <div>&nbsp; 저장하기</div>
     </div>
 
@@ -12,9 +12,15 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 export default {
+    props: {
+        saveAddress: {
+            type: Function, // 함수 타입 지정
+            required: true, // 필수 프로퍼티로 지정
+        },
+    },
     setup() {
-        const route = useRoute(); // 현재 라우트를 감지
-        const router = useRouter(); // 라우터 인스턴스 사용
+        const route = useRoute();
+        const router = useRouter();
 
         // 현재 경로가 '/1'인지를 확인
         const isSettingPage = computed(() => route.path === '/address-setting');
@@ -43,6 +49,9 @@ export default {
     align-items: center;
     background-color: #539ee0;
     color: white;
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
 }
 .addAddressBtn {
     display: flex;
@@ -51,6 +60,9 @@ export default {
     align-items: center;
     background-color: #539ee0;
     color: white;
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
 }
 #bottomBar {
     display: flex;
