@@ -102,130 +102,84 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useCurrentProfileStore } from '@/fetch_datas/currentProfileStore';
 import { useProductStore } from '@/stores/productStore';
 import { storeToRefs } from 'pinia';
-import router from '@/routes';
 
 const route = useRoute();
-const productType = route.params.type;
+const router = useRouter();
+const productType = route.params.type; // 라우트에서 type 가져오기
 
 // Pinia 스토어 사용
 const profileStore = useCurrentProfileStore();
 const productStore = useProductStore();
 const { contents } = storeToRefs(profileStore);
-const { products } = storeToRefs(productStore);
+// const { products, personalizedProducts } = storeToRefs(productStore);
 
-const activeCategory = ref('전체'); // 활성화된 카테고리 상태
-// const defaultImage = 'https://via.placeholder.com/150'; // 기본 이미지 URL
+const activeCategory = ref('맞춤형  '); // 활성화된 카테고리 상태
 
 // 로컬 상태 변수
-const searchQuery = ref(''); // 검색어
-const selectedSubtypes = ref([]); // 선택된 서브타입 체크박스 목록
-const selectedOrigins = ref([]); // 선택된 원산지 체크박스 목록
-const showFilterMenu = ref(false); // 필터 메뉴 토글 상태
-const filterMenuRef = ref(null); // 필터 메뉴를 참조할 ref 변수 생성
+const searchQuery = ref('');
+const selectedSubtypes = ref([]);
+const selectedOrigins = ref([]);
+const showFilterMenu = ref(false);
+const filterMenuRef = ref(null);
 
 const profileName = computed(() => contents.value?.name || '반려동물');
 const profileAnimalType = computed(() => contents.value?.animalDetailDTO?.animalDTO?.name || 'Unknown');
 
-// 필터링된 상품 목록
+// 상품 필터링 로직
 const FilteredProducts = computed(() => {
-    return products.value.filter((product) => {
+    let productList = activeCategory.value === '맞춤형' ? productStore.personalizedProducts : productStore.products;
+
+    // console.log('Profile Animal Type:', profileAnimalType.value);
+    // console.log('Products:', productList);
+
+    const isMatchingProduct = (product) => {
         const matchesType = product.type === productType;
-        const matchesAnimalType = product.animalName === profileAnimalType.value;
+        const matchesAnimalType =
+            product.animalName?.trim().toLowerCase() === profileAnimalType.value.trim().toLowerCase();
         const matchesSubtype = selectedSubtypes.value.length === 0 || selectedSubtypes.value.includes(product.subtype);
         const matchesOrigin = selectedOrigins.value.length === 0 || selectedOrigins.value.includes(product.origin);
+        const matchesSearchQuery = [product.name, product.description, product.category, product.origin]
+            .filter(Boolean)
+            .some((field) => field.toLowerCase().includes(searchQuery.value.toLowerCase()));
 
-        const matchesSearchQuery =
-            product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            product.description?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            product.category?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            product.origin?.toLowerCase().includes(searchQuery.value.toLowerCase());
+        // console.log('Product Animal:', product.animalName, 'Profile Animal:', profileAnimalType.value);
 
-        if (activeCategory.value === '전체') {
-            return matchesType && matchesAnimalType && matchesSearchQuery && matchesSubtype && matchesOrigin;
-        } else if (activeCategory.value === '맞춤형') {
-            return (
-                matchesType &&
-                matchesAnimalType &&
-                product.isCustom &&
-                matchesSearchQuery &&
-                matchesSubtype &&
-                matchesOrigin
-            );
-        }
-    });
+        return matchesType && matchesAnimalType && matchesSubtype && matchesOrigin && matchesSearchQuery;
+    };
+
+    return productList.filter(isMatchingProduct);
 });
 
-// 현재 보여지는 상품의 서브타입 목록
-const availableSubtypes = computed(() => {
-    const subtypes = new Set();
-    FilteredProducts.value.forEach((product) => {
-        if (product.subtype) {
-            subtypes.add(product.subtype);
-        }
-    });
-    return Array.from(subtypes);
-});
-
-// 현재 보여지는 상품의 원산지 목록
-const availableOrigins = computed(() => {
-    const origins = new Set();
-    FilteredProducts.value.forEach((product) => {
-        if (product.origin) {
-            origins.add(product.origin);
-        }
-    });
-    return Array.from(origins);
-});
+// 현재 보여지는 상품의 서브타입과 원산지 목록
+const availableSubtypes = computed(() => Array.from(new Set(FilteredProducts.value.map((product) => product.subtype))));
+const availableOrigins = computed(() => Array.from(new Set(FilteredProducts.value.map((product) => product.origin))));
 
 // 필터 메뉴 토글 함수
 const toggleFilterMenu = () => {
-    if (showFilterMenu.value) {
-        // 필터 메뉴가 이미 열려 있는 경우 (닫기)
-        nextTick(() => {
-            const filterMenu = document.querySelector('.filter-menu');
-            if (filterMenu) {
-                filterMenu.style.maxHeight = `${filterMenu.scrollHeight}px`; // 현재 높이를 max-height에 설정
-                requestAnimationFrame(() => {
-                    filterMenu.style.transition = 'max-height 0.3s ease-in-out';
-                    filterMenu.style.maxHeight = '0px'; // max-height을 0으로 설정하여 숨김
-                });
-            }
-        });
-        setTimeout(() => {
-            showFilterMenu.value = false;
-        }, 500); // 애니메이션 시간이 끝난 후 요소 숨김
-    } else {
-        // 필터 메뉴가 닫혀 있는 경우 (열기)
-        showFilterMenu.value = true; // 먼저 v-if를 통해 요소를 화면에 렌더링
-        nextTick(() => {
-            const filterMenu = document.querySelector('.filter-menu');
-            if (filterMenu) {
-                filterMenu.style.transition = 'none';
-                filterMenu.style.maxHeight = '0px'; // max-height을 0으로 설정하여 숨김
-                requestAnimationFrame(() => {
-                    filterMenu.style.transition = 'max-height 0.3s ease-in-out';
-                    filterMenu.style.maxHeight = `${filterMenu.scrollHeight}px`; // 실제 높이로 설정하여 펼침
-                });
-            }
-        });
-    }
+    showFilterMenu.value = !showFilterMenu.value;
+    nextTick(() => {
+        const filterMenu = filterMenuRef.value;
+        if (filterMenu) {
+            filterMenu.style.maxHeight = showFilterMenu.value ? `${filterMenu.scrollHeight}px` : '0px';
+        }
+    });
 };
 
-// 상품 클릭 시 해당 상품의 ID로 라우팅
+// 상품 클릭 시 해당 상품의 상세 페이지로 이동
 const goToProductDetails = (productId) => {
     router.push({ name: 'ProductDetails', params: { id: productId } });
 };
 
-// 검색어 변경 시 호출되는 함수
+// 검색어 변경 시
 const onSearchQueryChange = () => {
     productStore.updateSearchQuery(searchQuery.value);
 };
 
-// 필터링 옵션 변경 시 호출되는 함수
+// 필터링 옵션 변경 시
 const onFilterChange = () => {
     productStore.updateSelectedSubtype(selectedSubtypes.value);
     productStore.updateSelectedOrigin(selectedOrigins.value);
@@ -234,23 +188,37 @@ const onFilterChange = () => {
 // 프로필 및 상품 데이터를 가져오는 onMounted 함수
 onMounted(async () => {
     await profileStore.fetchContents();
-    await productStore.fetchAllProducts();
+    console.log('Profile Animal Type:', profileAnimalType.value);
+
+    const type = productType; // 현재 페이지의 type 파라미터 사용
+    if (activeCategory.value === '맞춤형') {
+        await productStore.fetchPersonalizedProductsByType(type);
+    } else {
+        await productStore.fetchAllProducts();
+    }
+
+    console.log('Products:', productStore.products);
 });
 
-// 카테고리 버튼 클릭 시 호출되는 함수
-const searchCategory = (category) => {
+// 카테고리 변경 시 라우터 이동 및 상품 데이터 로드
+const searchCategory = async (category) => {
     activeCategory.value = category;
+
+    if (category === '맞춤형') {
+        // 맞춤형 상품 페이지로 이동
+        router.push({ name: 'PersonalizedProductPage', params: { type: productType } });
+        await productStore.fetchPersonalizedProductsByType(productType);
+    } else {
+        // 전체 상품 페이지로 이동
+        router.push({ name: 'ProductPage', params: { type: productType } });
+        await productStore.fetchAllProducts();
+    }
 };
 
-// 뒤로가기 버튼 클릭 시 이전 페이지로 이동하는 함수
+// 뒤로가기 버튼
 const goBack = () => {
-    window.history.back();
+    router.push({ name: 'MainPage' });
 };
-
-// // 상품 클릭 시 해당 상품의 ID로 라우팅
-// const goToProductDetails = (productId) => {
-//     route.push({ name: 'ProductDetails', params: { id: productId } });
-// };
 </script>
 
 <style scoped>

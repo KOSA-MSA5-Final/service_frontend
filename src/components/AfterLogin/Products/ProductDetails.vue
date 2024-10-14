@@ -48,7 +48,7 @@
 
                 <hr class="horizontal-line" />
 
-                <p class="small-text">원료: {{ product.allRaMaterial }}</p>
+                <p class="small-text">원료: {{ product.allRawMaterial }}</p>
                 <p class="small-text">영양 성분</p>
                 <p class="small-text" v-for="(func, index) in product.ingredient.split(',')" :key="index">
                     {{ func.trim() }}
