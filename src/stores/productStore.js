@@ -3,7 +3,8 @@ import axios from 'axios';
 
 export const useProductStore = defineStore('productStore', {
     state: () => ({
-        products: [], // 상품 목록
+        products: [], // 전체 상품 목록
+        personalizedProducts: [], // 맞춤형 상품 목록
         searchQuery: '', // 검색어
         selectedSubtype: '', // 선택된 서브타입
         selectedOrigin: '', // 선택된 원산지
@@ -18,21 +19,39 @@ export const useProductStore = defineStore('productStore', {
             this.error = null;
 
             try {
-                const token = localStorage.getItem('token'); // 인증 토큰 가져오기
-                if (!token) {
-                    throw new Error('No authentication token found');
-                }
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error('No authentication token found');
 
                 const response = await axios.get('https://localhost:8081/api/products', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
-                this.products = response.data || []; // API 응답 데이터를 상태에 저장
+                this.products = response.data || [];
             } catch (error) {
                 this.error = error.message;
                 console.error('Failed to fetch products:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // 맞춤형 상품 데이터 가져오기
+        async fetchPersonalizedProductsByType(type) {
+            this.loading = true;
+            this.error = null;
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error('No authentication token found');
+
+                const response = await axios.get(`https://localhost:8081/api/products/personalized/${type}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                this.personalizedProducts = response.data || [];
+            } catch (error) {
+                this.error = error.message;
+                console.error('Failed to fetch personalized products:', error);
             } finally {
                 this.loading = false;
             }
@@ -79,6 +98,11 @@ export const useProductStore = defineStore('productStore', {
         // 카테고리별로 필터링된 상품 목록 반환
         getProductsByCategory: (state) => (category) => {
             return state.products.filter((product) => product.type === category);
+        },
+
+        // 맞춤형 제품 목록 반환
+        getPersonalizedProducts: (state) => {
+            return state.personalizedProducts;
         },
 
         // 특정 상품 ID로 상품 찾기

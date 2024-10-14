@@ -149,6 +149,11 @@ const routes = [
         component: ProdutsMain,
     },
     {
+        path: '/products/personalized/:type', // 맞춤형 상품 페이지 추가
+        name: 'PersonalizedProductPage',
+        component: ProdutsMain, // 동일한 컴포넌트를 사용
+    },
+    {
         path: '/product/:id',
         name: 'ProductDetails',
         component: ProductDetails,
