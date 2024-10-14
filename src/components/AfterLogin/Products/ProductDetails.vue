@@ -42,14 +42,18 @@
                 <!-- 가로 줄 -->
                 <hr class="horizontal-line" />
 
-                <p class="small-text" v-for="(func, index) in product.function.split(',')" :key="index">
+                <p class="small-text" v-for="(func, index) in product.function.split('/')" :key="index">
                     {{ func.trim() }}
                 </p>
 
                 <hr class="horizontal-line" />
 
                 <p class="small-text">원료: {{ product.allRaMaterial }}</p>
-                <p class="small-text">영양 성분: {{ product.ingredient }}</p>
+                <p class="small-text">영양 성분</p>
+                <p class="small-text" v-for="(func, index) in product.ingredient.split(',')" :key="index">
+                    {{ func.trim() }}
+                </p>
+                <hr class="horizontal-line" />
                 <p class="small-text">칼로리: {{ product.calories }}</p>
                 <p class="small-text">총 무게: {{ product.weight }}</p>
                 <p class="small-text">대상 연령: {{ product.ageGroup }}</p>
