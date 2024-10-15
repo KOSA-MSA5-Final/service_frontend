@@ -18,15 +18,18 @@
                 <input id="receiptant-telNum" v-model="receiptantTelNum" placeholder="받는 사람 전화번호" />
             </div>
         </div>
-
-        <button @click="saveAddress">배송지 저장</button>
     </div>
+
+    <BottomButton :saveAddress="saveAddress" />
 </template>
 
 <script>
 import { addAddress } from '@/post_datas/addAddress';
+import BottomButton from './BottomButton.vue'; // BottomButton 컴포넌트 가져오기
+
 export default {
     name: 'AddAddressPage',
+    components: { BottomButton },
     data() {
         return {
             address: '',
@@ -45,7 +48,6 @@ export default {
             this.$router.push({ name: 'AddressSearchPage' });
         },
         async saveAddress() {
-            // 입력 값 검증 추가
             if (!this.address || !this.detailedAddress || !this.receiptantName || !this.receiptantTelNum) {
                 alert('모든 필드를 입력해주세요.');
                 return;
