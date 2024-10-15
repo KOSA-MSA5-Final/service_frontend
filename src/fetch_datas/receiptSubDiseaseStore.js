@@ -19,7 +19,7 @@ export const useSubdiseasesStore = defineStore('subdiseases', {
             }
 
             try {
-                console.log('대분류 전송 내용 : ', diseaseNames);
+                //console.log('대분류 전송 내용 : ', diseaseNames);
                 const response = await axios.post('https://localhost:8081/api/fetch_subdiseases', diseaseNames, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export const useSubdiseasesStore = defineStore('subdiseases', {
                     this.analysedDiseases = response.data;
                 }
             } catch (error) {
-                console.error('Error fetching subdiseases:', error);
+                //console.error('Error fetching subdiseases:', error);
                 this.error = error.response?.data?.message || 'An error occurred while fetching subdiseases';
             } finally {
                 this.loading = false;

@@ -40,14 +40,14 @@ export default {
         };
     },
     async mounted() {
-        console.log('안녕');
+        //console.log('안녕');
         await this.fetchUserInfo(); // 컴포넌트가 마운트될 때 사용자 정보 가져오기
     },
     methods: {
         async fetchUserInfo() {
-            console.log('나야');
+            //console.log('나야');
             const token = localStorage.getItem('token'); // 저장된 토큰 가져오기
-            console.log(token);
+            //console.log(token);
             try {
                 const response = await axios.get('https://localhost:8081/auth/userinfo', {
                     headers: {
@@ -56,9 +56,9 @@ export default {
                 });
 
                 this.userInfo = response.data; // 사용자 정보 저장
-                console.log('User Info:', this.userInfo); // 사용자 정보 출력
+                //console.log('User Info:', this.userInfo); // 사용자 정보 출력
             } catch (error) {
-                console.error('Failed to fetch user info:', error.response.data);
+                //console.error('Failed to fetch user info:', error.response.data);
             }
         },
         async updateUserInfo() {
@@ -74,10 +74,10 @@ export default {
                     },
                 });
 
-                console.log('User Info Updated:', response.data); // 업데이트된 사용자 정보 출력
+                //console.log('User Info Updated:', response.data); // 업데이트된 사용자 정보 출력
                 this.fetchUserInfo(); // 사용자 정보 다시 가져오기
             } catch (error) {
-                console.error('Failed to update user info:', error.response.data);
+                //console.error('Failed to update user info:', error.response.data);
             }
         },
     },

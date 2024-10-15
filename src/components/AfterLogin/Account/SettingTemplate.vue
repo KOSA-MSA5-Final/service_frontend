@@ -30,10 +30,10 @@ export default {
         const saveAddress = async () => {
             try {
                 // 실제 주소 저장 로직 구현부 (API 호출 등)
-                alert('주소가 성공적으로 저장되었습니다!');
+                //alert('주소가 성공적으로 저장되었습니다!');
             } catch (error) {
-                console.error('주소 저장 오류:', error);
-                alert('주소 저장 중 오류가 발생했습니다.');
+                //console.error('주소 저장 오류:', error);
+                //alert('주소 저장 중 오류가 발생했습니다.');
             }
         };
 

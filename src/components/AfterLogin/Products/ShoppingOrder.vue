@@ -266,7 +266,7 @@ export default {
                 });
                 this.orders = response.data;
             } catch (error) {
-                console.error('주문 내역을 가져오는 중 오류가 발생했습니다.', error);
+                //console.error('주문 내역을 가져오는 중 오류가 발생했습니다.', error);
             }
         },
         goBack() {

@@ -233,11 +233,11 @@ export default {
                         selectedSubDiseases[content.diseaseTitle] = [];
                         showsub.value[content.diseaseTitle] = true;
                     } else {
-                        console.warn('Missing diseaseTitle in content:', content);
+                        //console.warn('Missing diseaseTitle in content:', content);
                     }
                 }
             } catch (error) {
-                console.error('Failed to fetch disease analysis:', error);
+                //console.error('Failed to fetch disease analysis:', error);
             }
         };
 
@@ -245,11 +245,11 @@ export default {
             try {
                 if (diseases.value.length > 0) {
                     selectedDiseaseStore.setDiseaseInfo(diseases);
-                    console.log('fetchSubDisease: ', selectedDiseaseStore.diseaseInfo);
+                    //console.log('fetchSubDisease: ', selectedDiseaseStore.diseaseInfo);
                     await subDiseaseStore.fetchSubdiseases(diseases.value);
                 }
             } catch (error) {
-                console.error('Failed to fetch sub-diseases:', error);
+                //console.error('Failed to fetch sub-diseases:', error);
             }
         };
 
@@ -262,7 +262,7 @@ export default {
         };
 
         const goExtraMedical = () => {
-            console.log('selectedSubDiseases', selectedSubDiseases);
+            //console.log('selectedSubDiseases', selectedSubDiseases);
             selectedSubDiseaseStore.setsubDiseaseInfo(selectedSubDiseases);
             router.push('/main/upload_receipt/disease/extra');
         };
@@ -271,7 +271,7 @@ export default {
             try {
                 await unfoundDiseaseStore.fetchUnfoundDisease(diseases.value);
             } catch (error) {
-                console.error('Failed to fetch unfound diseases: ', error);
+                //console.error('Failed to fetch unfound diseases: ', error);
             }
         };
 

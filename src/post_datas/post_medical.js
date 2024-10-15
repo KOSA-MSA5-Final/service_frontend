@@ -7,16 +7,16 @@ export const saveReceipt = async (extraMedical) => {
     const receiptStore = useReceiptStore();
     const selectedSubDiseaseStore = useSelectedSubDiseaseStore();
 
-    console.log('receiptStore.receiptInfo: ', receiptStore.receiptInfo);
+    //console.log('receiptStore.receiptInfo: ', receiptStore.receiptInfo);
 
-    console.log('extraMedical: ', extraMedical);
+    //console.log('extraMedical: ', extraMedical);
 
     const selectedDiseasesArray = Object.keys(selectedSubDiseaseStore.subDiseaseInfo).map((key) => ({
         diseaseName: key,
         subDiseases: selectedSubDiseaseStore.subDiseaseInfo[key],
     }));
 
-    console.log('selectedDiseaseStore.selectedDiseases: ', selectedDiseasesArray);
+    //console.log('selectedDiseaseStore.selectedDiseases: ', selectedDiseasesArray);
 
     try {
         const token = localStorage.getItem('token');
@@ -42,7 +42,7 @@ export const saveReceipt = async (extraMedical) => {
             throw new Error('Failed to save receipt');
         }
     } catch (error) {
-        console.error('Failed to save receipt:', error);
+        //console.error('Failed to save receipt:', error);
         throw error;
     }
 };

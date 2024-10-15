@@ -49,7 +49,7 @@ export default {
         },
         async saveAddress() {
             if (!this.address || !this.detailedAddress || !this.receiptantName || !this.receiptantTelNum) {
-                alert('모든 필드를 입력해주세요.');
+                //alert('모든 필드를 입력해주세요.');
                 return;
             }
 
@@ -61,11 +61,11 @@ export default {
 
             try {
                 await addAddress(addressData);
-                alert('주소가 성공적으로 저장되었습니다.');
+                //alert('주소가 성공적으로 저장되었습니다.');
                 this.$router.push({ name: 'AddressSettingMain' });
             } catch (error) {
-                console.error('Error details:', error);
-                alert(error.message || '주소 저장 중 오류가 발생했습니다.');
+                //console.error('Error details:', error);
+                //alert(error.message || '주소 저장 중 오류가 발생했습니다.');
                 // 에러가 발생했을 때는 페이지 이동을 하지 않음
             }
         },

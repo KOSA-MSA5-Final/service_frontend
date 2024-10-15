@@ -183,7 +183,7 @@ export default {
                 this.allergies = response.data;
                 this.initializeCheckedItems(); // checkedItems 초기화
             } catch (error) {
-                console.error('알러지 정보를 가져오는데 실패함', error);
+                //console.error('알러지 정보를 가져오는데 실패함', error);
             }
         },
         // checkedItems 객체를 알레르기 목록으로 초기화
@@ -213,7 +213,7 @@ export default {
             page2Store.setCheckedItems({
                 checkedItems: this.checkedItems,
             });
-            console.log('안녕하세요 page2예요' + JSON.stringify(page2Store.checkedItems, null, 2));
+            //console.log('안녕하세요 page2예요' + JSON.stringify(page2Store.checkedItems, null, 2));
 
             // 아무 알레르기 항목도 체크되지 않았고, '알레르기가 없습니다' 버튼도 누르지 않았을 경우
             if (!this.anyChecked && this.isAllergy === 'n') {

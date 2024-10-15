@@ -23,7 +23,7 @@ export const useUserInfoStore = defineStore('userInfoStore', {
                 // 현재 프로필 정보를 설정
                 this.currentProfile = this.profiles.find((profile) => profile.isCurrent === 'T') || null;
             } catch (error) {
-                console.error('Failed to fetch profiles:', error);
+                //console.error('Failed to fetch profiles:', error);
             } finally {
                 this.loading = false;
             }

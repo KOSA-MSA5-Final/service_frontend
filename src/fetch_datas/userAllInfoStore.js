@@ -30,12 +30,12 @@ export const useUserAllInfoStore = defineStore('userAllInfo', {
 
                 this.userInfo = response.data;
 
-                console.log(this.userInfo);
+                //console.log(this.userInfo);
                 return this.userInfo;
             } catch (error) {
                 this.error = error.message;
                 this.userInfo = null;
-                console.error('Failed to fetch user info in store:', error);
+                //console.error('Failed to fetch user info in store:', error);
                 throw error;
             } finally {
                 this.loading = false;
@@ -61,7 +61,7 @@ export const useUserAllInfoStore = defineStore('userAllInfo', {
                 );
 
                 if (response.data === 'success') {
-                    console.log('Profile changed successfully');
+                    //console.log('Profile changed successfully');
                     await this.fetchUserAllInfo(); // 사용자 정보 새로고침
 
                     // 현재 프로필 스토어 업데이트
@@ -69,7 +69,7 @@ export const useUserAllInfoStore = defineStore('userAllInfo', {
                     if (currentProfileStore && typeof currentProfileStore.fetchContents === 'function') {
                         await currentProfileStore.fetchContents();
                     } else {
-                        console.error('fetchContents method not found in currentProfileStore');
+                        //console.error('fetchContents method not found in currentProfileStore');
                     }
 
                     return true;
@@ -77,7 +77,7 @@ export const useUserAllInfoStore = defineStore('userAllInfo', {
                     throw new Error('Failed to change profile');
                 }
             } catch (error) {
-                console.error('Error changing profile:', error.response || error);
+                //console.error('Error changing profile:', error.response || error);
                 this.error = error.response?.data || error.message;
                 return false;
             } finally {

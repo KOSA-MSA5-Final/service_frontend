@@ -25,7 +25,7 @@ export const useFetchReceiptDiseaseStore = defineStore('receiptDiseaseStore', {
                 // medicalDTOs가 배열인지 확인하고, 아니라면 배열로 감싸기
                 const medicalDTOsArray = Array.isArray(medicalDTOs) ? medicalDTOs : [medicalDTOs];
 
-                console.log('Sending data:', JSON.stringify(medicalDTOsArray)); // 로깅 추가
+                //console.log('Sending data:', JSON.stringify(medicalDTOsArray)); // 로깅 추가
 
                 const response = await axios.post('https://localhost:8081/api/disease/analysis', medicalDTOsArray, {
                     headers: {
@@ -40,7 +40,7 @@ export const useFetchReceiptDiseaseStore = defineStore('receiptDiseaseStore', {
             } catch (error) {
                 this.error = error.message;
                 this.contents = null;
-                console.error('Failed to fetch disease analysis:', error);
+                //console.error('Failed to fetch disease analysis:', error);
                 throw error;
             } finally {
                 this.loading = false;

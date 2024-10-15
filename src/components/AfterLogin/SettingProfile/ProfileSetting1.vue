@@ -439,15 +439,15 @@ export default {
                 formData.append('file', this.selectedFile); // 'qimage' 대신 'file'로 변경
                 const store = uploadProfileImage();
                 const response = await store.uploadFile(formData);
-                console.log('이미지 업로드 성공:', response);
+                //console.log('이미지 업로드 성공:', response);
                 this.profileImg = response;
             } catch (error) {
-                console.error('이미지 업로드 실패:', error);
+                //console.error('이미지 업로드 실패:', error);
             }
         },
         async getInfoAnimalType() {
             try {
-                console.log('나 불러지고 있어요');
+                //console.log('나 불러지고 있어요');
                 const token = localStorage.getItem('token');
 
                 const response = await axios.get('https://localhost:8081/api/profile/animalDetails', {
@@ -458,14 +458,14 @@ export default {
                 this.dogs = response.data.dogs;
                 this.cats = response.data.cats;
             } catch (error) {
-                console.error('품종정보가져오는거 실패', error);
+                //console.error('품종정보가져오는거 실패', error);
             }
         },
         async handleNextButton() {
             const petStore = usePetStore();
 
             if (!(this.neuteredselected && this.petName && this.birthDate && this.inputValue && this.maleselected)) {
-                alert('값을 다 입력해주세요');
+                //alert('값을 다 입력해주세요');
                 return;
             }
 
@@ -486,13 +486,13 @@ export default {
                     willneutered: this.willneutered,
                 });
 
-                console.log('안녕하세요' + petStore.petName);
+                //console.log('안녕하세요' + petStore.petName);
 
                 // 다음 페이지로 이동
                 this.$router.push('/setProfile/2');
             } catch (error) {
-                console.error('프로필 설정 중 오류 발생:', error);
-                alert('프로필 설정 중 문제가 발생했습니다. 다시 시도해 주세요.');
+                //console.error('프로필 설정 중 오류 발생:', error);
+                //alert('프로필 설정 중 문제가 발생했습니다. 다시 시도해 주세요.');
             }
         },
     },

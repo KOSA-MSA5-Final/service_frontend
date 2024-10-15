@@ -209,7 +209,7 @@ const fetchUserProfiles = async () => {
     try {
         await userInfoStore.fetchProfiles(); // 수정된 fetchProfiles 호출
     } catch (error) {
-        console.error('프로필 정보를 가져오는 데 실패했습니다:', error);
+        //console.error('프로필 정보를 가져오는 데 실패했습니다:', error);
     }
 };
 
@@ -219,7 +219,7 @@ const fetchMedicalRecords = async (profileId) => {
         await medicalStore.fetchMedicalRecordsByProfileId(profileId);
         await fetchLatestMedicalRecord(profileId);
     } catch (error) {
-        console.error('메디컬 기록을 가져오는 데 실패했습니다:', error);
+        //console.error('메디컬 기록을 가져오는 데 실패했습니다:', error);
     }
 };
 
@@ -228,14 +228,14 @@ const fetchLatestMedicalRecord = async (profileId) => {
     try {
         recentVisit.value = await medicalStore.fetchLatestMedicalRecordByProfileId(profileId);
     } catch (error) {
-        console.error('최신 메디컬 기록을 가져오는 데 실패했습니다:', error);
+        //console.error('최신 메디컬 기록을 가져오는 데 실패했습니다:', error);
     }
 };
 
 // 영수증 확인 버튼 클릭 시 영수증 이미지 표시
 const showLatestReceiptDetails = async () => {
     if (!recentVisit.value) {
-        alert('최신 병원 방문 기록이 없습니다.');
+        //alert('최신 병원 방문 기록이 없습니다.');
         return;
     }
     await medicalStore.fetchMedicalRecordById(recentVisit.value.id);
@@ -300,7 +300,7 @@ const hasDiseases = computed(() => filteredDiseases.value.length > 0);
 const exportCurrentRecords = () => {
     const captureElement = document.getElementById('capture-content');
     if (!captureElement) {
-        console.error('캡처할 요소를 찾을 수 없습니다.');
+        //console.error('캡처할 요소를 찾을 수 없습니다.');
         return;
     }
     html2canvas(captureElement, {

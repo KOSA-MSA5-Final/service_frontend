@@ -12,7 +12,7 @@ export const uploadProfileImage = defineStore('profileImgUpload', {
     actions: {
         async uploadFile(payload) {
             const token = localStorage.getItem('token');
-            console.log('Token being sent:', token);
+            //console.log('Token being sent:', token);
             try {
                 const { data } = await axios.post(`${baseUrl}`, payload, {
                     headers: {
@@ -24,7 +24,7 @@ export const uploadProfileImage = defineStore('profileImgUpload', {
                 this.uploadedFiles.push(data);
                 return data;
             } catch (err) {
-                console.error('File Upload ERROR!', err);
+                //console.error('File Upload ERROR!', err);
                 throw err;
             }
         },

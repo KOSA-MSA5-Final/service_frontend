@@ -9,23 +9,22 @@ export const useFileUploadStore = defineStore('fileUpload', {
     }),
     actions: {
         async uploadFile(payload) {
-            
             const token = localStorage.getItem('token');
-            console.log('Token being sent:', token);
+            //console.log('Token being sent:', token);
             try {
                 const { data } = await axios.post(`${baseUrl}/file`, payload, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Authorization': `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
                     },
-                    withCredentials: true
+                    withCredentials: true,
                 });
                 this.uploadedFiles.push(data);
                 return data;
             } catch (err) {
-                console.error('File Upload ERROR!', err);
+                //console.error('File Upload ERROR!', err);
                 throw err;
             }
-        }
+        },
     },
 });

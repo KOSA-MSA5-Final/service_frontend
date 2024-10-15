@@ -194,11 +194,11 @@ export default {
                 });
 
                 this.product = response.data;
-                console.log(this.product);
+                //console.log(this.product);
                 this.unitPrice = response.data.price;
-                console.log(this.product.id);
+                //console.log(this.product.id);
             } catch (error) {
-                console.error('Fetch ERROR!', error);
+                //console.error('Fetch ERROR!', error);
             } finally {
                 this.isLoading = false;
             }
@@ -207,11 +207,11 @@ export default {
             this.$router.push('/products/feed');
         },
         purchaseProduct() {
-            alert('구매 페이지로 이동합니다!');
+            //alert('구매 페이지로 이동합니다!');
         },
         toggleHeart() {
             this.isHeartFilled = !this.isHeartFilled;
-            alert(this.isHeartFilled ? '장바구니에 추가되었습니다!' : '장바구니에서 제거되었습니다!');
+            //alert(this.isHeartFilled ? '장바구니에 추가되었습니다!' : '장바구니에서 제거되었습니다!');
         },
         showPaymentBox() {
             if (this.isPaymentBoxVisible === false) {
@@ -257,7 +257,7 @@ export default {
 
                 // 모듈이 로드되지 않았을 경우 경고창 표시
                 if (this.impLoadingStatus !== 'loaded') {
-                    alert('결제 모듈이 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.');
+                    //alert('결제 모듈이 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.');
                     return;
                 }
 
@@ -293,13 +293,13 @@ export default {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                console.log('Payment successful', res);
+                //console.log('Payment successful', res);
 
                 alert('결제가 완료되었습니다!');
                 this.isPaymentBoxVisible = false;
             } catch (error) {
                 // 결제 실패 시
-                console.error('Payment failed', error);
+                //console.error('Payment failed', error);
                 alert(`결제에 실패했습니다: ${error.message}`);
             }
         },

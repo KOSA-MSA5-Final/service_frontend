@@ -208,7 +208,7 @@ export default {
                     isCameraActive.value = true;
                 })
                 .catch((err) => {
-                    console.error('Error accessing camera: ', err);
+                    //console.error('Error accessing camera: ', err);
                 });
         };
 
@@ -261,7 +261,7 @@ export default {
                 isLoading.value = false;
                 showStep.value = true;
             } catch (err) {
-                console.error('Error submitting receipt:', err);
+                //console.error('Error submitting receipt:', err);
                 error.value = '영수증 제출 중 오류가 발생했습니다. 다시 시도해 주세요.';
             } finally {
                 isLoading.value = false;

@@ -32,7 +32,7 @@ export const useCurrentProfileStore = defineStore('currentProfile', {
             } catch (error) {
                 this.error = error.message;
                 this.contents = null; // 에러 발생시 contents를 null로 설정
-                console.error('Failed to fetch profile:', error);
+                //console.error('Failed to fetch profile:', error);
                 throw error;
             } finally {
                 this.loading = false;

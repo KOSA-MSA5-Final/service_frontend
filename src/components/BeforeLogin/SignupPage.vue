@@ -128,14 +128,14 @@ export default {
                 this.emailSent = true;
                 alert('인증코드가 이메일로 전송되었습니다.');
             } catch (error) {
-                console.error('인증코드 전송 실패:', error);
+                //console.error('인증코드 전송 실패:', error);
                 alert('인증코드 전송에 실패했습니다. 다시 시도해주세요.');
             }
         },
         verifyCode() {
             if (String(this.inputVerificationCode) === String(this.verificationCode)) {
                 this.isVerified = true;
-                alert('이메일이 성공적으로 인증되었습니다.');
+                //alert('이메일이 성공적으로 인증되었습니다.');
             } else {
                 alert('잘못된 인증코드입니다. 다시 시도해주세요.');
             }
@@ -172,11 +172,11 @@ export default {
                     },
                 )
                 .then(() => {
-                    alert('회원가입이 완료되었습니다.');
+                    //alert('회원가입이 완료되었습니다.');
                     this.$router.push('/');
                 })
                 .catch((error) => {
-                    console.error('회원가입 실패', error);
+                    //console.error('회원가입 실패', error);
                     alert('회원가입에 실패했습니다. 다시 시도해주세요.');
                 });
         },

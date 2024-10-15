@@ -57,7 +57,7 @@ export default {
             await this.addressStore.fetchContents();
             this.addresses = this.addressStore.contents; // 서버에서 가져온 주소 데이터를 설정
         } catch (error) {
-            console.error('Error fetching addresses:', error);
+            //console.error('Error fetching addresses:', error);
         }
     },
     methods: {
@@ -78,17 +78,17 @@ export default {
                     newPrimary.isPrimary = 'T';
                 }
 
-                console.log('대표 배송지가 변경되었습니다.');
+                //console.log('대표 배송지가 변경되었습니다.');
             } catch (error) {
-                console.error('Failed to change primary address:', error);
+                //console.error('Failed to change primary address:', error);
             }
         },
         async saveAddress() {
             try {
-                alert('주소가 성공적으로 저장되었습니다!');
+                //alert('주소가 성공적으로 저장되었습니다!');
             } catch (error) {
-                console.error('주소 저장 오류:', error);
-                alert('주소 저장 중 오류가 발생했습니다.');
+                //console.error('주소 저장 오류:', error);
+                //alert('주소 저장 중 오류가 발생했습니다.');
             }
         },
     },

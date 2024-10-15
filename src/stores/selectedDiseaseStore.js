@@ -7,7 +7,7 @@ export const useSelectedDiseaseStore = defineStore('selectedDiseaseStore', {
     actions: {
         setDiseaseInfo(diseaseInfo) {
             this.diseaseInfo = diseaseInfo;
-            console.log(this.diseaseInfo);
+            //console.log(this.diseaseInfo);
         },
     },
 });

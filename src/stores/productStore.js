@@ -29,7 +29,7 @@ export const useProductStore = defineStore('productStore', {
                 this.products = response.data || [];
             } catch (error) {
                 this.error = error.message;
-                console.error('Failed to fetch products:', error);
+                //console.error('Failed to fetch products:', error);
             } finally {
                 this.loading = false;
             }
@@ -51,7 +51,7 @@ export const useProductStore = defineStore('productStore', {
                 this.personalizedProducts = response.data || [];
             } catch (error) {
                 this.error = error.message;
-                console.error('Failed to fetch personalized products:', error);
+                //console.error('Failed to fetch personalized products:', error);
             } finally {
                 this.loading = false;
             }

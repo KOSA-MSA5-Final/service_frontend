@@ -28,9 +28,9 @@ export const useFacilityStore = defineStore('facilityStore', {
                     },
                 }); // 제휴 병원 데이터를 가져오는 API 호출
                 this.affiliatedFacilities = response.data;
-                console.log('제휴 병원 데이터:', this.affiliatedFacilities);
+                //console.log('제휴 병원 데이터:', this.affiliatedFacilities);
             } catch (error) {
-                console.error('제휴 병원 데이터를 불러오는 중 오류 발생:', error);
+                //console.error('제휴 병원 데이터를 불러오는 중 오류 발생:', error);
             }
         },
 
@@ -54,7 +54,7 @@ export const useFacilityStore = defineStore('facilityStore', {
 
             // 상태를 업데이트하여 프론트엔드에 반영
             this.kakaoFacilities = mappedKakaoData;
-            console.log('Kakao 병원 데이터 (제휴 여부 반영):', this.kakaoFacilities);
+            //console.log('Kakao 병원 데이터 (제휴 여부 반영):', this.kakaoFacilities);
         },
     },
 });

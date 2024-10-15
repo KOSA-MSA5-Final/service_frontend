@@ -311,7 +311,7 @@ const searchfacilitysNearLocation = (lat, lng, category) => {
 
     // 카테고리 검색 콜백 함수
     const callback = (result, status) => {
-        console.log('카카오맵 API 응답 데이터:', result);
+        //console.log('카카오맵 API 응답 데이터:', result);
         if (status === window.kakao.maps.services.Status.OK) {
             // 응답 결과에서 선택한 카테고리의 category_name이 포함된 데이터만 필터링
             let filteredResults;
@@ -326,7 +326,7 @@ const searchfacilitysNearLocation = (lat, lng, category) => {
             }
             updatefacilityListAndMarkers(filteredResults);
         } else {
-            console.error('장소 검색 실패:', status);
+            //console.error('장소 검색 실패:', status);
         }
     };
 
@@ -396,7 +396,7 @@ const updatefacilityListAndMarkers = async (places) => {
                 facilityDTO.lat = latitude;
                 facilityDTO.lng = longitude;
             } catch (error) {
-                console.error('Error converting address to lat/lng:', facilityDTO.address, error);
+                //console.error('Error converting address to lat/lng:', facilityDTO.address, error);
             }
 
             return facilityDTO;
@@ -439,7 +439,7 @@ const addMarkersToMap = (facilities) => {
 
     facilities.forEach((facility) => {
         if (!facility.lat || !facility.lng) {
-            console.error('Facility is missing latitude or longitude:', facility);
+            //console.error('Facility is missing latitude or longitude:', facility);
             return; // 위도/경도 값이 없는 시설은 건너뜀
         }
 
@@ -467,7 +467,7 @@ const addMarkersToMap = (facilities) => {
 // 인포윈도우 생성 함수
 const createInfoWindow = (marker, facility) => {
     if (!window.kakao || !window.kakao.maps) {
-        console.error('Kakao Maps SDK가 로드되지 않았습니다.');
+        //console.error('Kakao Maps SDK가 로드되지 않았습니다.');
         return;
     }
 
@@ -535,12 +535,12 @@ const showCopyMessage = () => {
 const addMapClickListener = () => {
     // Kakao Maps SDK가 로드되었는지 확인
     if (!window.kakao || !window.kakao.maps) {
-        console.error('Kakao Maps SDK가 로드되지 않았습니다.');
+        //console.error('Kakao Maps SDK가 로드되지 않았습니다.');
         return;
     }
 
     if (!mapInstance.value) {
-        console.error('mapInstance가 초기화되지 않았습니다.');
+        //console.error('mapInstance가 초기화되지 않았습니다.');
         return;
     }
 
@@ -577,7 +577,7 @@ const loadKakaoMap = (container) => {
             };
 
             script.onerror = () => {
-                console.error('Kakao Maps SDK 로드 실패');
+                //console.error('Kakao Maps SDK 로드 실패');
                 reject(false);
             };
         } else {
@@ -706,7 +706,7 @@ const refreshUserLocation = () => {
                 // fetchfacilityData(position.coords.latitude, position.coords.longitude);
             },
             (error) => {
-                console.error('사용자 위치를 가져오는 중 오류 발생: ', error);
+                //console.error('사용자 위치를 가져오는 중 오류 발생: ', error);
             },
             {
                 enableHighAccuracy: true, // 정확도 높은 위치 요청
@@ -715,7 +715,7 @@ const refreshUserLocation = () => {
             },
         );
     } else {
-        console.error('이 브라우저는 Geolocation을 지원하지 않습니다.');
+        //console.error('이 브라우저는 Geolocation을 지원하지 않습니다.');
     }
 };
 
@@ -731,7 +731,7 @@ const makePhoneCall = (phoneNumber) => {
     if (phoneNumber) {
         window.location.href = `tel:${phoneNumber}`;
     } else {
-        alert('전화번호가 없습니다.');
+        //alert('전화번호가 없습니다.');
     }
 };
 
@@ -747,9 +747,9 @@ onMounted(async () => {
         // Kakao Maps SDK가 정상적으로 로드된 이후, 이벤트 리스너 등록
         addMapClickListener();
 
-        console.log('Kakao Map 초기화 및 이벤트 리스너 등록 완료');
+        //console.log('Kakao Map 초기화 및 이벤트 리스너 등록 완료');
     } catch (error) {
-        console.error('Kakao Map 로드 중 오류 발생:', error);
+        //console.error('Kakao Map 로드 중 오류 발생:', error);
     }
 });
 

@@ -5,7 +5,7 @@ export const changePrimaryAddress = async (addressId) => {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
-            console.log('no token');
+            //console.log('no token');
         }
         const response = await axios.post(
             'https://localhost:8081/auth/address/change_primary',
@@ -24,7 +24,7 @@ export const changePrimaryAddress = async (addressId) => {
             throw new Error('Failed to change PRimary address');
         }
     } catch (error) {
-        console.error('Failed to change Primary address:', error);
+        //console.error('Failed to change Primary address:', error);
         throw error;
     }
 };

@@ -190,7 +190,7 @@ const onFilterChange = () => {
 // 프로필 및 상품 데이터를 가져오는 onMounted 함수
 onMounted(async () => {
     await profileStore.fetchContents();
-    console.log('Profile Animal Type:', profileAnimalType.value);
+    //console.log('Profile Animal Type:', profileAnimalType.value);
 
     const type = productType; // 현재 페이지의 type 파라미터 사용
     if (activeCategory.value === '맞춤형') {
@@ -200,7 +200,7 @@ onMounted(async () => {
     }
     loading.value = false; // 로딩 완료
 
-    console.log('Products:', productStore.products);
+    //console.log('Products:', productStore.products);
 });
 
 // 카테고리 변경 시 라우터 이동 및 상품 데이터 로드

@@ -24,7 +24,7 @@ export const useMedicalStore = defineStore('medicalStore', {
                 this.medicalRecords = response.data; // 가져온 메디컬 기록을 상태에 저장
             } catch (err) {
                 this.error = '메디컬 기록을 가져오는 데 실패했습니다.';
-                console.error(err);
+                //console.error(err);
             } finally {
                 this.loading = false; // 로딩 상태를 false로 설정
             }
@@ -47,7 +47,7 @@ export const useMedicalStore = defineStore('medicalStore', {
                 return response.data; // 데이터를 반환하여 컴포넌트에서 사용 가능하도록 함
             } catch (err) {
                 this.error = '해당 메디컬 기록을 가져오는 데 실패했습니다.';
-                console.error(err);
+                //console.error(err);
             } finally {
                 this.loading = false; // 로딩 상태를 false로 설정
             }
@@ -70,7 +70,7 @@ export const useMedicalStore = defineStore('medicalStore', {
                 return response.data; // 데이터를 반환하여 컴포넌트에서 사용 가능하도록 함
             } catch (err) {
                 this.error = '최근 메디컬 기록을 가져오는 데 실패했습니다.';
-                console.error(err);
+                //console.error(err);
             } finally {
                 this.loading = false; // 로딩 상태를 false로 설정
             }

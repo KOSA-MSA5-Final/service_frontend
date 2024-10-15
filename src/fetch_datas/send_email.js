@@ -10,10 +10,10 @@ export const send_email = defineStore('smtp', {
                 const response = await axios.get(`${baseUrl}/register/email`, {
                     params: { email },
                 });
-                console.log('email: ', response.data);
+                //console.log('email: ', response.data);
                 return response.data; // 이는 서버에서 반환된 인증 코드입니다.
             } catch (error) {
-                console.error('이메일 전송 실패:', error);
+                //console.error('이메일 전송 실패:', error);
                 throw error;
             }
         },

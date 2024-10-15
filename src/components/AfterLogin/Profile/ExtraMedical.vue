@@ -78,17 +78,16 @@ export default {
                     selected: disease.selected,
                 }));
 
-                console.log('Extra Medicals:', extraMedicals);
+                //console.log('Extra Medicals:', extraMedicals);
 
                 // saveReceipt 함수 호출
                 const response = await saveReceipt(extraMedicals);
 
-                console.log('Receipt saved successfully:', response);
+                //console.log('Receipt saved successfully:', response);
 
                 router.push('/main');
             } catch (error) {
-                console.error('Failed to save receipt:', error);
-
+                //console.error('Failed to save receipt:', error);
                 // 에러 메시지를 사용자에게 표시
                 // 예: alert('영수증 저장에 실패했습니다. 다시 시도해 주세요.');
             }

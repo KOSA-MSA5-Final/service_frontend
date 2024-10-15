@@ -120,8 +120,8 @@ export default defineComponent({
             try {
                 await userAllInfoStore.fetchUserAllInfo();
             } catch (error) {
-                console.error('Failed to fetch user info:', error);
-                console.log(userAllInfoStore.getMemberInfo);
+                //console.error('Failed to fetch user info:', error);
+                //console.log(userAllInfoStore.getMemberInfo);
                 // 에러 처리 로직 추가 가능
             }
         });
@@ -133,7 +133,7 @@ export default defineComponent({
                 userAllInfoStore.clearStore(); // 사용자 정보 클리어
                 router.push('/');
             } catch (error) {
-                console.error('Logout error:', error);
+                //console.error('Logout error:', error);
                 // 에러 처리 로직 추가 가능
             }
         };
@@ -144,11 +144,11 @@ export default defineComponent({
                 if (success) {
                     router.push('/main');
                 } else {
-                    console.error('Failed to change profile:', userAllInfoStore.error);
+                    //console.error('Failed to change profile:', userAllInfoStore.error);
                     // 여기에 사용자에게 에러를 표시하는 로직을 추가할 수 있습니다.
                 }
             } catch (error) {
-                console.error('Error in handleProfileSelect:', error);
+                //console.error('Error in handleProfileSelect:', error);
                 // 여기에 사용자에게 에러를 표시하는 로직을 추가할 수 있습니다.
             }
         };

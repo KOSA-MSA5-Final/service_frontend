@@ -221,12 +221,12 @@ export default {
                 );
                 // 서버로부터 받은 질병과 하위 질병 데이터를 저장
                 this.diseaseData = response.data;
-                console.log(this.diseaseData);
+                //console.log(this.diseaseData);
 
                 // 각 질병에 대해 상태 초기화
                 this.initializeComboState();
             } catch (error) {
-                console.error('Error fetching sub disease: ', error);
+                //console.error('Error fetching sub disease: ', error);
             }
         },
         initializeComboState() {
@@ -252,9 +252,9 @@ export default {
                     },
                 });
                 this.userInfo = response.data; // 사용자 정보 저장
-                console.log('User Info:', this.userInfo); // 사용자 정보 출력
+                //console.log('User Info:', this.userInfo); // 사용자 정보 출력
             } catch (error) {
-                console.error('Failed to fetch user info:', error.response.data);
+                //console.error('Failed to fetch user info:', error.response.data);
             }
         },
         async saveProfile() {
@@ -274,7 +274,7 @@ export default {
             }
             //백엔드에 데이터 저장 로직
             const token = localStorage.getItem('token');
-            console.log('token' + token);
+            //console.log('token' + token);
             try {
                 const page2Store = usePage2Store();
                 const petStore = usePetStore();
@@ -283,7 +283,7 @@ export default {
                 const selectedAllergies = Object.keys(page2Store.checkedItems).filter(
                     (item) => page2Store.checkedItems[item],
                 );
-                console.log(selectedAllergies); // ["우유", "보리", "메밀"]
+                //console.log(selectedAllergies); // ["우유", "보리", "메밀"]
 
                 //페이지1스토어에서 필요한 데이터 가져오기
                 const petImg = petStore.petImg;
@@ -324,7 +324,7 @@ export default {
                     },
                 });
                 if (response.status === 200) {
-                    alert('프로필이 성공적으로 저장되었습니다');
+                    //alert('프로필이 성공적으로 저장되었습니다');
 
                     // Pinia 스토어의 isDisease 값을 초기화
                     diseaseStore.isDisease = []; // 초기화 (비어 있는 배열 또는 초기 상태로 설정)
@@ -332,7 +332,7 @@ export default {
                     this.$router.push('/main');
                 }
             } catch (error) {
-                console.error('프로필 저장 실패: ', error);
+                //console.error('프로필 저장 실패: ', error);
             }
         },
         goToBeforeLogin() {
