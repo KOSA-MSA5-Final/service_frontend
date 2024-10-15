@@ -133,10 +133,22 @@ const profileAnimalType = computed(() => contents.value?.animalDetailDTO?.animal
 
 // 상품 필터링 로직
 const FilteredProducts = computed(() => {
-    let productList = activeCategory.value === '맞춤형' ? productStore.personalizedProducts : productStore.products;
-
+    // let productList = activeCategory.value === '맞춤형' ? productStore.personalizedProducts : productStore.products;
     // console.log('Profile Animal Type:', profileAnimalType.value);
     // console.log('Products:', productList);
+    let productList;
+    // 맞춤형일 경우 타입에 따라 올바른 배열을 선택
+    if (activeCategory.value === '맞춤형') {
+        if (productType === 'feed') productList = productStore.personalizedFeedProducts;
+        else if (productType === 'snack') productList = productStore.personalizedSnackProducts;
+        else if (productType === 'supplement') productList = productStore.personalizedSupplementProducts;
+        else productList = []; // 해당하는 타입이 없을 경우 빈 배열
+    } else {
+        // 전체 상품일 경우
+        productList = productStore.products;
+    }
+
+    console.log('Active Product List:', productList); // 확인용 로그
 
     const isMatchingProduct = (product) => {
         const matchesType = product.type === productType;
@@ -195,6 +207,7 @@ onMounted(async () => {
     const type = productType; // 현재 페이지의 type 파라미터 사용
     if (activeCategory.value === '맞춤형') {
         await productStore.fetchPersonalizedProductsByType(type);
+        console.log('Personalized Products:', productStore.personalizedProducts);
     } else {
         await productStore.fetchAllProducts();
     }

@@ -1,7 +1,25 @@
 <template>
     <div class="main-page">
+        <!-- 프로필 로딩 상태 -->
+        <div v-if="!profileLoaded" class="loading-container">
+            <span class="spinner"></span>
+            <p>프로필 정보를 불러오고 있습니다...</p>
+        </div>
+
+        <!-- 전체 상품 로딩 중인 경우 -->
+        <div v-else-if="profileLoaded && !allProductsLoaded" class="loading-container">
+            <span class="spinner"></span>
+            <p>전체 상품을 불러오고 있습니다...</p>
+        </div>
+
+        <!-- 맞춤형 상품 로딩 중인 경우 -->
+        <div v-else-if="allProductsLoaded && !personalizedLoaded" class="loading-container">
+            <span class="spinner"></span>
+            <p>맞춤형 상품을 불러오고 있습니다...</p>
+        </div>
         <!-- 중간 이미지 섹션 (4분할) -->
-        <div class="middle-section" v-if="profileName">
+        <!-- 모든 데이터가 로드된 경우 -->
+        <div v-else class="middle-section">
             <!-- 첫 번째 섹션 -->
             <div class="section-item" @click.stop="navigateToPage('MapsPage', 'facility')">
                 <!-- <div id="title-container">
@@ -34,7 +52,7 @@
                     </div>
                 </div>
                 <!-- 필터링된 feedProducts를 ProductSlider 컴포넌트에 props로 전달 -->
-                <ProductSlider :products="feedProducts" />
+                <ProductSlider :products="feedProducts" :type="'feed'" />
             </div>
 
             <!-- 세 번째 섹션 -->
@@ -49,6 +67,7 @@
                             alt="snack"
                         />
                     </div>
+
                     <div id="title-img-container">
                         <img
                             class="icon"
@@ -59,7 +78,7 @@
                     </div>
                 </div>
                 <!-- 필터링된 snackProducts를 ProductSlider 컴포넌트에 props로 전달 -->
-                <ProductSlider :products="snackProducts" />
+                <ProductSlider :products="snackProducts" :type="'snack'" />
             </div>
 
             <!-- 네 번째 섹션 -->
@@ -84,19 +103,14 @@
                     </div>
                 </div>
                 <!-- 필터링된 supplementProducts를 ProductSlider 컴포넌트에 props로 전달 -->
-                <ProductSlider :products="supplementProducts" />
+                <ProductSlider :products="supplementProducts" :type="'supplement'" />
             </div>
-        </div>
-
-        <!-- 로딩 중이거나 프로필 정보가 없는 경우 -->
-        <div v-else>
-            <p>프로필 정보를 불러오고 있습니다...</p>
         </div>
     </div>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCurrentProfileStore } from '@/fetch_datas/currentProfileStore';
 import { useProductStore } from '@/stores/productStore';
@@ -107,11 +121,38 @@ const router = useRouter();
 const profileStore = useCurrentProfileStore();
 const productStore = useProductStore();
 const { contents } = storeToRefs(profileStore);
-const { products } = storeToRefs(productStore);
+// const { products } = storeToRefs(productStore);
+const { personalizedFeedProducts, personalizedSnackProducts, personalizedSupplementProducts } =
+    storeToRefs(productStore);
+
+const profileLoaded = ref(false); // 프로필 데이터 로딩 여부
+const allProductsLoaded = ref(false); // 전체 상품 로딩 여부
+const personalizedLoaded = ref(false); // 맞춤형 상품 로딩 완료 여부
 
 onMounted(async () => {
-    await profileStore.fetchContents();
-    await productStore.fetchAllProducts();
+    try {
+        const profilePromise = profileStore.fetchContents().then(() => {
+            profileLoaded.value = true;
+        });
+
+        const productsPromise = productStore.fetchAllProducts().then(() => {
+            allProductsLoaded.value = true;
+        });
+
+        // 프로필과 전체 상품 병렬 로딩
+        await Promise.all([profilePromise, productsPromise]);
+
+        // 맞춤형 상품은 비동기적으로 로드
+        await Promise.all([
+            productStore.fetchPersonalizedProductsByType('feed'),
+            productStore.fetchPersonalizedProductsByType('snack'),
+            productStore.fetchPersonalizedProductsByType('supplement'),
+        ]).then(() => {
+            personalizedLoaded.value = true;
+        });
+    } catch (error) {
+        console.error('Error loading data:', error);
+    }
 });
 
 const profileName = computed(() => contents.value?.name || '반려동물');
@@ -124,13 +165,19 @@ const profileAnimalType = computed(() => {
 
 // 상품 타입에 따라 필터링된 상품들을 computed로 정의
 const feedProducts = computed(() =>
-    products.value.filter((product) => product.type === 'feed' && product.animalName === profileAnimalType.value),
+    personalizedFeedProducts.value.filter(
+        (product) => product.type === 'feed' && product.animalName === profileAnimalType.value,
+    ),
 );
 const snackProducts = computed(() =>
-    products.value.filter((product) => product.type === 'snack' && product.animalName === profileAnimalType.value),
+    personalizedSnackProducts.value.filter(
+        (product) => product.type === 'snack' && product.animalName === profileAnimalType.value,
+    ),
 );
 const supplementProducts = computed(() =>
-    products.value.filter((product) => product.type === 'supplement' && product.animalName === profileAnimalType.value),
+    personalizedSupplementProducts.value.filter(
+        (product) => product.type === 'supplement' && product.animalName === profileAnimalType.value,
+    ),
 );
 
 const navigateToPage = (pageName, type) => {
@@ -203,5 +250,41 @@ const navigateToPage = (pageName, type) => {
 
 .icon {
     filter: invert(100%) sepia(0%) saturate(7483%) hue-rotate(253deg) brightness(108%) contrast(104%);
+}
+
+/* 로딩 컨테이너: 중앙 정렬 */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh; /* 화면 전체 높이 */
+    background-color: #ffffff;
+}
+
+/* 스피너 스타일 */
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #3498db;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 10px;
+}
+
+/* 스피너 회전 애니메이션 */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 로딩 메시지 스타일 */
+.loading-container p {
+    font-size: 18px;
+    color: #555;
+    margin-top: 10px;
 }
 </style>

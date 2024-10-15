@@ -37,6 +37,10 @@ const props = defineProps({
         required: true,
         default: () => [],
     },
+    type: {
+        type: String,
+        required: true,
+    },
 });
 
 const container = ref(null);
@@ -47,7 +51,9 @@ const isAtEnd = ref(false);
 
 const router = useRouter(); // router 정의
 
-onMounted(() => {
+onMounted(async () => {
+    console.log('Slider Type:', props.type); // 슬라이더 타입 확인
+    console.log('Slider Products:', props.products);
     updateScrollState();
     if (container.value) {
         container.value.addEventListener('scroll', updateScrollState);
