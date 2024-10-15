@@ -42,7 +42,7 @@ export const saveReceipt = async (extraMedical) => {
             throw new Error('Failed to save receipt');
         }
     } catch (error) {
-        //console.error('Failed to save receipt:', error);
+        console.error('Failed to save receipt:', error);
         throw error;
     }
 };

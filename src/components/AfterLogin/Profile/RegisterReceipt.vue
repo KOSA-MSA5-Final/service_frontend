@@ -208,7 +208,7 @@ export default {
                     isCameraActive.value = true;
                 })
                 .catch((err) => {
-                    //console.error('Error accessing camera: ', err);
+                    console.error('Error accessing camera: ', err);
                 });
         };
 

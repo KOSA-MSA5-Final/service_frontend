@@ -83,7 +83,7 @@ export default {
                 // saveReceipt 함수 호출
                 const response = await saveReceipt(extraMedicals);
 
-                //console.log('Receipt saved successfully:', response);
+                console.log('Receipt saved successfully:', response);
 
                 router.push('/main');
             } catch (error) {

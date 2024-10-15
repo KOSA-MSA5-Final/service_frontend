@@ -706,7 +706,7 @@ const refreshUserLocation = () => {
                 // fetchfacilityData(position.coords.latitude, position.coords.longitude);
             },
             (error) => {
-                //console.error('사용자 위치를 가져오는 중 오류 발생: ', error);
+                console.error('사용자 위치를 가져오는 중 오류 발생: ', error);
             },
             {
                 enableHighAccuracy: true, // 정확도 높은 위치 요청
@@ -749,7 +749,7 @@ onMounted(async () => {
 
         //console.log('Kakao Map 초기화 및 이벤트 리스너 등록 완료');
     } catch (error) {
-        //console.error('Kakao Map 로드 중 오류 발생:', error);
+        console.error('Kakao Map 로드 중 오류 발생:', error);
     }
 });
 

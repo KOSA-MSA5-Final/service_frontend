@@ -293,7 +293,7 @@ export default {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                //console.log('Payment successful', res);
+                console.log('Payment successful', res);
 
                 alert('결제가 완료되었습니다!');
                 this.isPaymentBoxVisible = false;

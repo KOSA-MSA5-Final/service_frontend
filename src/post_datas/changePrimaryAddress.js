@@ -24,7 +24,7 @@ export const changePrimaryAddress = async (addressId) => {
             throw new Error('Failed to change PRimary address');
         }
     } catch (error) {
-        //console.error('Failed to change Primary address:', error);
+        console.error('Failed to change Primary address:', error);
         throw error;
     }
 };

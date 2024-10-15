@@ -22,7 +22,7 @@ export const useFileUploadStore = defineStore('fileUpload', {
                 this.uploadedFiles.push(data);
                 return data;
             } catch (err) {
-                //console.error('File Upload ERROR!', err);
+                console.error('File Upload ERROR!', err);
                 throw err;
             }
         },

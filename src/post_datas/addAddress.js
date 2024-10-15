@@ -17,7 +17,7 @@ export const addAddress = async (addressData) => {
             throw new Error('Failed to save address');
         }
     } catch (error) {
-        //console.error('Failed to add address:', error);
+        console.error('Failed to add address:', error);
         throw error;
     }
 };

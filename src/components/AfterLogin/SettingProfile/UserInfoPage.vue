@@ -74,7 +74,7 @@ export default {
                     },
                 });
 
-                //console.log('User Info Updated:', response.data); // 업데이트된 사용자 정보 출력
+                console.log('User Info Updated:', response.data); // 업데이트된 사용자 정보 출력
                 this.fetchUserInfo(); // 사용자 정보 다시 가져오기
             } catch (error) {
                 //console.error('Failed to update user info:', error.response.data);
