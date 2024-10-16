@@ -2,7 +2,7 @@
     "terminal.integrated.env.windows": {},
     "terminal.integrated.defaultProfile.windows": "Command Prompt",
     "code-runner.runInTerminal": true,
-    "liveServer.settings.host": "localhost",
+    "liveServer.settings.host": "mgng.site",
     "liveServer.settings.CustomBrowser": "chrome",
     "editor.wordWrap": "on",
     "editor.formatOnSave": true,

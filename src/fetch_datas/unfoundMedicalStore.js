@@ -20,7 +20,7 @@ export const useUnfoundDiseaseStore = defineStore('unfoundDisease', {
 
             try {
                 console.log('대분류 전송 내용 : ', diseaseNames);
-                const response = await axios.post('https://localhost:8081/api/unfound_diseases', diseaseNames, {
+                const response = await axios.post('https://mgng.site:8081/api/unfound_diseases', diseaseNames, {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,

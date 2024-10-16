@@ -4,7 +4,7 @@ import axios from 'axios';
 export const addAddress = async (addressData) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post('https://localhost:8081/auth/address/add', addressData, {
+        const response = await axios.post('https://mgng.site:8081/auth/address/add', addressData, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

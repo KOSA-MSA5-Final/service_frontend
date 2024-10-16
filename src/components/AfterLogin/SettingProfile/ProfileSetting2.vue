@@ -175,7 +175,7 @@ export default {
         async getAllergies() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('https://localhost:8081/api/profile/allergies', {
+                const response = await axios.get('https://mgng.site:8081/api/profile/allergies', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
                     },

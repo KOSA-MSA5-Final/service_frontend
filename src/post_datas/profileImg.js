@@ -3,7 +3,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const baseUrl = 'https://localhost:8081/api/s3/profile';
+const baseUrl = 'https://mgng.site:8081/api/s3/profile';
 
 export const uploadProfileImage = defineStore('profileImgUpload', {
     state: () => ({

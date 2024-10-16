@@ -16,7 +16,7 @@ export const useMedicalStore = defineStore('medicalStore', {
 
             try {
                 const token = localStorage.getItem('token'); // 토큰을 가져옴
-                const response = await axios.get(`https://localhost:8081/api/medical/profile/${profileId}`, {
+                const response = await axios.get(`https://mgng.site:8081/api/medical/profile/${profileId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`, // 토큰을 헤더에 추가
                     },
@@ -37,7 +37,7 @@ export const useMedicalStore = defineStore('medicalStore', {
 
             try {
                 const token = localStorage.getItem('token'); // 토큰을 가져옴
-                const response = await axios.get(`https://localhost:8081/api/medical/${medicalId}`, {
+                const response = await axios.get(`https://mgng.site:8081/api/medical/${medicalId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`, // 토큰을 헤더에 추가
                     },
@@ -60,7 +60,7 @@ export const useMedicalStore = defineStore('medicalStore', {
 
             try {
                 const token = localStorage.getItem('token'); // 토큰을 가져옴
-                const response = await axios.get(`https://localhost:8081/api/medical/profile/${profileId}/latest`, {
+                const response = await axios.get(`https://mgng.site:8081/api/medical/profile/${profileId}/latest`, {
                     headers: {
                         Authorization: `Bearer ${token}`, // 토큰을 헤더에 추가
                     },

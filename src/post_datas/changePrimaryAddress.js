@@ -8,7 +8,7 @@ export const changePrimaryAddress = async (addressId) => {
             console.log('no token');
         }
         const response = await axios.post(
-            'https://localhost:8081/auth/address/change_primary',
+            'https://mgng.site:8081/auth/address/change_primary',
             { addressId },
             {
                 headers: {

@@ -21,7 +21,7 @@ export const saveReceipt = async (extraMedical) => {
     try {
         const token = localStorage.getItem('token');
         const response = await axios.post(
-            'https://localhost:8081/api/save_receipt',
+            'https://mgng.site:8081/api/save_receipt',
             {
                 extraMedical: extraMedical,
                 receiptInfo: receiptStore.receiptInfo,

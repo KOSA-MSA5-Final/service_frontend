@@ -22,7 +22,7 @@ export const useUserAllInfoStore = defineStore('userAllInfo', {
                     throw new Error('No authentication token found');
                 }
 
-                const response = await axios.get('https://localhost:8081/auth/userinfo-all', {
+                const response = await axios.get('https://mgng.site:8081/auth/userinfo-all', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -50,7 +50,7 @@ export const useUserAllInfoStore = defineStore('userAllInfo', {
             }
             try {
                 const response = await axios.post(
-                    `https://localhost:8081/auth/changeCurrentProfile?profileId=${profileId}`,
+                    `https://mgng.site:8081/auth/changeCurrentProfile?profileId=${profileId}`,
                     {},
                     {
                         headers: {

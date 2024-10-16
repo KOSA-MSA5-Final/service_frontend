@@ -2,14 +2,14 @@ const { defineConfig } = require('@vue/cli-service');
 const fs = require('fs');
 const path = require('path');
 
-const host = 'localhost';
+const host = 'mgng.site';
 const port = '8081';
 
 let httpsOptions = null;
 try {
     httpsOptions = {
-        key: fs.readFileSync(path.join(__dirname, '.cert', 'localhost-key.pem')),
-        cert: fs.readFileSync(path.join(__dirname, '.cert', 'localhost.pem')),
+        key: fs.readFileSync(path.join(__dirname, '.cert', 'mgng.site-key.pem')),
+        cert: fs.readFileSync(path.join(__dirname, '.cert', 'mgng.site.pem')),
     };
 } catch (err) {
     console.error('HTTPS 인증서 파일을 읽는 중 오류 발생:', err.message);

@@ -26,7 +26,7 @@ export const useProductStore = defineStore('productStore', {
                 const token = localStorage.getItem('token');
                 if (!token) throw new Error('No authentication token found');
 
-                const response = await axios.get('https://localhost:8081/api/products', {
+                const response = await axios.get('https://mgng.site:8081/api/products', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -59,7 +59,7 @@ export const useProductStore = defineStore('productStore', {
                 const token = localStorage.getItem('token');
                 if (!token) throw new Error('No authentication token found');
 
-                const response = await axios.get(`https://localhost:8081/api/products/personalized/${type}`, {
+                const response = await axios.get(`https://mgng.site:8081/api/products/personalized/${type}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

@@ -20,7 +20,7 @@ export const fetchAddressList = defineStore('addressStore', {
                     throw new Error('No authentication token found');
                 }
 
-                const response = await axios.get('https://localhost:8081/auth/address/all', {
+                const response = await axios.get('https://mgng.site:8081/auth/address/all', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

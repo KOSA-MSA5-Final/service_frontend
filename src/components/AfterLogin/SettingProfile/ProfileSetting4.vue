@@ -246,7 +246,7 @@ export default {
             const token = localStorage.getItem('token');
 
             try {
-                const response = await axios.get('https://localhost:8081/auth/userinfo', {
+                const response = await axios.get('https://mgng.site:8081/auth/userinfo', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
                     },
@@ -318,7 +318,7 @@ export default {
                     etcDisease, // 기타 병명 추가
                 };
 
-                const response = await axios.post('https://localhost:8081/api/profile/saveProfile', profileData, {
+                const response = await axios.post('https://mgng.site:8081/api/profile/saveProfile', profileData, {
                     headers: {
                         Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
                     },

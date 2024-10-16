@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const baseUrl = 'https://localhost:8081/auth';
+const baseUrl = 'https://mgng.site:8081/auth';
 
 export const send_email = defineStore('smtp', {
     actions: {

@@ -1,27 +1,30 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const baseUrl = 'https://localhost:8081';
+const baseUrl = 'https://mgng.site:8081';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-
         token: null,
         username: '',
-        password: ''
+        password: '',
     }),
     actions: {
         async login() {
             try {
                 console.log('Logging in with:', { username: this.username, password: this.password }); // 추가된 로그
-                const response = await axios.post(`${baseUrl}/auth/login`, {
-                    username: this.username,
-                    password: this.password
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+                const response = await axios.post(
+                    `${baseUrl}/auth/login`,
+                    {
+                        username: this.username,
+                        password: this.password,
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
 
                 if (response && response.data && response.data.token) {
                     this.token = response.data.token;
@@ -48,6 +51,6 @@ export const useAuthStore = defineStore('auth', {
             this.token = null;
             localStorage.removeItem('token');
             delete axios.defaults.headers.common['Authorization'];
-        }
-    }
+        },
+    },
 });

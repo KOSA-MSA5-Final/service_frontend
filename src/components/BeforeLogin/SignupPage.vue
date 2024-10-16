@@ -158,7 +158,7 @@ export default {
 
             axios
                 .post(
-                    'https://localhost:8081/auth/register',
+                    'https://mgng.site:8081/auth/register',
                     {
                         email: this.email,
                         password: this.password,
