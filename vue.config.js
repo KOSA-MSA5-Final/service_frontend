@@ -22,7 +22,7 @@ module.exports = defineConfig({
     devServer: {
         https: httpsOptions,
         host: host,
-        port: 8080,
+        port: 8081,
         hot: true,
         proxy: {
             '/api/': {
