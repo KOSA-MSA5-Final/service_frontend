@@ -20,7 +20,7 @@ export const useCurrentProfileStore = defineStore('currentProfile', {
                     throw new Error('No authentication token found');
                 }
 
-                const response = await axios.get('https://mgng.site:8081/auth/currentProfileInfo', {
+                const response = await axios.get('https://mgng.site/auth/currentProfileInfo', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

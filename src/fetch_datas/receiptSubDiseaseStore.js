@@ -20,7 +20,7 @@ export const useSubdiseasesStore = defineStore('subdiseases', {
 
             try {
                 console.log('대분류 전송 내용 : ', diseaseNames);
-                const response = await axios.post('https://mgng.site:8081/api/fetch_subdiseases', diseaseNames, {
+                const response = await axios.post('https://mgng.site/api/fetch_subdiseases', diseaseNames, {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,

@@ -22,7 +22,7 @@ export const useFacilityStore = defineStore('facilityStore', {
         async fetchAffiliatedFacilities() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('https://mgng.site:8081/api/maps/affiliated-facilities', {
+                const response = await axios.get('https://mgng.site/api/maps/affiliated-facilities', {
                     headers: {
                         Authorization: `Bearer ${token}`, // 서버에서 요구하는 인증 방식에 맞는 토큰 추가
                     },

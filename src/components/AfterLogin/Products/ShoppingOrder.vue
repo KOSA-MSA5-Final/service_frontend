@@ -40,7 +40,7 @@ export default {
         async fetchOrders() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`https://mgng.site:8081/api/products/order`, {
+                const response = await axios.get(`https://mgng.site/api/products/order`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -259,7 +259,7 @@ export default {
         async fetchOrders() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`https://mgng.site:8081/api/products/order`, {
+                const response = await axios.get(`https://mgng.site/api/products/order`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

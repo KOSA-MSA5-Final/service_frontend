@@ -27,7 +27,7 @@ export const useFetchReceiptDiseaseStore = defineStore('receiptDiseaseStore', {
 
                 console.log('Sending data:', JSON.stringify(medicalDTOsArray)); // 로깅 추가
 
-                const response = await axios.post('https://mgng.site:8081/api/disease/analysis', medicalDTOsArray, {
+                const response = await axios.post('https://mgng.site/api/disease/analysis', medicalDTOsArray, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',

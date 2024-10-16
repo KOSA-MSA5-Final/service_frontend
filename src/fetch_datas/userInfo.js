@@ -14,7 +14,7 @@ export const useUserInfoStore = defineStore('userInfoStore', {
             this.loading = true;
             try {
                 const token = localStorage.getItem('token'); // 로컬스토리지에서 토큰 가져오기
-                const response = await axios.get(`https://mgng.site:8081/auth/profile/userinfo-all`, {
+                const response = await axios.get(`https://mgng.site/auth/profile/userinfo-all`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

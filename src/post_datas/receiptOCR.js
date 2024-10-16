@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const baseUrl = 'https://mgng.site:8081/api/s3';
+const baseUrl = 'https://mgng.site/api/s3';
 
 export const useFileUploadStore = defineStore('fileUpload', {
     state: () => ({

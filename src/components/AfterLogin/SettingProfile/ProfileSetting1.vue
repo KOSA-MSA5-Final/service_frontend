@@ -450,7 +450,7 @@ export default {
                 console.log('나 불러지고 있어요');
                 const token = localStorage.getItem('token');
 
-                const response = await axios.get('https://mgng.site:8081/api/profile/animalDetails', {
+                const response = await axios.get('https://mgng.site/api/profile/animalDetails', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
                     },

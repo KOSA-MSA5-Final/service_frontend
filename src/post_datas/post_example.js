@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const baseUrl = 'http://mgng.site:8081';
+const baseUrl = 'http://mgng.site';
 
 export const usePostStore = defineStore('storeId', {
     state: () => ({

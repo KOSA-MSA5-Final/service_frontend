@@ -49,7 +49,7 @@ export default {
             const token = localStorage.getItem('token'); // 저장된 토큰 가져오기
             console.log(token);
             try {
-                const response = await axios.get('https://mgng.site:8081/auth/userinfo', {
+                const response = await axios.get('https://mgng.site/auth/userinfo', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
                     },
@@ -68,7 +68,7 @@ export default {
                 username: this.userInfo.username, // 기존 사용자 이름 유지
             };
             try {
-                const response = await axios.post('https://mgng.site:8081/auth/userinfo/update', memberDTO, {
+                const response = await axios.post('https://mgng.site/auth/userinfo/update', memberDTO, {
                     headers: {
                         Authorization: `Bearer ${token}`, // JWT 토큰 포함
                     },

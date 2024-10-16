@@ -187,7 +187,7 @@ export default {
             this.isLoading = true;
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`https://mgng.site:8081/api/products/get/${productId}`, {
+                const response = await axios.get(`https://mgng.site/api/products/get/${productId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -288,7 +288,7 @@ export default {
 
                 // 결제가 성공했을 때
                 const token = localStorage.getItem('token');
-                const res = await axios.post(`https://mgng.site:8081/api/pay/${response.imp_uid}`, {
+                const res = await axios.post(`https://mgng.site/api/pay/${response.imp_uid}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

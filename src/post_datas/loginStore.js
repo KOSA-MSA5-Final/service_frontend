@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const baseUrl = 'https://mgng.site:8081';
+const baseUrl = 'https://mgng.site';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
