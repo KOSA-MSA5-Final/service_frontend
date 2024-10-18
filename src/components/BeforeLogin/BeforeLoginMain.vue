@@ -16,9 +16,9 @@
                 />
             </div>
         </div>
-        <hr class="horizontal-line" />
 
         <div class="login-box">
+            <hr class="horizontal-line" />
             <div class="login-input-fields">
                 <form @submit.prevent="login" class="login-form">
                     <div class="input-container">
@@ -140,7 +140,7 @@ button {
 
 #info-text-container {
     position: absolute;
-    top: 53%;
+    top: 56%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
@@ -150,7 +150,7 @@ button {
 }
 .login-box {
     position: absolute;
-    top: 70%;
+    top: 75%;
     left: 50%;
     width: 80%;
     transform: translate(-50%, -50%);
@@ -247,12 +247,11 @@ button {
 
 .horizontal-line {
     border: 1.5px solid #939393; /* 줄 색상 */
-    margin: 20px 0; /* 상하 여백 */
-    width: 80%;
+    margin: 15px 0; /* 상하 여백 */
+    width: 100%;
     justify-content: center;
     display: inline-grid;
     position: relative;
-    top: -60px;
 }
 
 .signup-text {

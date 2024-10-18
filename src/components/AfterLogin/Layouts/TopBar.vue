@@ -31,6 +31,7 @@ const navigateToMain = () => {
     height: 80px;
     /* margin-bottom: 5px; */
     padding: 0 15px;
+    margin-top: 20px;
 }
 
 #mgng-name {

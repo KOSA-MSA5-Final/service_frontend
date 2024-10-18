@@ -275,7 +275,7 @@ const currentProfile = computed(() => {
     return {
         ...profile,
         gender: mapGender(profile.gender),
-        pictureUrl: profile.pictureUrl || defaultProfileImage,
+        pictureUrl: defaultProfileImage,
         allergies: profile.allergies || [],
         disease: profile.diseases || [],
         medicalDiseases,

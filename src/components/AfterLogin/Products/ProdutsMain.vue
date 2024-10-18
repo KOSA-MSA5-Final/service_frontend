@@ -148,12 +148,14 @@ const FilteredProducts = computed(() => {
         productList = productStore.products;
     }
 
-    console.log('Active Product List:', productList); // 확인용 로그
+    // console.log('Active Product List:', productList); // 확인용 로그
 
     const isMatchingProduct = (product) => {
         const matchesType = product.type === productType;
-        const matchesAnimalType =
-            product.animalName?.trim().toLowerCase() === profileAnimalType.value.trim().toLowerCase();
+        // 프로필이 없는 경우 animalName 필터링을 하지 않음
+        const matchesAnimalType = profileAnimalType.value
+            ? product.animalName?.trim().toLowerCase() === profileAnimalType.value.trim().toLowerCase()
+            : true; // 프로필이 없으면 무조건 true
         const matchesSubtype = selectedSubtypes.value.length === 0 || selectedSubtypes.value.includes(product.subtype);
         const matchesOrigin = selectedOrigins.value.length === 0 || selectedOrigins.value.includes(product.origin);
         const matchesSearchQuery = [product.name, product.description, product.category, product.origin]
@@ -202,18 +204,18 @@ const onFilterChange = () => {
 // 프로필 및 상품 데이터를 가져오는 onMounted 함수
 onMounted(async () => {
     await profileStore.fetchContents();
-    console.log('Profile Animal Type:', profileAnimalType.value);
+    // console.log('Profile Animal Type:', profileAnimalType.value);
 
     const type = productType; // 현재 페이지의 type 파라미터 사용
     if (activeCategory.value === '맞춤형') {
         await productStore.fetchPersonalizedProductsByType(type);
-        console.log('Personalized Products:', productStore.personalizedProducts);
+        // console.log('Personalized Products:', productStore.personalizedProducts);
     } else {
         await productStore.fetchAllProducts();
     }
     loading.value = false; // 로딩 완료
 
-    console.log('Products:', productStore.products);
+    // console.log('Products:', productStore.products);
 });
 
 // 카테고리 변경 시 라우터 이동 및 상품 데이터 로드
@@ -355,10 +357,18 @@ const goBack = () => {
     padding: 3px 0px;
 }
 
-.f-subtype,
+/* .f-subtype,
 .f-origin {
     display: flex;
     align-items: center;
+    flex-wrap: wrap; 
+} */
+
+.f-subtype label,
+.f-origin label {
+    flex: 0 1 auto; /* 아이템들이 내용에 맞게 조정 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    margin-bottom: 5px; /* 줄 간격 조정 */
 }
 
 /* Main Content 스타일 */
@@ -422,6 +432,7 @@ const goBack = () => {
     font-size: 0.8em;
     height: 40px;
     align-content: center;
+    overflow: hidden;
 }
 
 .product-price {

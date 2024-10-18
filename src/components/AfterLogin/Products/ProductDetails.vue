@@ -37,6 +37,9 @@
                 <div class="tag-container">
                     <span class="tag">#{{ product.animalName }}</span>
                     <span class="tag">#{{ product.subtype }}</span>
+                    <span class="tag" v-for="(diseaseName, index) in diseaseNames" :key="index">
+                        #{{ diseaseName }}에 좋은
+                    </span>
                 </div>
 
                 <!-- 가로 줄 -->
@@ -159,6 +162,7 @@ export default {
     data() {
         return {
             product: null,
+            diseaseNames: [], // 여기서 diseaseNames 배열 초기화
             unitPrice: 0,
             productId: this.$route.params.id,
             defaultImage: 'https://via.placeholder.com/300',
@@ -197,6 +201,14 @@ export default {
                 console.log(this.product);
                 this.unitPrice = response.data.price;
                 console.log(this.product.id);
+
+                // diseaseProducts에서 diseaseName을 추출
+                if (this.product.diseaseProducts && this.product.diseaseProducts.length > 0) {
+                    // diseaseName을 직접 사용하여 배열로 변환
+                    this.diseaseNames = this.product.diseaseProducts.map((dp) => dp.diseaseName);
+                } else {
+                    this.diseaseNames = []; // diseaseProducts가 없을 경우 빈 배열로 설정
+                }
             } catch (error) {
                 console.error('Fetch ERROR!', error);
             } finally {
@@ -353,6 +365,10 @@ export default {
     scrollbar-width: none;
 }
 
+.image-container {
+    margin-bottom: 30px;
+}
+
 .product-image {
     width: 400px;
     height: 400px;
@@ -378,7 +394,7 @@ export default {
     width: 100%; /* 각 이미지가 가로로 100% 차지하도록 설정 */
     height: auto; /* 비율 유지 */
     max-width: none; /* 최대 너비 제한 제거 */
-    padding: 10px 20px;
+    padding: 0px 20px;
 }
 
 /* .button-container {
@@ -425,6 +441,7 @@ export default {
 
 .tag-container {
     display: flex;
+    flex-wrap: wrap; /* 너비를 넘어갈 경우 태그가 아래로 생기게 함 */
     gap: 10px; /* 태그 사이의 간격 */
     margin: 10px 0; /* 상하 여백 */
 }
@@ -436,6 +453,7 @@ export default {
     padding: 5px 10px; /* 여백 */
     font-size: 14px; /* 글자 크기 */
     display: inline-block; /* 블록 형태로 표시 */
+    white-space: nowrap; /* 태그 내부 텍스트 줄바꿈 방지 */
 }
 
 .horizontal-line {

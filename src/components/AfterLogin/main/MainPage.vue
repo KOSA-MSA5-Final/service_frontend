@@ -143,13 +143,15 @@ onMounted(async () => {
         await Promise.all([profilePromise, productsPromise]);
 
         // 맞춤형 상품은 비동기적으로 로드
-        await Promise.all([
-            productStore.fetchPersonalizedProductsByType('feed'),
-            productStore.fetchPersonalizedProductsByType('snack'),
-            productStore.fetchPersonalizedProductsByType('supplement'),
-        ]).then(() => {
-            personalizedLoaded.value = true;
-        });
+        if (profileLoaded.value) {
+            await Promise.all([
+                productStore.fetchPersonalizedProductsByType('feed'),
+                productStore.fetchPersonalizedProductsByType('snack'),
+                productStore.fetchPersonalizedProductsByType('supplement'),
+            ]).then(() => {
+                personalizedLoaded.value = true;
+            });
+        }
     } catch (error) {
         console.error('Error loading data:', error);
     }
@@ -164,21 +166,33 @@ const profileAnimalType = computed(() => {
 });
 
 // 상품 타입에 따라 필터링된 상품들을 computed로 정의
-const feedProducts = computed(() =>
-    personalizedFeedProducts.value.filter(
+const feedProducts = computed(() => {
+    // 프로필이 없는 경우, 동물 이름과 상관없이 모든 상품을 보여주도록 수정
+    if (!profileAnimalType.value) {
+        return personalizedFeedProducts.value;
+    }
+    // 프로필이 있을 경우에는 animalName과 필터링
+    return personalizedFeedProducts.value.filter(
         (product) => product.type === 'feed' && product.animalName === profileAnimalType.value,
-    ),
-);
-const snackProducts = computed(() =>
-    personalizedSnackProducts.value.filter(
+    );
+});
+const snackProducts = computed(() => {
+    if (!profileAnimalType.value) {
+        return personalizedSnackProducts.value;
+    }
+    return personalizedSnackProducts.value.filter(
         (product) => product.type === 'snack' && product.animalName === profileAnimalType.value,
-    ),
-);
-const supplementProducts = computed(() =>
-    personalizedSupplementProducts.value.filter(
+    );
+});
+
+const supplementProducts = computed(() => {
+    if (!profileAnimalType.value) {
+        return personalizedSupplementProducts.value;
+    }
+    return personalizedSupplementProducts.value.filter(
         (product) => product.type === 'supplement' && product.animalName === profileAnimalType.value,
-    ),
-);
+    );
+});
 
 const navigateToPage = (pageName, type) => {
     router.push({ name: pageName, params: { type } });
